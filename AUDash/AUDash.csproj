@@ -124,34 +124,34 @@
     <Compile Include="App_Start\FilterConfig.cs" />
     <Compile Include="App_Start\RouteConfig.cs" />
     <Compile Include="App_Start\WebApiConfig.cs" />
-    <Compile Include="Areas\HelpPage\ApiDescriptionExtensions.cs" />
-    <Compile Include="Areas\HelpPage\App_Start\HelpPageConfig.cs" />
-    <Compile Include="Areas\HelpPage\Controllers\HelpController.cs" />
-    <Compile Include="Areas\HelpPage\HelpPageAreaRegistration.cs" />
-    <Compile Include="Areas\HelpPage\HelpPageConfigurationExtensions.cs" />
-    <Compile Include="Areas\HelpPage\ModelDescriptions\CollectionModelDescription.cs" />
-    <Compile Include="Areas\HelpPage\ModelDescriptions\ComplexTypeModelDescription.cs" />
-    <Compile Include="Areas\HelpPage\ModelDescriptions\DictionaryModelDescription.cs" />
-    <Compile Include="Areas\HelpPage\ModelDescriptions\EnumTypeModelDescription.cs" />
-    <Compile Include="Areas\HelpPage\ModelDescriptions\EnumValueDescription.cs" />
-    <Compile Include="Areas\HelpPage\ModelDescriptions\IModelDocumentationProvider.cs" />
-    <Compile Include="Areas\HelpPage\ModelDescriptions\KeyValuePairModelDescription.cs" />
-    <Compile Include="Areas\HelpPage\ModelDescriptions\ModelDescription.cs" />
-    <Compile Include="Areas\HelpPage\ModelDescriptions\ModelDescriptionGenerator.cs" />
-    <Compile Include="Areas\HelpPage\ModelDescriptions\ModelNameAttribute.cs" />
-    <Compile Include="Areas\HelpPage\ModelDescriptions\ModelNameHelper.cs" />
-    <Compile Include="Areas\HelpPage\ModelDescriptions\ParameterAnnotation.cs" />
-    <Compile Include="Areas\HelpPage\ModelDescriptions\ParameterDescription.cs" />
-    <Compile Include="Areas\HelpPage\ModelDescriptions\SimpleTypeModelDescription.cs" />
-    <Compile Include="Areas\HelpPage\Models\HelpPageApiModel.cs" />
-    <Compile Include="Areas\HelpPage\SampleGeneration\HelpPageSampleGenerator.cs" />
-    <Compile Include="Areas\HelpPage\SampleGeneration\HelpPageSampleKey.cs" />
-    <Compile Include="Areas\HelpPage\SampleGeneration\ImageSample.cs" />
-    <Compile Include="Areas\HelpPage\SampleGeneration\InvalidSample.cs" />
-    <Compile Include="Areas\HelpPage\SampleGeneration\ObjectGenerator.cs" />
-    <Compile Include="Areas\HelpPage\SampleGeneration\SampleDirection.cs" />
-    <Compile Include="Areas\HelpPage\SampleGeneration\TextSample.cs" />
-    <Compile Include="Areas\HelpPage\XmlDocumentationProvider.cs" />
+    <Compile Include="App_Start\Areas\HelpPage\ApiDescriptionExtensions.cs" />
+    <Compile Include="App_Start\Areas\HelpPage\App_Start\HelpPageConfig.cs" />
+    <Compile Include="App_Start\Areas\HelpPage\Controllers\HelpController.cs" />
+    <Compile Include="App_Start\Areas\HelpPage\HelpPageAreaRegistration.cs" />
+    <Compile Include="App_Start\Areas\HelpPage\HelpPageConfigurationExtensions.cs" />
+    <Compile Include="App_Start\Areas\HelpPage\ModelDescriptions\CollectionModelDescription.cs" />
+    <Compile Include="App_Start\Areas\HelpPage\ModelDescriptions\ComplexTypeModelDescription.cs" />
+    <Compile Include="App_Start\Areas\HelpPage\ModelDescriptions\DictionaryModelDescription.cs" />
+    <Compile Include="App_Start\Areas\HelpPage\ModelDescriptions\EnumTypeModelDescription.cs" />
+    <Compile Include="App_Start\Areas\HelpPage\ModelDescriptions\EnumValueDescription.cs" />
+    <Compile Include="App_Start\Areas\HelpPage\ModelDescriptions\IModelDocumentationProvider.cs" />
+    <Compile Include="App_Start\Areas\HelpPage\ModelDescriptions\KeyValuePairModelDescription.cs" />
+    <Compile Include="App_Start\Areas\HelpPage\ModelDescriptions\ModelDescription.cs" />
+    <Compile Include="App_Start\Areas\HelpPage\ModelDescriptions\ModelDescriptionGenerator.cs" />
+    <Compile Include="App_Start\Areas\HelpPage\ModelDescriptions\ModelNameAttribute.cs" />
+    <Compile Include="App_Start\Areas\HelpPage\ModelDescriptions\ModelNameHelper.cs" />
+    <Compile Include="App_Start\Areas\HelpPage\ModelDescriptions\ParameterAnnotation.cs" />
+    <Compile Include="App_Start\Areas\HelpPage\ModelDescriptions\ParameterDescription.cs" />
+    <Compile Include="App_Start\Areas\HelpPage\ModelDescriptions\SimpleTypeModelDescription.cs" />
+    <Compile Include="App_Start\Areas\HelpPage\Models\HelpPageApiModel.cs" />
+    <Compile Include="App_Start\Areas\HelpPage\SampleGeneration\HelpPageSampleGenerator.cs" />
+    <Compile Include="App_Start\Areas\HelpPage\SampleGeneration\HelpPageSampleKey.cs" />
+    <Compile Include="App_Start\Areas\HelpPage\SampleGeneration\ImageSample.cs" />
+    <Compile Include="App_Start\Areas\HelpPage\SampleGeneration\InvalidSample.cs" />
+    <Compile Include="App_Start\Areas\HelpPage\SampleGeneration\ObjectGenerator.cs" />
+    <Compile Include="App_Start\Areas\HelpPage\SampleGeneration\SampleDirection.cs" />
+    <Compile Include="App_Start\Areas\HelpPage\SampleGeneration\TextSample.cs" />
+    <Compile Include="App_Start\Areas\HelpPage\XmlDocumentationProvider.cs" />
     <Compile Include="Controllers\DashboardController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\ValuesController.cs" />
@@ -179,7 +179,7 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Areas\HelpPage\HelpPage.css" />
+    <Content Include="App_Start\Areas\HelpPage\HelpPage.css" />
     <Content Include="Content\themes\base\accordion.css" />
     <Content Include="Content\themes\base\all.css" />
     <Content Include="Content\themes\base\autocomplete.css" />
@@ -234,6 +234,7 @@
     <Content Include="fonts\glyphicons-halflings-regular.svg" />
     <Content Include="Global.asax" />
     <Content Include="images\DD_RGB_black-small.jpg" />
+    <Content Include="images\DD_RGB_white-black-small.jpg" />
     <Content Include="js\angular-file-upload.js">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
@@ -249,25 +250,25 @@
     <Content Include="js\bootstrap.min.js">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="Areas\HelpPage\Views\Web.config" />
-    <Content Include="Areas\HelpPage\Views\Shared\_Layout.cshtml" />
-    <Content Include="Areas\HelpPage\Views\Help\ResourceModel.cshtml" />
-    <Content Include="Areas\HelpPage\Views\Help\Index.cshtml" />
-    <Content Include="Areas\HelpPage\Views\Help\DisplayTemplates\TextSample.cshtml" />
-    <Content Include="Areas\HelpPage\Views\Help\DisplayTemplates\SimpleTypeModelDescription.cshtml" />
-    <Content Include="Areas\HelpPage\Views\Help\DisplayTemplates\Samples.cshtml" />
-    <Content Include="Areas\HelpPage\Views\Help\DisplayTemplates\Parameters.cshtml" />
-    <Content Include="Areas\HelpPage\Views\Help\DisplayTemplates\ModelDescriptionLink.cshtml" />
-    <Content Include="Areas\HelpPage\Views\Help\DisplayTemplates\KeyValuePairModelDescription.cshtml" />
-    <Content Include="Areas\HelpPage\Views\Help\DisplayTemplates\InvalidSample.cshtml" />
-    <Content Include="Areas\HelpPage\Views\Help\DisplayTemplates\ImageSample.cshtml" />
-    <Content Include="Areas\HelpPage\Views\Help\DisplayTemplates\HelpPageApiModel.cshtml" />
-    <Content Include="Areas\HelpPage\Views\Help\DisplayTemplates\EnumTypeModelDescription.cshtml" />
-    <Content Include="Areas\HelpPage\Views\Help\DisplayTemplates\DictionaryModelDescription.cshtml" />
-    <Content Include="Areas\HelpPage\Views\Help\DisplayTemplates\ComplexTypeModelDescription.cshtml" />
-    <Content Include="Areas\HelpPage\Views\Help\DisplayTemplates\CollectionModelDescription.cshtml" />
-    <Content Include="Areas\HelpPage\Views\Help\DisplayTemplates\ApiGroup.cshtml" />
-    <Content Include="Areas\HelpPage\Views\Help\Api.cshtml" />
+    <Content Include="App_Start\Areas\HelpPage\Views\Web.config" />
+    <Content Include="App_Start\Areas\HelpPage\Views\Shared\_Layout.cshtml" />
+    <Content Include="App_Start\Areas\HelpPage\Views\Help\ResourceModel.cshtml" />
+    <Content Include="App_Start\Areas\HelpPage\Views\Help\Index.cshtml" />
+    <Content Include="App_Start\Areas\HelpPage\Views\Help\DisplayTemplates\TextSample.cshtml" />
+    <Content Include="App_Start\Areas\HelpPage\Views\Help\DisplayTemplates\SimpleTypeModelDescription.cshtml" />
+    <Content Include="App_Start\Areas\HelpPage\Views\Help\DisplayTemplates\Samples.cshtml" />
+    <Content Include="App_Start\Areas\HelpPage\Views\Help\DisplayTemplates\Parameters.cshtml" />
+    <Content Include="App_Start\Areas\HelpPage\Views\Help\DisplayTemplates\ModelDescriptionLink.cshtml" />
+    <Content Include="App_Start\Areas\HelpPage\Views\Help\DisplayTemplates\KeyValuePairModelDescription.cshtml" />
+    <Content Include="App_Start\Areas\HelpPage\Views\Help\DisplayTemplates\InvalidSample.cshtml" />
+    <Content Include="App_Start\Areas\HelpPage\Views\Help\DisplayTemplates\ImageSample.cshtml" />
+    <Content Include="App_Start\Areas\HelpPage\Views\Help\DisplayTemplates\HelpPageApiModel.cshtml" />
+    <Content Include="App_Start\Areas\HelpPage\Views\Help\DisplayTemplates\EnumTypeModelDescription.cshtml" />
+    <Content Include="App_Start\Areas\HelpPage\Views\Help\DisplayTemplates\DictionaryModelDescription.cshtml" />
+    <Content Include="App_Start\Areas\HelpPage\Views\Help\DisplayTemplates\ComplexTypeModelDescription.cshtml" />
+    <Content Include="App_Start\Areas\HelpPage\Views\Help\DisplayTemplates\CollectionModelDescription.cshtml" />
+    <Content Include="App_Start\Areas\HelpPage\Views\Help\DisplayTemplates\ApiGroup.cshtml" />
+    <Content Include="App_Start\Areas\HelpPage\Views\Help\Api.cshtml" />
     <Content Include="font-awesome-4.1.0\fonts\fontawesome-webfont.eot" />
     <Content Include="font-awesome-4.1.0\fonts\fontawesome-webfont.ttf" />
     <Content Include="font-awesome-4.1.0\fonts\fontawesome-webfont.woff" />
@@ -436,7 +437,7 @@
     <Content Include="Web.Release.config">
       <DependentUpon>Web.config</DependentUpon>
     </Content>
-    <Content Include="Areas\HelpPage\Views\_ViewStart.cshtml" />
+    <Content Include="App_Start\Areas\HelpPage\Views\_ViewStart.cshtml" />
     <Content Include="css\Site.css" />
     <Content Include="js\_references.js">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>

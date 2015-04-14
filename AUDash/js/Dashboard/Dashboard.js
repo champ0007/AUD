@@ -406,7 +406,7 @@ AUDashboardApp.controller('ActiveProjectsController', ['$scope', '$filter', '$ht
             if (data != 'null') {
                 ProjectDetails = $scope.ActiveProjectDetails = JSON.parse(JSON.parse(data));
                 $scope.OriginalProjectDetails = JSON.parse(JSON.parse(data));
-                $scope.$parent.ActiveProjects = ProjectDetails.length;
+                $scope.$parent.ActiveProjects = $filter('filter')(ProjectDetails, { Stage: "Sold" }).length;
                 $scope.UpdateChart();
             }
         }).
@@ -463,7 +463,7 @@ AUDashboardApp.controller('ActiveProjectsController', ['$scope', '$filter', '$ht
            if (data != 'null') {
                ProjectDetails = $scope.ActiveProjectDetails = JSON.parse(JSON.parse(data));
                $scope.OriginalProjectDetails = JSON.parse(JSON.parse(data));
-               $scope.$parent.ActiveProjects = ProjectDetails.length;
+               $scope.$parent.ActiveProjects = $filter('filter')(ProjectDetails, { Stage: "Sold" }).length;
                $scope.UpdateChart();
 
                $scope.ActiveProjectDetails = ProjectDetails;
