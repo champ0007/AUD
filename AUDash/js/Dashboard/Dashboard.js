@@ -43,225 +43,256 @@ AUDashboardApp.config(['$routeProvider',
 
 AUDashboardApp.controller('DashboardController', ['$scope', '$http', function ($scope, $http) {
 
-    $http({
-        method: 'GET',
-        url: 'api/Dashboard/GetDashboardCounts'
-    }).
-    success(function (data, status, headers, config) {
-        $scope.PendingInvoices = JSON.parse(JSON.parse(data))[0];
-        $scope.ActiveProjects = JSON.parse(JSON.parse(data))[1];
-        $scope.OpenActionItems = JSON.parse(JSON.parse(data))[2];
-        $scope.ActiveResources = JSON.parse(JSON.parse(data))[3];
-
-    }).
-    error(function (data, status, headers, config) {
-        // called asynchronously if an error occurs
-        // or server returns response with an error status.
-        $scope.ActiveProjects = -1;
-        $scope.PendingInvoices = -1;
-        $scope.ActiveResources = -1;
-        $scope.OpenActionItems = -1;
-    });
-
-
-    //$scope.PendingInvoices = 9;
-    //$scope.ActiveResources = 32;
-    //$scope.OpenActionItems = 5;
-
-    var ProjectEntity;
-
-    var FakeNotifications = [{
-        message: 'Frank Farrall USI Visit - Mumbai',
-        eventdate: '8-Dec',
-        type: 'fa fa-calendar fa-fw'
-    }, {
-        message: 'Frank Farrall USI Visit - Hyderabad',
-        eventdate: '10-Dec',
-        type: 'fa fa-calendar fa-fw'
-    }, {
-        message: 'Submit Project Report',
-        eventdate: '20-Dec',
-        type: 'fa fa-twitter fa-fw'
-    }, {
-        message: 'EDC-AU meet',
-        eventdate: '5-Jan',
-        type: 'fa fa-calendar fa-fw'
-    }, {
-        message: 'EDC Upcoming Holiday',
-        eventdate: '26-Dec',
-        type: 'fa fa-calendar fa-fw'
-    }];
-
-    $scope.notifications = FakeNotifications;
-
-
-
-    //Start 
-    // Chart.js Data
-    $scope.skillChartData = {
-        labels: ['January', 'February', 'March', 'April', 'May', 'June', 'July'],
-        datasets: [
-          {
-              label: 'FY15 Business',
-              fillColor: '#FFFFFF',
-              strokeColor: 'rgba(69,201,102,0.9)',
-              highlightFill: 'rgba(69,201,102,0.9)',
-              highlightStroke: 'rgba(220,220,220,1)',
-              data: [65, 59, 80, 81, 56, 55, 40]
-          },
-          {
-              label: 'FY14 Business',
-              fillColor: '#FFFFFF',
-              strokeColor: 'rgba(1,187,205,0.8)',
-              highlightFill: 'rgba(38, 208, 255, 0.75)',
-              highlightStroke: 'rgba(151,187,205,1)',
-              data: [28, 48, 40, 19, 86, 27, 30]
-          }
-        ]
-    };
-
-    // Chart.js Options
-    $scope.skillChartOptions = {
-
-        // Sets the chart to be responsive
-        responsive: true,
-
-        //Boolean - Whether the scale should start at zero, or an order of magnitude down from the lowest value
-        scaleBeginAtZero: true,
-
-        //Boolean - Whether grid lines are shown across the chart
-        scaleShowGridLines: true,
-
-        //String - Colour of the grid lines
-        scaleGridLineColor: "rgba(0,0,0,.05)",
-
-        //Number - Width of the grid lines
-        scaleGridLineWidth: 1,
-
-        //Boolean - If there is a stroke on each bar
-        barShowStroke: true,
-
-        //Number - Pixel width of the bar stroke
-        barStrokeWidth: 2,
-
-        //Number - Spacing between each of the X value sets
-        barValueSpacing: 5,
-
-        //Number - Spacing between data sets within X values
-        barDatasetSpacing: 1,
-
-        //String - A legend template
-        legendTemplate: '<ul class="tc-chart-js-legend"><% for (var i=0; i<datasets.length; i++){%><li><span style="background-color:<%=datasets[i].fillColor%>"></span><%if(datasets[i].label){%><%=datasets[i].label%><%}%></li><%}%></ul>'
-    };
-
-    $scope.ProjectChartData = [];
-
-    $scope.UpdateProjChart = function () {
+    $scope.UserIdentity = null;
+    $scope.UserPassword = null;
+    $scope.UserValidated = false;
+    $scope.LoginMessage = null;
+    debugger;
+    $scope.ValidateUserLogin = function () {
         $http({
             method: 'GET',
-            url: 'api/Dashboard/GetProjChartData'
+            url: 'api/Dashboard/GetAuthentication?authToken=' + $scope.UserIdentity + "-" + $scope.UserPassword
         }).
-      success(function (data, status, headers, config) {
-          if (data != null) {
-              debugger;
-              $scope.ProjectChartData = [];
-              var ProjectChartDataList = JSON.parse(data[0]);
-              for (i = 0; i <= ProjectChartDataList.length; i++) {
-                  var dataItem = new Object();
-                  dataItem.value = ProjectChartDataList[i].Count;
-                  dataItem.label = ProjectChartDataList[i].ProjectStatus;
-                  dataItem.color = colors[i];
-                  dataItem.highlight = highlights[i];
-                  $scope.ProjectChartData.push(dataItem);
-              }
-              //$scope.revenueChartPrevData = JSON.parse(data[1]);
-              //$scope.revenueChartCurrData = JSON.parse(data[0]);
-              //$scope.skillChartData.datasets[0].data = $scope.revenueChartCurrData;
-              //$scope.skillChartData.datasets[1].data = $scope.revenueChartPrevData;
-              //$scope.skillChartData.datasets[0].label = JSON.parse(data[2]);
-              //$scope.skillChartData.datasets[1].label = JSON.parse(data[3]);
-          }
-      }).
-      error(function (data, status, headers, config) {
-          // called asynchronously if an error occurs
-          // or server returns response with an error status.
-          $scope.AllResources = -1;
-      });
-    };
-
-    //$scope.UpdateProjChart();
-
-    //// Chart.js Data
-    //$scope.ProjectChartData = [
-    //  {
-    //      value: 0,
-    //      color: '#F7464A',
-    //      highlight: '#FF5A5E',
-    //      label: 'Sitecore'
-    //  }];
-    //  {
-    //      value: 0,
-    //      color: '#46BFBD',
-    //      highlight: '#5AD3D1',
-    //      label: 'Hybris'
-    //  },
-    //  {
-    //      value: 0,
-    //      color: '#FDB45C',
-    //      highlight: '#FFC870',
-    //      label: 'Adobe CQ'
-    //  },
-    //  {
-    //      value: 0,
-    //      color: '#46BFBA',
-    //      highlight: '#5AD3D1',
-    //      label: 'Biztalk'
-    //  },
-    //  {
-    //      value: 0,
-    //      color: '#FDB4AC',
-    //      highlight: '#FFC870',
-    //      label: 'Mobile'
-    //  }
-    //];
-
-    // Chart.js Options
-    $scope.ProjectChartOptions = {
-
-        // Sets the chart to be responsive
-        responsive: true,
-
-        //Boolean - Whether we should show a stroke on each segment
-        segmentShowStroke: true,
-
-        //String - The colour of each segment stroke
-        segmentStrokeColor: '#fff',
-
-        //Number - The width of each segment stroke
-        segmentStrokeWidth: 2,
-
-        //Number - The percentage of the chart that we cut out of the middle
-        percentageInnerCutout: 50, // This is 0 for Pie charts
-
-        //Number - Amount of animation steps
-        animationSteps: 100,
-
-        //String - Animation easing effect
-        animationEasing: 'easeOutQuint',
-
-        //Boolean - Whether we animate the rotation of the Doughnut
-        animateRotate: false,
-
-        //Boolean - Whether we animate scaling the Doughnut from the centre
-        animateScale: false,
-
-        //String - A legend template     
-        legendTemplate: '<ul class="tc-chart-js-legend"><% for (var i=0; i<datasets.length; i++){%><li><span style="background-color:<%=datasets[i].fillColor%>"></span><%if(datasets[i].label){%><%=datasets[i].label%><%}%></li><%}%></ul>'
-
-    };
+        success(function (data, status, headers, config) {
+            var isValidUser = JSON.parse(data);
+            $scope.UserValidated = JSON.parse(data)
+            if (isValidUser == "false")
+                $scope.LoginMessage = "* user name/password not correct";
+            else {
+                $scope.LoginMessage = null;
 
 
-    //End
+                $http({
+                    method: 'GET',
+                    url: 'api/Dashboard/GetDashboardCounts?authToken=' + $scope.UserIdentity + "-" + $scope.UserPassword
+                }).
+                success(function (data, status, headers, config) {
+                    $scope.PendingInvoices = JSON.parse(JSON.parse(data))[0];
+                    $scope.ActiveProjects = JSON.parse(JSON.parse(data))[1];
+                    $scope.OpenActionItems = JSON.parse(JSON.parse(data))[2];
+                    $scope.ActiveResources = JSON.parse(JSON.parse(data))[3];
+
+                }).
+                error(function (data, status, headers, config) {
+                    // called asynchronously if an error occurs
+                    // or server returns response with an error status.
+                    $scope.ActiveProjects = -1;
+                    $scope.PendingInvoices = -1;
+                    $scope.ActiveResources = -1;
+                    $scope.OpenActionItems = -1;
+                });
+
+
+                //$scope.PendingInvoices = 9;
+                //$scope.ActiveResources = 32;
+                //$scope.OpenActionItems = 5;
+
+                var ProjectEntity;
+
+                var FakeNotifications = [{
+                    message: 'Frank Farrall USI Visit - Mumbai',
+                    eventdate: '8-Dec',
+                    type: 'fa fa-calendar fa-fw'
+                }, {
+                    message: 'Frank Farrall USI Visit - Hyderabad',
+                    eventdate: '10-Dec',
+                    type: 'fa fa-calendar fa-fw'
+                }, {
+                    message: 'Submit Project Report',
+                    eventdate: '20-Dec',
+                    type: 'fa fa-twitter fa-fw'
+                }, {
+                    message: 'EDC-AU meet',
+                    eventdate: '5-Jan',
+                    type: 'fa fa-calendar fa-fw'
+                }, {
+                    message: 'EDC Upcoming Holiday',
+                    eventdate: '26-Dec',
+                    type: 'fa fa-calendar fa-fw'
+                }];
+
+                $scope.notifications = FakeNotifications;
+
+
+
+                //Start 
+                // Chart.js Data
+                $scope.skillChartData = {
+                    labels: ['January', 'February', 'March', 'April', 'May', 'June', 'July'],
+                    datasets: [
+                      {
+                          label: 'FY15 Business',
+                          fillColor: '#FFFFFF',
+                          strokeColor: 'rgba(69,201,102,0.9)',
+                          highlightFill: 'rgba(69,201,102,0.9)',
+                          highlightStroke: 'rgba(220,220,220,1)',
+                          data: [65, 59, 80, 81, 56, 55, 40]
+                      },
+                      {
+                          label: 'FY14 Business',
+                          fillColor: '#FFFFFF',
+                          strokeColor: 'rgba(1,187,205,0.8)',
+                          highlightFill: 'rgba(38, 208, 255, 0.75)',
+                          highlightStroke: 'rgba(151,187,205,1)',
+                          data: [28, 48, 40, 19, 86, 27, 30]
+                      }
+                    ]
+                };
+
+                // Chart.js Options
+                $scope.skillChartOptions = {
+
+                    // Sets the chart to be responsive
+                    responsive: true,
+
+                    //Boolean - Whether the scale should start at zero, or an order of magnitude down from the lowest value
+                    scaleBeginAtZero: true,
+
+                    //Boolean - Whether grid lines are shown across the chart
+                    scaleShowGridLines: true,
+
+                    //String - Colour of the grid lines
+                    scaleGridLineColor: "rgba(0,0,0,.05)",
+
+                    //Number - Width of the grid lines
+                    scaleGridLineWidth: 1,
+
+                    //Boolean - If there is a stroke on each bar
+                    barShowStroke: true,
+
+                    //Number - Pixel width of the bar stroke
+                    barStrokeWidth: 2,
+
+                    //Number - Spacing between each of the X value sets
+                    barValueSpacing: 5,
+
+                    //Number - Spacing between data sets within X values
+                    barDatasetSpacing: 1,
+
+                    //String - A legend template
+                    legendTemplate: '<ul class="tc-chart-js-legend"><% for (var i=0; i<datasets.length; i++){%><li><span style="background-color:<%=datasets[i].fillColor%>"></span><%if(datasets[i].label){%><%=datasets[i].label%><%}%></li><%}%></ul>'
+                };
+
+                $scope.ProjectChartData = [];
+
+                $scope.UpdateProjChart = function () {
+                    $http({
+                        method: 'GET',
+                        url: 'api/Dashboard/GetProjChartData?authToken=' + $scope.UserIdentity + "-" + $scope.UserPassword
+                    }).
+                  success(function (data, status, headers, config) {
+                      if (data != null) {
+                          debugger;
+                          $scope.ProjectChartData = [];
+                          var ProjectChartDataList = JSON.parse(data[0]);
+                          for (i = 0; i <= ProjectChartDataList.length; i++) {
+                              var dataItem = new Object();
+                              dataItem.value = ProjectChartDataList[i].Count;
+                              dataItem.label = ProjectChartDataList[i].ProjectStatus;
+                              dataItem.color = colors[i];
+                              dataItem.highlight = highlights[i];
+                              $scope.ProjectChartData.push(dataItem);
+                          }
+                          //$scope.revenueChartPrevData = JSON.parse(data[1]);
+                          //$scope.revenueChartCurrData = JSON.parse(data[0]);
+                          //$scope.skillChartData.datasets[0].data = $scope.revenueChartCurrData;
+                          //$scope.skillChartData.datasets[1].data = $scope.revenueChartPrevData;
+                          //$scope.skillChartData.datasets[0].label = JSON.parse(data[2]);
+                          //$scope.skillChartData.datasets[1].label = JSON.parse(data[3]);
+                      }
+                  }).
+                  error(function (data, status, headers, config) {
+                      // called asynchronously if an error occurs
+                      // or server returns response with an error status.
+                      $scope.AllResources = -1;
+                  });
+                };
+
+                //$scope.UpdateProjChart();
+
+                //// Chart.js Data
+                //$scope.ProjectChartData = [
+                //  {
+                //      value: 0,
+                //      color: '#F7464A',
+                //      highlight: '#FF5A5E',
+                //      label: 'Sitecore'
+                //  }];
+                //  {
+                //      value: 0,
+                //      color: '#46BFBD',
+                //      highlight: '#5AD3D1',
+                //      label: 'Hybris'
+                //  },
+                //  {
+                //      value: 0,
+                //      color: '#FDB45C',
+                //      highlight: '#FFC870',
+                //      label: 'Adobe CQ'
+                //  },
+                //  {
+                //      value: 0,
+                //      color: '#46BFBA',
+                //      highlight: '#5AD3D1',
+                //      label: 'Biztalk'
+                //  },
+                //  {
+                //      value: 0,
+                //      color: '#FDB4AC',
+                //      highlight: '#FFC870',
+                //      label: 'Mobile'
+                //  }
+                //];
+
+                // Chart.js Options
+                $scope.ProjectChartOptions = {
+
+                    // Sets the chart to be responsive
+                    responsive: true,
+
+                    //Boolean - Whether we should show a stroke on each segment
+                    segmentShowStroke: true,
+
+                    //String - The colour of each segment stroke
+                    segmentStrokeColor: '#fff',
+
+                    //Number - The width of each segment stroke
+                    segmentStrokeWidth: 2,
+
+                    //Number - The percentage of the chart that we cut out of the middle
+                    percentageInnerCutout: 50, // This is 0 for Pie charts
+
+                    //Number - Amount of animation steps
+                    animationSteps: 100,
+
+                    //String - Animation easing effect
+                    animationEasing: 'easeOutQuint',
+
+                    //Boolean - Whether we animate the rotation of the Doughnut
+                    animateRotate: false,
+
+                    //Boolean - Whether we animate scaling the Doughnut from the centre
+                    animateScale: false,
+
+                    //String - A legend template     
+                    legendTemplate: '<ul class="tc-chart-js-legend"><% for (var i=0; i<datasets.length; i++){%><li><span style="background-color:<%=datasets[i].fillColor%>"></span><%if(datasets[i].label){%><%=datasets[i].label%><%}%></li><%}%></ul>'
+
+                };
+                //End
+            }
+        }).
+        error(function (data, status, headers, config) {
+            $scope.UserValidated = false;
+            $scope.LoginMessage = "* user name/password not correct";
+        });
+    }
+    $scope.UserLogout = function () {
+        $scope.UserIdentity = null;
+        $scope.UserPassword = null;
+        $scope.UserValidated = false;
+        $scope.LoginMessage = null;
+    }
+
 
 
 }]);
@@ -297,7 +328,7 @@ AUDashboardApp.controller('ActionItemsController', ['$scope', '$filter', '$http'
 
         $http({
             method: 'GET',
-            url: 'api/Dashboard/GetReferenceData?storageId=' + STORAGE_ID
+            url: 'api/Dashboard/GetReferenceData?storageId=' + STORAGE_ID + '&authToken=' + $scope.UserIdentity + "-" + $scope.UserPassword
         }).
         success(function (data, status, headers, config) {
 
@@ -322,6 +353,7 @@ AUDashboardApp.controller('ActionItemsController', ['$scope', '$filter', '$http'
         var referenceData = new Object();
         referenceData.storageId = STORAGE_ID;
         referenceData.storageData = JSON.stringify(todos);
+        referenceData.authToken = $scope.UserIdentity + "-" + $scope.UserPassword;
         $http({
             url: 'api/Dashboard/SetReferenceData',
             method: "POST",
@@ -399,7 +431,7 @@ AUDashboardApp.controller('ActiveProjectsController', ['$scope', '$filter', '$ht
         ////debugger;
         $http({
             method: 'GET',
-            url: 'api/Dashboard/GetReferenceData?storageId=' + STORAGE_ID,
+            url: 'api/Dashboard/GetReferenceData?storageId=' + STORAGE_ID + '&authToken=' + $scope.UserIdentity + "-" + $scope.UserPassword,
         }).
         success(function (data, status, headers, config) {
 
@@ -452,6 +484,7 @@ AUDashboardApp.controller('ActiveProjectsController', ['$scope', '$filter', '$ht
         projectRequest.Projects = ProjectDetails;
         projectRequest.Project = ProjectEntity;
         projectRequest.action = action;
+        projectRequest.authToken=$scope.UserIdentity + "-" + $scope.UserPassword;
         
         $http({
             method: 'POST',
@@ -488,7 +521,7 @@ AUDashboardApp.controller('ActiveProjectsController', ['$scope', '$filter', '$ht
 
         $http({
             method: 'GET',
-            url: 'api/Dashboard/GetReferenceData?storageId=KeyUpdates'
+            url: 'api/Dashboard/GetReferenceData?storageId=KeyUpdates&authToken=' + $scope.UserIdentity + "-" + $scope.UserPassword
         }).
         success(function (data, status, headers, config) {
 
@@ -517,6 +550,7 @@ AUDashboardApp.controller('ActiveProjectsController', ['$scope', '$filter', '$ht
         var referenceData = new Object();
         referenceData.storageId = 'KeyUpdates';
         referenceData.storageData = JSON.stringify(keyUpdates);
+        referenceData.authToken = $scope.UserIdentity + "-" + $scope.UserPassword;
         $http({
             url: 'api/Dashboard/SetReferenceData',
             method: "POST",
@@ -554,7 +588,7 @@ AUDashboardApp.controller('ActiveProjectsController', ['$scope', '$filter', '$ht
     $scope.UpdateChart = function () {
         $http({
             method: 'GET',
-            url: 'api/Dashboard/GetProjectChartData'
+            url: 'api/Dashboard/GetProjectChartData?authToken=' + $scope.UserIdentity + "-" + $scope.UserPassword
         }).
       success(function (data, status, headers, config) {
           if (data != null) {
@@ -639,7 +673,7 @@ AUDashboardApp.controller('ActiveResourcesController', ['$scope', '$http', 'File
     $scope.getResources = function () {
         $http({
             method: 'GET',
-            url: 'api/Dashboard/GetReferenceData?storageId=' + STORAGE_ID
+            url: 'api/Dashboard/GetReferenceData?storageId=' + STORAGE_ID + '&authToken=' + $scope.UserIdentity + "-" + $scope.UserPassword
         }).
         success(function (data, status, headers, config) {
             if (data != null) {
@@ -655,7 +689,8 @@ AUDashboardApp.controller('ActiveResourcesController', ['$scope', '$http', 'File
 
         $http({
             method: 'GET',
-            url: 'api/Dashboard/GetReferenceData?storageId=GSSResources'
+            url: 'api/Dashboard/GetReferenceData?storageId=GSSResources&authToken=' + $scope.UserIdentity + "-" + $scope.UserPassword
+
         }).
        success(function (data, status, headers, config) {
            if (data != null) {
@@ -709,6 +744,7 @@ AUDashboardApp.controller('ActiveResourcesController', ['$scope', '$http', 'File
         resourceRequest.Resources = resources;
         resourceRequest.Resource = resource;
         resourceRequest.Action = action;
+        resourceRequest.authToken=$scope.UserIdentity + "-" + $scope.UserPassword;
 
         $http({
             method: 'POST',
@@ -738,7 +774,7 @@ AUDashboardApp.controller('ActiveResourcesController', ['$scope', '$http', 'File
     $scope.UpdateChart = function () {
         $http({
             method: 'GET',
-            url: 'api/Dashboard/GetResourceChartData'
+            url: 'api/Dashboard/GetResourceChartData?authToken=' + $scope.UserIdentity + "-" + $scope.UserPassword
         }).
       success(function (data, status, headers, config) {
           if (data != null) {
@@ -845,7 +881,7 @@ AUDashboardApp.controller('NewActionItemsController', ['$scope', '$filter', '$ht
     $scope.getNewToDos = function () {
         $http({
             method: 'GET',
-            url: 'api/Dashboard/GetReferenceData?storageId=' + STORAGE_ID
+            url: 'api/Dashboard/GetReferenceData?storageId=' + STORAGE_ID + '&authToken=' + $scope.UserIdentity + "-" + $scope.UserPassword
         }).
         success(function (data, status, headers, config) {
 
@@ -874,6 +910,7 @@ AUDashboardApp.controller('NewActionItemsController', ['$scope', '$filter', '$ht
         var referenceData = new Object();
         referenceData.storageId = STORAGE_ID;
         referenceData.storageData = JSON.stringify(NewToDos);
+        referenceData.authToken= $scope.UserIdentity + "-" + $scope.UserPassword;
         $http({
             url: 'api/Dashboard/SetReferenceData',
             method: "POST",
@@ -979,7 +1016,7 @@ AUDashboardApp.controller('OperationsController', ['$scope', '$http', function (
         ////debugger;
         $http({
             method: 'GET',
-            url: 'api/Dashboard/GetReferenceData?storageId=KeyUpdates'
+            url: 'api/Dashboard/GetReferenceData?storageId=KeyUpdates&authToken=' + $scope.UserIdentity + "-" + $scope.UserPassword
         }).
         success(function (data, status, headers, config) {
 
@@ -1008,6 +1045,7 @@ AUDashboardApp.controller('OperationsController', ['$scope', '$http', function (
         var referenceData = new Object();
         referenceData.storageId = 'KeyUpdates';
         referenceData.storageData = JSON.stringify(keyUpdates);
+        referenceData.authToken = $scope.UserIdentity + "-" + $scope.UserPassword;
         $http({
             url: 'api/Dashboard/SetReferenceData',
             method: "POST",
@@ -1044,7 +1082,7 @@ AUDashboardApp.controller('OperationsController', ['$scope', '$http', function (
     $scope.UpdateProjectDistributionChart = function () {
         $http({
             method: 'GET',
-            url: 'api/Dashboard/GetProjectDistributionChartData'
+            url: 'api/Dashboard/GetProjectDistributionChartData?authToken=' + $scope.UserIdentity + "-" + $scope.UserPassword
         }).
       success(function (data, status, headers, config) {
           if (data != null) {
@@ -1120,7 +1158,7 @@ AUDashboardApp.controller('OperationsController', ['$scope', '$http', function (
     $scope.UpdateResourceDeploymentChart = function () {
         $http({
             method: 'GET',
-            url: 'api/Dashboard/GetResourceDeploymentChartData'
+            url: 'api/Dashboard/GetResourceDeploymentChartData?authToken=' + $scope.UserIdentity + "-" + $scope.UserPassword
         }).
       success(function (data, status, headers, config) {
           if (data != null) {
@@ -1196,7 +1234,7 @@ AUDashboardApp.controller('OperationsController', ['$scope', '$http', function (
     $scope.UpdateRevenueChart = function () {
         $http({
             method: 'GET',
-            url: 'api/Dashboard/GetRevenueChartData'
+            url: 'api/Dashboard/GetRevenueChartData?authToken=' + $scope.UserIdentity + "-" + $scope.UserPassword
         }).
       success(function (data, status, headers, config) {
           if (data != null) {
@@ -1334,13 +1372,13 @@ AUDashboardApp.controller('OperationsController', ['$scope', '$http', function (
     $scope.UpdateTechChart = function () {
         $http({
             method: 'GET',
-            url: 'api/Dashboard/GetTechChartData'
+            url: 'api/Dashboard/GetTechChartData?authToken=' + $scope.UserIdentity + "-" + $scope.UserPassword
         }).
       success(function (data, status, headers, config) {
           if (data != null) {
               debugger;
-              var colors = ['#F7464A', '#46BFBD', '#FDB45C', '#46BFBA', '#FDB4AC', '#F7464A', '#46BFBD', '#FDB45C', '#46BFBA', '#FDB4AC', '#F7464A', '#46BFBD', '#FDB45C', '#46BFBA', '#FDB4AC', '#F7464A', '#46BFBD', '#FDB45C', '#46BFBA', '#FDB4AC'];
-              var highlights = ['#FF5A5E', '#5AD3D1', '#FFC870', '#5AD3D1', '#FFC870', '#FF5A5E', '#5AD3D1', '#FFC870', '#5AD3D1', '#FFC870', '#FF5A5E', '#5AD3D1', '#FFC870', '#5AD3D1', '#FFC870', '#FF5A5E', '#5AD3D1', '#FFC870', '#5AD3D1', '#FFC870'];
+              var colors = ['#F7464A', '#46BFBD', '#FDB45C', '#40C000', '#FF8000', '#F7464A', '#46BFBD', '#FDB45C', '#46BFBA', '#FDB4AC', '#F7464A', '#46BFBD', '#FDB45C', '#46BFBA', '#FDB4AC', '#F7464A', '#46BFBD', '#FDB45C', '#46BFBA', '#FDB4AC'];
+              var highlights = ['#FF5A5E', '#5AD3D1', '#FFC870', '#40C000', '#FFC870', '#FF5A5E', '#5AD3D1', '#FFC870', '#5AD3D1', '#FFC870', '#FF5A5E', '#5AD3D1', '#FFC870', '#5AD3D1', '#FFC870', '#FF5A5E', '#5AD3D1', '#FFC870', '#5AD3D1', '#FFC870'];
               $scope.ProjectChartData = [];
               var ProjectChartDataList = JSON.parse(data[0]);
               for (i = 0; i <= ProjectChartDataList.length; i++) {
@@ -1411,7 +1449,7 @@ AUDashboardApp.controller('OperationsController', ['$scope', '$http', function (
     $scope.UpdateSoldProposedChart = function () {
         $http({
             method: 'GET',
-            url: 'api/Dashboard/GetSoldProposedChartData'
+            url: 'api/Dashboard/GetSoldProposedChartData?authToken=' + $scope.UserIdentity + "-" + $scope.UserPassword
         }).
       success(function (data, status, headers, config) {
           if (data != null) {
@@ -1526,10 +1564,9 @@ AUDashboardApp.controller('InvoicesController', ['$scope', '$filter', '$http', '
     var InvoiceDetails = $scope.InvoiceDetails = [];
 
     $scope.getInvoices = function () {
-        debugger;
         $http({
             method: 'GET',
-            url: 'api/Dashboard/GetReferenceData?storageId=' + STORAGE_ID
+            url: 'api/Dashboard/GetReferenceData?storageId=' + STORAGE_ID + '&authToken=' + $scope.UserIdentity + "-" + $scope.UserPassword
         }).
         success(function (data, status, headers, config) {
 
@@ -1548,7 +1585,6 @@ AUDashboardApp.controller('InvoicesController', ['$scope', '$filter', '$http', '
     };
 
     $scope.EditInvoice = function (invoice, index) {
-        debugger;
         invoice.index = index;
         $scope.InvoiceEntity = jQuery.extend(true, {}, invoice); // deep copy
         $scope.OriginalInvoice = jQuery.extend(true, {}, invoice); // deep copy
@@ -1573,10 +1609,10 @@ AUDashboardApp.controller('InvoicesController', ['$scope', '$filter', '$http', '
     $scope.getInvoices();
 
     $scope.setInvoices = function (InvoiceDetails) {
-        debugger;
         var referenceData = new Object();
         referenceData.storageId = STORAGE_ID;
         referenceData.storageData = JSON.stringify(InvoiceDetails);
+        referenceData.authToken = $scope.UserIdentity + "-" + $scope.UserPassword;
         $http({
             url: 'api/Dashboard/SetReferenceData',
             method: "POST",
@@ -1608,17 +1644,149 @@ AUDashboardApp.controller('InvoicesController', ['$scope', '$filter', '$http', '
         $scope.InvoiceEntity = '';
     };
 
+    $scope.DownloadInvoice = function (InvoiceNo) {
+        debugger;
+        $http({
+            method: 'GET',
+            cache: false,
+            url: 'api/Dashboard/GetInvoiceFile',
+            responseType: 'arraybuffer',
+            headers: {
+                'Content-Type': 'application/json; charset=utf-8',
+                'fileID': InvoiceNo
+            }
+        }).success(function (data, status, headers) {
+            var octetStreamMime = 'application/pdf';
+            var success = false;
+
+            // Get the headers
+            headers = headers();
+
+            // Get the filename from the x-filename header or default to "download.bin"
+            var filename = headers['x-filename'] || 'download.bin';
+
+            // Determine the content type from the header or default to "application/octet-stream"
+            var contentType = headers['content-type'] || octetStreamMime;
+
+            try {
+
+                console.log(filename);
+                // Try using msSaveBlob if supported
+                console.log("Trying saveBlob method ...");
+                var blob = new Blob([data], { type: contentType });
+                if (navigator.msSaveBlob)
+                    navigator.msSaveBlob(blob, filename);
+                else {
+                    // Try using other saveBlob implementations, if available
+                    var saveBlob = navigator.webkitSaveBlob || navigator.mozSaveBlob || navigator.saveBlob;
+                    if (saveBlob === undefined) throw "Not supported";
+                    saveBlob(blob, filename);
+                }
+                console.log("saveBlob succeeded");
+                success = true;
+            } catch (ex) {
+                console.log("saveBlob method failed with the following exception:");
+                console.log(ex);
+            }
+            debugger;
+            if (!success) {
+                // Get the blob url creator
+                var urlCreator = window.URL || window.webkitURL || window.mozURL || window.msURL;
+                if (urlCreator) {
+                    // Try to use a download link
+                    var link = document.createElement('a');
+                    if ('download' in link) {
+                        // Try to simulate a click
+                        try {
+                            // Prepare a blob URL
+                            console.log("Trying download link method with simulated click ...");
+                            var blob = new Blob([data], { type: contentType });
+                            var url = urlCreator.createObjectURL(blob);
+                            link.setAttribute('href', url);
+
+                            // Set the download attribute (Supported in Chrome 14+ / Firefox 20+)
+                            link.setAttribute("download", filename);
+
+                            // Simulate clicking the download link
+                            var event = document.createEvent('MouseEvents');
+                            event.initMouseEvent('click', true, true, window, 1, 0, 0, 0, 0, false, false, false, false, 0, null);
+                            link.dispatchEvent(event);
+                            console.log("Download link method with simulated click succeeded");
+                            success = true;
+
+                        } catch (ex) {
+                            console.log("Download link method with simulated click failed with the following exception:");
+                            console.log(ex);
+                        }
+                    }
+
+                    if (!success) {
+                        // Fallback to window.location method
+                        try {
+                            // Prepare a blob URL
+                            // Use application/octet-stream when using window.location to force download
+                            console.log("Trying download link method with window.location ...");
+                            var blob = new Blob([data], { type: octetStreamMime });
+                            var url = urlCreator.createObjectURL(blob);
+                            window.location = url;
+                            console.log("Download link method with window.location succeeded");
+                            success = true;
+                        } catch (ex) {
+                            console.log("Download link method with window.location failed with the following exception:");
+                            console.log(ex);
+                        }
+                    }
+
+                }
+            }
+
+            if (!success) {
+                // Fallback to window.open method
+                console.log("No methods worked for saving the arraybuffer, using last resort window.open");
+                window.open(httpPath, '_blank', '');
+            }
+            /******************/
+
+
+        }).error(function (data, status) {
+
+            console.log("Request failed with status: " + status);
+
+            // Optionally write the error out to scope
+            //$scope.errorDetails = "Request failed with status: " + status;
+        });
+    };
 
     //File upload functionality
     var uploader = $scope.uploader = new FileUploader({
         url: 'api/Dashboard/UploadInvoices',
-        autoUpload: true
+        autoUpload: true        
         //removeAfterUpload: true
     });
 
     uploader.onCompleteItem = function (fileItem, response, status, headers) {
         $scope.getInvoices();
     };
+
+    //Invoice File upload functionality
+    var invoiceuploader = $scope.invoiceuploader = new FileUploader({
+        url: 'api/Dashboard/UploadInvoiceFiles',
+        autoUpload: true        
+        //removeAfterUpload: true
+    });
+
+    // FILTERS
+
+    invoiceuploader.filters.push({
+        name: 'pdfFilter',
+        fn: function (item /*{File|FileLikeObject}*/, options) {
+            var type = '|' + item.type.slice(item.type.lastIndexOf('/') + 1) + '|';
+            return '|pdf|'.indexOf(type) !== -1;
+        }
+    });
+
+
+    
 
     // FILTERS
 
@@ -1628,9 +1796,6 @@ AUDashboardApp.controller('InvoicesController', ['$scope', '$filter', '$http', '
     //        return this.queue.length < 10;
     //    }
     //});
-
-
-
 
     // Chart.js Data
     $scope.InvoiceChartData = {

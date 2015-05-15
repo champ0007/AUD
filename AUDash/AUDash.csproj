@@ -224,7 +224,7 @@
     <Content Include="css\plugins\timeline.css" />
     <Content Include="css\plugins\ToDo\NewToDoItem.css" />
     <Content Include="css\plugins\ToDo\base.css" />
-    <Content Include="css\sb-admin-2.css" />
+    <Content Include="css\AUDashboard.css" />
     <Content Include="Dashboard-2.html" />
     <Content Include="Dashboard.html" />
     <Content Include="favicon.ico" />

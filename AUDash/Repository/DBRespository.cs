@@ -6,6 +6,8 @@ using System.Data.SqlClient;
 using AUDash.Models;
 using System.Configuration;
 using System.Web.Configuration;
+using System.IO;
+using System.Data;
 namespace AUDash.Repository
 {
     public class DBRepository
@@ -124,5 +126,61 @@ namespace AUDash.Repository
             return dashboardCounts;
 
         }
+
+        public MemoryStream GetInvoiceFile(string varID)
+        {
+            MemoryStream memoryStream = new MemoryStream();
+            using (var varConnection = GetConnection())
+            using (var sqlQuery = new SqlCommand(@"SELECT [File] FROM [InvoiceFiles] WHERE InvoiceNo = @varID", varConnection))
+            {
+                sqlQuery.Parameters.AddWithValue("@varID", varID);
+                varConnection.Open();
+                using (var sqlQueryResult = sqlQuery.ExecuteReader())
+                    if (sqlQueryResult != null)
+                    {
+                        sqlQueryResult.Read();
+                        var blob = new Byte[(sqlQueryResult.GetBytes(0, 0, null, 0, int.MaxValue))];
+                        sqlQueryResult.GetBytes(0, 0, blob, 0, blob.Length);
+                        //using (var fs = new MemoryStream(memoryStream, FileMode.Create, FileAccess.Write)) {
+                        memoryStream.Write(blob, 0, blob.Length);
+                        //}
+                    }
+                varConnection.Close();
+            }
+            return memoryStream;
+        }
+
+        public void InsertInvoiceFile(byte[] file, string fileName )
+        {
+
+            using (var varConnection = GetConnection())
+                try
+                {
+                    using (var sqlWrite = new SqlCommand("INSERT INTO InvoiceFiles Values(@InvoiceNo, @File)", varConnection))
+                    {
+                        varConnection.Open();
+                        sqlWrite.Parameters.Add("@InvoiceNo", SqlDbType.BigInt, 18).Value = fileName;
+                        sqlWrite.Parameters.Add("@File", SqlDbType.VarBinary, file.Length).Value = file;
+                        sqlWrite.ExecuteNonQuery();
+                        varConnection.Close();
+                    }
+                }
+                catch (Exception ex)
+                {
+                    if (ex.Message.Contains("Violation of PRIMARY KEY constraint 'PK_InvoiceFiles'. Cannot insert duplicate key"))
+                    {
+                        using (var sqlWrite = new SqlCommand("UPDATE InvoiceFiles set [File] = @File where InvoiceNo = @InvoiceNo", varConnection))
+                        {
+                          
+                            sqlWrite.Parameters.Add("@InvoiceNo", SqlDbType.BigInt, 18).Value = fileName;
+                            sqlWrite.Parameters.Add("@File", SqlDbType.VarBinary, file.Length).Value = file;
+                            sqlWrite.ExecuteNonQuery();
+                            varConnection.Close();
+                        }
+
+                    }
+                }
+        }
+
     }
 }

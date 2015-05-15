@@ -13,6 +13,7 @@ using System.IO;
 using System.Web;
 using System.Text;
 using System.Text.RegularExpressions;
+using System.Net.Http.Headers;
 
 
 namespace AUDash.Controllers
@@ -21,68 +22,108 @@ namespace AUDash.Controllers
     {
         DBRepository repo = new DBRepository();
 
-        //GET api/Dashboard/GetDashboardCounts
-        public string GetDashboardCounts()
+        private string AUTH_TOKEN = "admin-admin";
+
+        public string GetAuthentication(string authToken)
         {
-            List<string> dashboardCounts = ParseDashboardCounts(repo.GetDashboardCounts());
+            string uid = authToken.Split('-').First();
+            string pass = authToken.Split('-').Last();
+            if (authToken.Equals(AUTH_TOKEN))
+                return "true";
+            else
+                return "false";
+        }
 
+        //GET api/Dashboard/GetDashboardCounts
+        public string GetDashboardCounts(string authToken)
+        {
+            List<string> dashboardCounts = new List<string>();
+            if (authToken.Equals(AUTH_TOKEN))
+                dashboardCounts = ParseDashboardCounts(repo.GetDashboardCounts());
             return JsonConvert.SerializeObject(dashboardCounts);
-
         }
 
         //GET api/Dashboard/GetProjectChartData //Added by Vibhav
-        public List<string> GetProjectChartData()
+        public List<string> GetProjectChartData(string authToken)
         {
-            return ParseProjectData(repo.GetReferenceData("Projects"));
+            if (authToken.Equals(AUTH_TOKEN))
+                return ParseProjectData(repo.GetReferenceData("Projects"));
+            else
+                return new List<string>();
         }
 
         //GET api/Dashboard/GetRevenueChartData //Added by Vibhav
-        public List<string> GetRevenueChartData()
+        public List<string> GetRevenueChartData(string authToken)
         {
-            return ParseRevenueData(repo.GetReferenceData("Invoices"));
+            if (authToken.Equals(AUTH_TOKEN))
+                return ParseRevenueData(repo.GetReferenceData("Invoices"));
+            else
+                return new List<string>();
         }
 
         //GET api/Dashboard/GetTechChartData //Added by Vibhav
-        public List<string> GetTechChartData()
+        public List<string> GetTechChartData(string authToken)
         {
-            return ParseSKillData(repo.GetReferenceData("Projects"));
+            if (authToken.Equals(AUTH_TOKEN))
+                return ParseSKillData(repo.GetReferenceData("Projects"));
+            else
+                return new List<string>();
         }
 
         //GET api/Dashboard/GetProjChartData //Added by Vibhav
-        public List<string> GetProjChartData()
+        public List<string> GetProjChartData(string authToken)
         {
-            return ParseProjBySkillData(repo.GetReferenceData("Projects"));
+            if (authToken.Equals(AUTH_TOKEN))
+                return ParseProjBySkillData(repo.GetReferenceData("Projects"));
+            else
+                return new List<string>();
         }
         //GET api/GetSoldProposedChartData
-        public List<string> GetSoldProposedChartData()
+        public List<string> GetSoldProposedChartData(string authToken)
         {
             //return ParseSoldProposedData(repo.GetReferenceData("Projects"));
-            return ParseSoldProposedData(repo.GetReferenceData("Resources"), repo.GetReferenceData("GSSResources"));
+            if (authToken.Equals(AUTH_TOKEN))
+                return ParseSoldProposedData(repo.GetReferenceData("Resources"), repo.GetReferenceData("GSSResources"));
+            else
+                return new List<string>();
+
         }
 
         //GET api/Dashboard/GetReferenceData
-        public string GetReferenceData(string storageId)
+        public string GetReferenceData(string storageId, string authToken)
         {
-            string response = repo.GetReferenceData(storageId);
+            string response = string.Empty;
+            if (authToken.Equals(AUTH_TOKEN))
+                response = repo.GetReferenceData(storageId);
+
             return response == string.Empty ? null : response;
         }
 
         //GET api/Dashboard/GetResourceChartData
-        public List<string> GetResourceChartData()
+        public List<string> GetResourceChartData(string authToken)
         {
-            return ParseResourceData(repo.GetReferenceData("GSSResources"));
+            if (authToken.Equals(AUTH_TOKEN))
+                return ParseResourceData(repo.GetReferenceData("GSSResources"));
+            else
+                return new List<string>();
         }
 
         //GET api/Dashboard/GetProjectDistributionChartData
-        public List<string> GetProjectDistributionChartData()
+        public List<string> GetProjectDistributionChartData(string authToken)
         {
-            return ParseProjectDistributionData(repo.GetReferenceData("Projects"));
+            if (authToken.Equals(AUTH_TOKEN))
+                return ParseProjectDistributionData(repo.GetReferenceData("Projects"));
+            else
+                return new List<string>();
         }
 
         //GET api/Dashboard/GetResourceDeploymentChartData
-        public List<string> GetResourceDeploymentChartData()
+        public List<string> GetResourceDeploymentChartData(string authToken)
         {
-            return ParseResourceDeploymentChartData(repo.GetReferenceData("ResourceDataCount"));
+            if (authToken.Equals(AUTH_TOKEN))
+                return ParseResourceDeploymentChartData(repo.GetReferenceData("ResourceDataCount"));
+            else
+                return new List<string>();
         }
 
         //POST api/Dashboard/SetReferenceData
@@ -91,15 +132,16 @@ namespace AUDash.Controllers
         {
             ReferenceData refData = JsonConvert.DeserializeObject<ReferenceData>(referenceData);
             //Set Session Values
-
             //HttpContext.Current.Session[refData.storageId] = refData.storageData;
             //string sessionvalue = Convert.ToString(HttpContext.Current.Session[refData.storageId]);
-
-            repo.SetReferenceData(refData.storageId, refData.storageData);
+            if (refData.authToken.Equals(AUTH_TOKEN))
+            {
+                repo.SetReferenceData(refData.storageId, refData.storageData);
+            }
         }
 
         //GET api/Dashboard/GetResourceList
-        public string GetResourceList()
+        public string GetResourceList(string authToken)
         {
             //List<Resource> Resources = new List<Resource>();
             //Resources.Add(new Resource() { FirstName = "Shakil", LastName = "Shaikh", CurrentProject = "Telstra", ProposedProject = "None", Level = "Manager", AvailableOn = "01-Dec-2014", Skills = "Adobe CQ", StartDate = "01-Mar-2014" });
@@ -107,8 +149,10 @@ namespace AUDash.Controllers
             //Resources.Add(new Resource() { FirstName = "Shakil", LastName = "Shaikh", CurrentProject = "Telstra", ProposedProject = "None", Level = "Manager", AvailableOn = "01-Dec-2014", Skills = "Adobe CQ", StartDate = "01-Mar-2014" });
             //Resources.Add(new Resource() { FirstName = "Shakil", LastName = "Shaikh", CurrentProject = "Telstra", ProposedProject = "None", Level = "Manager", AvailableOn = "01-Dec-2014", Skills = "Adobe CQ", StartDate = "01-Mar-2014" });
             //Resources.Add(new Resource() { FirstName = "Shakil", LastName = "Shaikh", CurrentProject = "Telstra", ProposedProject = "None", Level = "Manager", AvailableOn = "01-Dec-2014", Skills = "Adobe CQ", StartDate = "01-Mar-2014" });
-
-            return JSONConcat(repo.GetAllResources());
+            if (authToken.Equals(AUTH_TOKEN))
+                return JSONConcat(repo.GetAllResources());
+            else
+                return string.Empty;
         }
 
         private string JSONConcat(List<Resource> resourceList)
@@ -147,26 +191,28 @@ namespace AUDash.Controllers
         }
 
         //GET api/Dashboard/GetKeyUpdates
-        public string GetKeyUpdates()
+        public string GetKeyUpdates(string authToken)
         {
             List<KeyUpdates> kUpdates = new List<KeyUpdates>();
-            kUpdates.Add(new KeyUpdates()
+            if (authToken.Equals(AUTH_TOKEN))
             {
-                Heading = "Telstra Client India Visit",
-                Highlights = new List<string>() {
+                kUpdates.Add(new KeyUpdates()
+                {
+                    Heading = "Telstra Client India Visit",
+                    Highlights = new List<string>() {
                     "Brendan Devers, Jen Cochrane and Adam Sandler along with Telstra client will be visiting Hyderabad and Mumbai office between 1st Sept and 5th Sept"
                  }
-            });
+                });
 
-            kUpdates.Add(new KeyUpdates()
-            {
-                Heading = " Decisions on AU/DD Testing CoE continue",
-                Highlights = new List<string>() {
+                kUpdates.Add(new KeyUpdates()
+                {
+                    Heading = " Decisions on AU/DD Testing CoE continue",
+                    Highlights = new List<string>() {
                     "Process identified",
                     "Identification of right resources for CoE in progress"
                  }
-            });
-
+                });
+            }
 
             return JsonConvert.SerializeObject(kUpdates);
 
@@ -266,6 +312,28 @@ namespace AUDash.Controllers
             repo.SetReferenceData("ResourceDataCount", GetResourceDataCount(resources.Count(), DateTime.Now.ToString("MMMyy")));
         }
 
+        [HttpPost]
+        public void UploadInvoiceFiles()
+        {
+            HttpPostedFile uploadedFile = HttpContext.Current.Request.Files[0];
+            try
+            {
+                uint filename = Convert.ToUInt32(uploadedFile.FileName.Remove(uploadedFile.FileName.IndexOf(".")));
+                byte[] file;
+                using (var stream = uploadedFile.InputStream)
+                {
+                    using (var reader = new BinaryReader(stream))
+                    {
+                        file = reader.ReadBytes((int)stream.Length);
+                        repo.InsertInvoiceFile(file, filename.ToString());
+                    }
+                }
+            }
+            catch (Exception ex) { }
+            
+
+        }
+
 
 
         //POST api/Dashboard/UpsertProject
@@ -330,6 +398,33 @@ namespace AUDash.Controllers
             repo.SetReferenceData("Resources", JsonConvert.SerializeObject(resourceRequest.Resources));
 
             return repo.GetReferenceData("Resources");
+        }
+
+        
+        public HttpResponseMessage GetInvoiceFile()
+        {
+            HttpResponseMessage result = null;
+            try
+            {
+                IEnumerable<string> headerValues = Request.Headers.GetValues("fileID");
+                string invoiceNo = headerValues.First();
+                MemoryStream invoiceMS = repo.GetInvoiceFile(invoiceNo);
+                if (invoiceMS.Length > 0)
+                {
+                    result = Request.CreateResponse(HttpStatusCode.OK);
+                    invoiceMS.Seek(0, SeekOrigin.Begin);
+                    result.Content = new StreamContent(invoiceMS);
+                    result.Content.Headers.ContentType = new MediaTypeHeaderValue("application/pdf");
+                    result.Content.Headers.Add("x-filename", invoiceNo.ToString() + ".pdf");
+                    result.Content.Headers.ContentDisposition = new System.Net.Http.Headers.ContentDispositionHeaderValue("attachment");
+                    result.Content.Headers.ContentDisposition.FileName = invoiceNo.ToString();
+                }
+                return result;
+            }
+            catch (Exception e)
+            {
+                return Request.CreateResponse(HttpStatusCode.BadRequest);
+            }
         }
 
 
@@ -689,7 +784,7 @@ namespace AUDash.Controllers
             List<string> dashboardCounts = new List<string>();
 
             dashboardCounts.Add(JsonConvert.DeserializeObject<List<Invoice>>(dashboardData["Invoices"]).Where(x => x.PaymentReceived == "Pending").Count().ToString());
-            dashboardCounts.Add(JsonConvert.DeserializeObject<List<ProjectEntity>>(dashboardData["Projects"]).Where(x=>x.Stage=="Sold").Count().ToString());
+            dashboardCounts.Add(JsonConvert.DeserializeObject<List<ProjectEntity>>(dashboardData["Projects"]).Where(x => x.Stage == "Sold").Count().ToString());
             dashboardCounts.Add(JsonConvert.DeserializeObject<List<ActionItem>>(dashboardData["NewToDoItems"]).Where(x => x.Status == "Open").Count().ToString());
             dashboardCounts.Add(JsonConvert.DeserializeObject<List<ResourceEntity>>(dashboardData["GSSResources"]).Count.ToString());
 
@@ -802,7 +897,7 @@ namespace AUDash.Controllers
             {
                 PopulateUnallocatedEntity(proposedEntity, unallocatedResource);
             }
-            
+
             List<string> chartData = new List<string>();
 
             chartData.Add(JsonConvert.SerializeObject(soldEntity.Keys.ToList<string>()));

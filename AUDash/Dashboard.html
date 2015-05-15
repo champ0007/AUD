@@ -21,7 +21,7 @@
     <link href="css/plugins/timeline.css" rel="stylesheet">
 
     <!-- Custom CSS -->
-    <link href="css/sb-admin-2.css" rel="stylesheet">
+    <link href="css/AUDashboard.css" rel="stylesheet">
 
     <!-- Morris Charts CSS -->
     <link href="css/plugins/morris.css" rel="stylesheet">
@@ -37,6 +37,7 @@
         <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
         <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
     <![endif]-->
+
 
 </head>
 
@@ -76,23 +77,59 @@
     <!--TC Angular JS-->
     <script src="js/tc-angular-chartjs.min.js"></script>
 
+    <!--<script src="//cdnjs.cloudflare.com/ajax/libs/annyang/1.6.0/annyang.min.js"></script>
+    <script>
+        if (annyang) {
+            // Let's define our first command. First the text we expect, and then the function it should call
+            var commands = {
+                'go to projects': function () {
+                    //alert('Selected active projects');
+                    window.location.href= 'Dashboard.html#/ActiveProjects';
+                },
+                'go to operations': function () {
+                    //alert('Selected active projects');
+                    window.location.href = 'Dashboard.html#/Operations';
+                },
+                'go to items': function () {
+                    //alert('Selected active projects');
+                    window.location.href = 'Dashboard.html#/NewActionItems';
+                },
+                'go to resources': function () {
+                    //alert('Selected active projects');
+                    window.location.href = 'Dashboard.html#/ActiveResources';
+                }
+            };
+
+            // Add our commands to annyang
+            annyang.addCommands(commands);
+            annyang.debug();
+            // Start listening. You can call this here, or attach this call to an event, button, etc.
+            annyang.start();
+        }
+    </script>-->
+
+
     <!-- Navigation -->
     <nav class="navbar navbar-default navbar-static-top" role="navigation" style="margin-bottom: 0">
-        <div class="navbar-header">
+        <!--<div class="navbar-header">-->
             <!--<button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
                 <span class="sr-only">Toggle navigation</span>
                 <span class="icon-bar"></span>
                 <span class="icon-bar"></span>
                 <span class="icon-bar"></span>
             </button>-->
-            <a class="navbar-brand" href="#Dashboard"><img src="images/DD_RGB_black-small.jpg" height=50px" /> </a>
-        </div>
+            <!--<a class="navbar-brand" href="#Dashboard"><img src="images/DD_RGB_black-small.jpg" height=50px" /> </a>
+        </div>-->
         <!-- /.navbar-header -->
 
         <ul class="nav navbar-top-links navbar-right">
             <li class="dropdown">
-                <a class="dropdown-toggle" href="#Dashboard">
+                <!--<a class="dropdown-toggle" href="#Dashboard">
                     <i class="fa fa-home fa-fw"></i>  
+                </a>-->
+                
+                <a ng-show ="UserValidated" title="LogOut">
+                    <i class="fa fa-sign-out fa-fw" ng-click="UserLogout()"></i>
                 </a>
             </li>
       
@@ -102,7 +139,31 @@
 
     </nav>
 
-    <div id="page-wrapper">
+
+    <table align="center" ng-hide="UserValidated" style="min-width: 250px">
+        <tr>
+            <td>
+                <div>
+                    <div class="form-group">
+                        <label for="uid">User Name:</label>
+                        <input type="text" class="form-control" id="uid" placeholder="Enter user name" ng-model="UserIdentity">
+                    </div>
+                    <div class="form-group">
+                        <label for="pwd">Password:</label>
+                        <input type="password" class="form-control" id="pwd" placeholder="Enter password" ng-model="UserPassword">
+                    </div>
+                    <div>
+                        <button class="btn btn-info btn-md" ng-click="ValidateUserLogin()">Login</button>
+                    </div>
+                    <div class="bg-danger text-danger text-warning" style="text-align:center; padding-top:10px;">{{LoginMessage}}</div>
+                </div>
+            </td>
+        </tr>
+    </table>
+
+    <!--<div ng-show="UserValidated" style="text-align:right;"><button class="btn btn-info btn-md" ng-click="UserLogout()">Logout</button></div>-->
+
+    <div id="page-wrapper" ng-show="UserValidated">
         <div class="row">
             <div class="col-lg-12 clearfix">
                 &nbsp;

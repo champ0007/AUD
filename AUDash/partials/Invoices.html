@@ -80,48 +80,61 @@
         <div class="panel-heading">
             <i class="fa fa-info-circle fa-fw"></i> Invoices
             <i class="fa fa-search"></i> <input ng-model="searchInvoice" class="textSearch" />
-            <span class="pull-right"> 
+            <span class="pull-right">
                 Show
                 <select id="filterProjectStage" ng-model="searchInvoice">
                     <option value="">All</option>
                     <option>Pending</option>
                 </select>
-            <i class="fa fa-plus" data-toggle="modal" data-target=".bs-AddInvoice-modal-lg"></i>&nbsp;&nbsp;&nbsp;</span>
+                <i class="fa fa-plus" data-toggle="modal" data-target=".bs-AddInvoice-modal-lg"></i>&nbsp;&nbsp;&nbsp;
+            </span>
         </div>
         <div class="panel-body">
             <table class="table table-striped table-responsive">
                 <tr>
                     <th>Edit</th>
-                    <th ng-click="predicate = 'Project'; reverse=!reverse">Project</th>
-                    <th>Partner / Director</th>
-                    <th>Resource</th>
-                    <th ng-click="predicate = 'Period'; reverse=!reverse">Period</th>
+                    <th width="50px"></th>
+                    <th width="125px" ng-click="predicate = 'Project'; reverse=!reverse">Project</th>
+                    <th class="hidden-xs">Partner / Director</th>
+                    <!--<th>Resource</th>-->
+                    <th class="hidden-sm hidden-xs" width="70px" ng-click="predicate = 'Period'; reverse=!reverse">Period</th>
                     <!--<th>Date</th>-->
-                    <th>Hours</th>
-                    <th ng-click="predicate = 'Amount'; reverse=!reverse"> Amount (USD)</th>
-                    <th>ATB Approval</th>
+                    <!--<th>Hours</th>-->
+                    <th class="hidden-xs" ng-click="predicate = 'Amount'; reverse=!reverse"> Amount (USD)</th>
+                    <th class="hidden-sm hidden-xs">ATB Approval</th>
                     <!--<th>ATM Approval Sent on</th>-->
-                    <th>Invoice Raised</th>
+                    <th class="hidden-sm hidden-xs">Invoice Raised</th>
                     <th ng-click="predicate = 'Invoice'; reverse=!reverse">Invoice No.</th>
                     <!--<th>InvoiceRaisedOn</th>-->
-                    <th>Comments</th>
+                    <th class="hidden-sm hidden-xs">Comments</th>
                     <th>Payment Received</th>
                 </tr>
                 <tr dir-paginate="invoice in InvoiceDetails  | filter:{PaymentReceived: searchInvoice} | orderBy:sort:reverse | itemsPerPage: 10 track by $index" current-page="currentPage">
                     <td><i class="fa fa-edit" ng-click="EditInvoice(invoice, $index)" data-toggle="modal" data-target=".bs-AddInvoice-modal-lg"> </i></td>
+                    <td>
+                        <div class="image-upload">
+                            <label for="file-input">
+                                <i class="fa fa-cloud-upload"></i> 
+                            </label>
+                            <i ng-click="DownloadInvoice(invoice.InvoiceNo)" class="fa fa-cloud-download"></i>
+                            <input id="file-input" type="file" nv-file-select="" uploader="invoiceuploader" />
+                        </div>
+                        
+                        
+                    </td>
                     <td>{{invoice.Project}}</td>
-                    <td>{{invoice.Partner}}</td>
-                    <td width="300px">{{invoice.Resource}}</td>
-                    <td>{{invoice.Period | changeDateFormat}}</td>
+                    <td class="hidden-xs">{{invoice.Partner}}</td>
+                    <!--<td width="300px">{{invoice.Resource}}</td>-->
+                    <td class="hidden-sm hidden-xs">{{invoice.Period | changeDateFormat}}</td>
                     <!--<td>{{invoice.Date}}</td>-->
-                    <td>{{invoice.Hours}}</td>
-                    <td>{{invoice.Amount | currency}}</td>
-                    <td><i class="fa fa-check" ng-show="ShowReceived(invoice.ATBApproval)"></i><i class="fa fa-clock-o" ng-show="ShowPending(invoice.ATBApproval)"></i></td>
+                    <!--<td>{{invoice.Hours}}</td>-->
+                    <td class="hidden-xs">{{invoice.Amount | currency}}</td>
+                    <td class="hidden-sm hidden-xs"><i class="fa fa-check" ng-show="ShowReceived(invoice.ATBApproval)"></i><i class="fa fa-clock-o" ng-show="ShowPending(invoice.ATBApproval)"></i></td>
                     <!--<td>{{invoice.ATBApprovalSentOn}}</td>-->
-                    <td><i class="fa fa-check" ng-show="ShowReceived(invoice.InvoiceRaised)"></i><i class="fa fa-clock-o" ng-show="ShowPending(invoice.InvoiceRaised)"></i></td>
+                    <td class="hidden-sm hidden-xs"><i class="fa fa-check" ng-show="ShowReceived(invoice.InvoiceRaised)"></i><i class="fa fa-clock-o" ng-show="ShowPending(invoice.InvoiceRaised)"></i></td>
                     <td>{{invoice.InvoiceNo}}</td>
                     <!--<td>{{invoice.InvoiceRaisedOn}}</td>-->
-                    <td width="300px">{{invoice.Comments}}</td>
+                    <td class="hidden-sm hidden-xs" width="300px">{{invoice.Comments}}</tdclass>
                     <td><i class="fa fa-check" ng-show="ShowReceived(invoice.PaymentReceived)"></i><i class="fa fa-clock-o" ng-show="ShowPending(invoice.PaymentReceived)"></i></td>
                 </tr>
             </table>
@@ -148,13 +161,11 @@
                             <input type="hidden" ng-model="InvoiceEntity.index" />
                             <div class="form-group">
                                 <label for="inputProjectName" class="col-sm-2 control-label">Project</label>
-                                <div class="col-sm-10">
+                                <div class="col-sm-4">
                                     <input type="text" class="form-control" id="inputProjectName" placeholder="Project" ng-model="InvoiceEntity.Project">
                                 </div>
-                            </div>
-                            <div class="form-group">
                                 <label for="inputPartner" class="col-sm-2 control-label">Partner / Director</label>
-                                <div class="col-sm-10">
+                                <div class="col-sm-4">
                                     <input type="text" class="form-control" id="inputPartner" placeholder="Partner / Director" ng-model="InvoiceEntity.Partner">
                                 </div>
                             </div>
@@ -166,25 +177,21 @@
                             </div>
                             <div class="form-group">
                                 <label for="inputPeriod" class="col-sm-2 control-label">Period</label>
-                                <div class="col-sm-10">
+                                <div class="col-sm-4">
                                     <input type="text" class="form-control" id="inputPeriod" placeholder="Period" ng-model="InvoiceEntity.Period">
                                 </div>
-                            </div>
-                            <div class="form-group">
                                 <label for="inputDate" class="col-sm-2 control-label">Date</label>
-                                <div class="col-sm-10">
+                                <div class="col-sm-4">
                                     <input type="text" class="form-control" id="inputDate" placeholder="Date Range" ng-model="InvoiceEntity.Date">
                                 </div>
                             </div>
                             <div class="form-group">
                                 <label for="inputHours" class="col-sm-2 control-label">Hours</label>
-                                <div class="col-sm-10">
+                                <div class="col-sm-4">
                                     <input type="text" class="form-control" id="inputHours" placeholder="Hours" ng-model="InvoiceEntity.Hours">
                                 </div>
-                            </div>
-                            <div class="form-group">
                                 <label for="inputAmount" class="col-sm-2 control-label">Amount (USD)</label>
-                                <div class="col-sm-10">
+                                <div class="col-sm-4">
                                     <input type="text" class="form-control" id="inputAmount" placeholder="USD" ng-model="InvoiceEntity.Amount">
                                 </div>
                             </div>
