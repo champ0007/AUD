@@ -958,8 +958,11 @@ AUDashboardApp.controller('NewActionItemsController', ['$scope', '$filter', '$ht
     };
 
     $scope.DeleteToDoItem = function (ToDoItem) {
-        if (ToDoItem.index >= 0) {
-            NewToDos.splice(ToDoItem.index, 1);
+        for (var i = 0; i < NewToDos.length; i++) {
+            if (NewToDos[i].Desc === ToDoItem.Desc && NewToDos[i].AssignedTo === ToDoItem.AssignedTo && NewToDos[i].Status === ToDoItem.Status && NewToDos[i].Comments === ToDoItem.Comments) {
+                NewToDos.splice(i, 1);
+                break;
+            }
         }
     };
 

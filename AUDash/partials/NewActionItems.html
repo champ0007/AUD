@@ -18,6 +18,14 @@
     <div class="panel panel-green">
         <div class="panel-heading">
             <i class="fa fa-info-circle fa-fw"></i> Action Items
+            <span class="pull-right">
+                Show
+                <select id="filterToDo" ng-model="ToDoSearch">
+                    <option value="">All</option>
+                    <option>Open</option>
+                    <option>Closed</option>
+                </select>
+            </span>
 
         </div>
         <div class="panel-body">
@@ -40,7 +48,7 @@
                 </tr>
 
                 <!--<tr ng-repeat="ToDoItem in NewToDos track by $index">-->
-                <tr dir-paginate="ToDoItem in NewToDos | itemsPerPage: 5" current-page="currentToDoPage" pagination-id="ToDoPagination">
+                <tr dir-paginate="ToDoItem in NewToDos | filter:ToDoSearch | itemsPerPage: 5" current-page="currentToDoPage" pagination-id="ToDoPagination">
                     <td><i class="fa fa-edit" ng-click="EditToDoItem(ToDoItem, $index)" data-toggle="modal" data-target=".bs-AddActionItem-modal-lg"> </i></td>
                     <td class="col-lg-4">{{ToDoItem.Desc}}</td>
                     <td class="col-lg-2">{{ToDoItem.AssignedTo}}</td>
