@@ -171,7 +171,7 @@ namespace AUDash.Repository
                     {
                         using (var sqlWrite = new SqlCommand("UPDATE InvoiceFiles set [File] = @File where InvoiceNo = @InvoiceNo", varConnection))
                         {
-                          
+
                             sqlWrite.Parameters.Add("@InvoiceNo", SqlDbType.BigInt, 18).Value = fileName;
                             sqlWrite.Parameters.Add("@File", SqlDbType.VarBinary, file.Length).Value = file;
                             sqlWrite.ExecuteNonQuery();
@@ -179,6 +179,8 @@ namespace AUDash.Repository
                         }
 
                     }
+                    else
+                        throw ex;
                 }
         }
 

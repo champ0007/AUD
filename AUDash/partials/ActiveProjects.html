@@ -31,7 +31,8 @@
                             <div class="form-group">
                                 <div class="col-sm-offset-4 col-sm-10">
                                     <button type="submit" class="btn btn-success" data-dismiss="modal" ng-click="AddKeyUpdate(keyUpdate)">Save</button> &nbsp;
-                                    <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+                                    <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button> &nbsp;
+                                    <button type="button" class="btn btn-danger" data-dismiss="modal" ng-click="DeleteKeyUpdate(keyUpdate)">Delete</button> &nbsp;
                                 </div>
                             </div>
                         </form>
@@ -47,7 +48,7 @@
     <div class="panel panel-blue">
         <div class="panel-heading">
             <i class="fa fa-info-circle fa-fw"></i> Latest News
-            <span class="pull-right"><i class="fa fa-plus" data-toggle="modal" data-target=".bs-ManageKeyUpdates-modal-lg"></i>&nbsp;&nbsp;&nbsp;</span>
+            <span class="pull-right"><i class="fa fa-plus" data-toggle="modal" data-target=".bs-ManageKeyUpdates-modal-lg" ng-click="OpenAddUpdates()"></i>&nbsp;&nbsp;&nbsp;</span>
         </div>
         <div class="panel-body">
             <ul class="list-unstyled">
@@ -131,23 +132,27 @@
                     <th ng-click="predicate = 'Client'; reverse=false">Client</th>
                     <th ng-click="predicate = 'ProjectName'; reverse=false">Project Name</th>
                     <th ng-click="predicate = 'Stage'; reverse=false">Project Stage</th>
-                    <th ng-click="predicate = 'Technology'; reverse=false">Technology</th>
-                    <th ng-click="predicate = 'GDM'; reverse=false">GDM</th>
-                    <th ng-click="predicate = 'AUPM'; reverse=false">AU-PM</th>
-                    <th><i class="fa fa-times"</th>
+                    <th class="hidden-xs" ng-click="predicate = 'Technology'; reverse=false">Technology</th>
+                    <th class="hidden-xs" ng-click="predicate = 'GDM'; reverse=false">GDM</th>
+                    <th class="hidden-xs" ng-click="predicate = 'AUPM'; reverse=false">AU-PM</th>
+                    <th><i class="fa fa-times"/></th>
 
                 </tr>
-                <tr ng-repeat="project in ActiveProjectDetails | filter:{Stage: searchProject} | orderBy:predicate:reverse track by $index">
+                <!--<tr ng-repeat="project in ActiveProjectDetails | filter:{Stage: searchProject} | orderBy:predicate:reverse track by $index">-->
+                <tr dir-paginate="project in ActiveProjectDetails | orderBy:predicate:reverse | filter: searchProject |itemsPerPage: 10" current-page="currentProjectPage" pagination-id="ProjectPagination">
                     <td><i class="fa fa-edit" ng-click="EditProject(project, $index)" data-toggle="modal" data-target=".bs-AddProjects-modal-lg"> </i></td>
                     <td>{{project.Client}}</td>
                     <td>{{project.ProjectName}}</td>
                     <td>{{project.Stage}}</td>
-                    <td>{{project.Technology}}</td>
-                    <td>{{project.GDM}}</td>
-                    <td>{{project.AUPM}}</td>
+                    <td class="hidden-xs">{{project.Technology}}</td>
+                    <td class="hidden-xs">{{project.GDM}}</td>
+                    <td class="hidden-xs">{{project.AUPM}}</td>
                     <td><i class="fa fa-times" ng-click="AddProject(project, 'Delete')"> </i></td>
                 </tr>
-            </table>
+            </table>            
+            <div class="text-center">
+                <dir-pagination-controls boundary-links="true" on-page-change="pageChangeHandler(newPageNumber)" template-url="/js/dirPagination.tpl.html" pagination-id="ProjectPagination"></dir-pagination-controls>
+            </div>
         </div>
 
         <!-- /.panel-body -->

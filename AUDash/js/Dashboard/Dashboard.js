@@ -423,7 +423,10 @@ AUDashboardApp.controller('ActionItemsController', ['$scope', '$filter', '$http'
 AUDashboardApp.controller('ActiveProjectsController', ['$scope', '$filter', '$http', function ($scope, $filter, $http) {
     var STORAGE_ID = 'Projects';
     $scope.EditMode = "false";
-    $scope.ActiveFilterSet;
+    $scope.ActiveFilterSet;    
+    $scope.currentProjectPage = 1;
+    $scope.pageSize = 10;
+    $scope.ProjectPerPage = 10;
 
     var ProjectDetails = $scope.ActiveProjectDetails = [];
 
@@ -578,6 +581,14 @@ AUDashboardApp.controller('ActiveProjectsController', ['$scope', '$filter', '$ht
         }
 
         $scope.keyUpdates = keyUpdates;
+        $scope.keyUpdate = '';
+    };
+
+    $scope.DeleteKeyUpdate = function (keyUpdate) {
+        keyUpdates.splice(keyUpdate.index, 1);
+    };
+
+    $scope.OpenAddUpdates = function () {
         $scope.keyUpdate = '';
     };
     //End Key updates
@@ -875,6 +886,10 @@ AUDashboardApp.controller('ActiveResourcesController', ['$scope', '$http', 'File
 AUDashboardApp.controller('NewActionItemsController', ['$scope', '$filter', '$http', function ($scope, $filter, $http) {
     var STORAGE_ID = 'NewToDoItems'; // To be passed
     //$scope.EditMode = "false";
+    $scope.currentPage = 1;
+    $scope.currentToDoPage = 1;
+    $scope.pageSize = 5;
+    $scope.ToDoPerPage = 5;
 
     var NewToDos = $scope.NewToDos = [];
 
@@ -900,7 +915,6 @@ AUDashboardApp.controller('NewActionItemsController', ['$scope', '$filter', '$ht
     };
 
     $scope.EditToDoItem = function (ToDoItem, index) {
-        debugger;
         ToDoItem.index = index;
         $scope.ToDoItem = jQuery.extend(true, {}, ToDoItem); // deep copy
         $scope.OriginalToDoItem = jQuery.extend(true, {}, ToDoItem); // deep copy
@@ -931,7 +945,6 @@ AUDashboardApp.controller('NewActionItemsController', ['$scope', '$filter', '$ht
     }, true);
 
     $scope.AddToDoItem = function (ToDoItem) {
-        debugger;
 
         if (ToDoItem.index >= 0) {
             NewToDos[ToDoItem.index] = ToDoItem;
@@ -942,6 +955,12 @@ AUDashboardApp.controller('NewActionItemsController', ['$scope', '$filter', '$ht
 
         $scope.NewToDos = NewToDos;
         $scope.NewToDoItem = '';
+    };
+
+    $scope.DeleteToDoItem = function (ToDoItem) {
+        if (ToDoItem.index >= 0) {
+            NewToDos.splice(ToDoItem.index, 1);
+        }
     };
 
     $scope.UpdateChart = function (open, closed, pending) {
