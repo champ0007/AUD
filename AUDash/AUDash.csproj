@@ -220,6 +220,10 @@
     <Content Include="css\plugins\metisMenu\metisMenu.css" />
     <Content Include="css\plugins\metisMenu\metisMenu.min.css" />
     <Content Include="css\plugins\morris.css" />
+    <Content Include="css\plugins\ngToast\ngToast-animations.css" />
+    <Content Include="css\plugins\ngToast\ngToast-animations.min.css" />
+    <Content Include="css\plugins\ngToast\ngToast.css" />
+    <Content Include="css\plugins\ngToast\ngToast.min.css" />
     <Content Include="css\plugins\social-buttons.css" />
     <Content Include="css\plugins\timeline.css" />
     <Content Include="css\plugins\ToDo\NewToDoItem.css" />
@@ -235,12 +239,14 @@
     <Content Include="Global.asax" />
     <Content Include="images\DD_RGB_black-small.jpg" />
     <Content Include="images\DD_RGB_white-black-small.jpg" />
+    <Content Include="js\angular-animate.min.js" />
     <Content Include="js\angular-file-upload.js">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="js\angular-file-upload.min.js">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+    <Content Include="js\angular-sanitize.min.js" />
     <Content Include="js\bootstrap-datepicker.js">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
@@ -364,6 +370,8 @@
     <Content Include="js\plugins\morris\morris.js" />
     <Content Include="js\plugins\morris\morris.min.js" />
     <Content Include="js\plugins\morris\raphael.min.js" />
+    <Content Include="js\plugins\ngToast\ngToast.js" />
+    <Content Include="js\plugins\ngToast\ngToast.min.js" />
     <Content Include="js\plugins\ToDo\app.js" />
     <Content Include="js\plugins\ToDo\base.js" />
     <Content Include="js\plugins\ToDo\todoCtrl.js" />
@@ -461,6 +469,8 @@
     <Content Include="DocumentTemplates\Template_Non -Attest Independence %282%29.doc" />
     <Content Include="DocumentTemplates\WO Template 111114.doc" />
     <Content Include="DocumentTemplates\FY15_EDC_India_Billing_Expense_Policy.pdf" />
+    <Content Include="js\angular-animate.min.js.map" />
+    <Content Include="js\angular-sanitize.min.js.map" />
     <None Include="Properties\PublishProfiles\audashboard.pubxml" />
     <None Include="Properties\PublishProfiles\IISDeploy.pubxml" />
     <None Include="Properties\PublishProfiles\Tushar.pubxml" />

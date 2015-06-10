@@ -2,7 +2,7 @@
 /// <reference path="../jquery-1.10.2.intellisense.js" />
 var todos;
 
-var AUDashboardApp = angular.module("AUDashboardApp", ["ngRoute", "tc.chartjs", "angularFileUpload", "angularUtils.directives.dirPagination"]);
+var AUDashboardApp = angular.module("AUDashboardApp", ["ngRoute", "tc.chartjs", "angularFileUpload", "angularUtils.directives.dirPagination", "ngToast"]);
 
 AUDashboardApp.config(['$routeProvider',
     function ($routeProvider) {
@@ -1577,7 +1577,7 @@ AUDashboardApp.controller('OperationsController', ['$scope', '$http', function (
 
 }]);
 
-AUDashboardApp.controller('InvoicesController', ['$scope', '$filter', '$http', 'FileUploader', function ($scope, $filter, $http, FileUploader) {
+AUDashboardApp.controller('InvoicesController', ['$scope', '$filter', '$http', 'FileUploader','ngToast', function ($scope, $filter, $http, FileUploader,ngToast) {
     var STORAGE_ID = 'Invoices';
     $scope.EditMode = "false";
     $scope.currentPage = 1;
@@ -1793,7 +1793,7 @@ AUDashboardApp.controller('InvoicesController', ['$scope', '$filter', '$http', '
     //Invoice File upload functionality
     var invoiceuploader = $scope.invoiceuploader = new FileUploader({
         url: 'api/Dashboard/UploadInvoiceFiles',
-        autoUpload: true        
+        autoUpload: true
         //removeAfterUpload: true
     });
 
@@ -1806,6 +1806,15 @@ AUDashboardApp.controller('InvoicesController', ['$scope', '$filter', '$http', '
             return '|pdf|'.indexOf(type) !== -1;
         }
     });
+
+    invoiceuploader.onCompleteItem = function (fileItem, response, status, headers) {
+        debugger;
+        var myToastMsg = ngToast.info({
+            content: 'File uploaded successfully !'
+        });
+
+        ngToast.create('a toast message...');
+    };
 
 
     
