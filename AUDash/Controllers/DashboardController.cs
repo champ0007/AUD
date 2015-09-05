@@ -254,7 +254,8 @@ namespace AUDash.Controllers
                             InvoiceNo = Convert.ToString(invoiceWorkSheet.Cells[rowCount, 12].Value),
                             InvoiceRaisedOn = Convert.ToString(invoiceWorkSheet.Cells[rowCount, 13].Value).IndexOf(" ") > 0 ? Convert.ToString(invoiceWorkSheet.Cells[rowCount, 13].Value).Substring(0, Convert.ToString(invoiceWorkSheet.Cells[rowCount, 13].Value).IndexOf(" ")) : Convert.ToString(invoiceWorkSheet.Cells[rowCount, 13].Value),
                             Comments = Convert.ToString(invoiceWorkSheet.Cells[rowCount, 14].Value),
-                            PaymentReceived = Convert.ToString(invoiceWorkSheet.Cells[rowCount, 15].Value)
+                            PaymentReceived = Convert.ToString(invoiceWorkSheet.Cells[rowCount, 15].Value),
+                            InvoiceId = Convert.ToString(invoiceWorkSheet.Cells[rowCount, 16].Value)
                         });
 
                         rowCount++;
@@ -334,8 +335,6 @@ namespace AUDash.Controllers
 
         }
 
-
-
         //POST api/Dashboard/UpsertProject
         [HttpPost]
         public string UpsertProject([FromBody]ProjectRequest projectRequest)
@@ -400,6 +399,37 @@ namespace AUDash.Controllers
             return repo.GetReferenceData("Resources");
         }
 
+        //POST api/Dashboard/UpsertInvoice
+        [HttpPost]
+        public string UpsertInvoice([FromBody]InvoiceRequest invoiceRequest)
+        {
+            if (invoiceRequest.action == RequestedAction.Delete)
+            {
+                int index = invoiceRequest.Invoices.FindIndex(x => x.InvoiceId == invoiceRequest.InvoiceEntity.InvoiceId);
+                invoiceRequest.Invoices.RemoveAt(index);
+            }
+            else if (invoiceRequest.action == RequestedAction.Upsert)
+            {
+                if (invoiceRequest.InvoiceEntity.InvoiceId == null)
+                {
+                    invoiceRequest.InvoiceEntity.InvoiceId = DateTime.Now.ToString("dMyyHHmmss");
+                    invoiceRequest.Invoices.Add(invoiceRequest.InvoiceEntity);
+                }
+                else
+                {
+                    int index = invoiceRequest.Invoices.FindIndex(x => x.InvoiceId == invoiceRequest.InvoiceEntity.InvoiceId);
+                    if (index >= 0)
+                    {
+                        invoiceRequest.Invoices[index] = invoiceRequest.InvoiceEntity;
+                    }
+                }
+            }
+
+            repo.SetReferenceData("Invoices", JsonConvert.SerializeObject(invoiceRequest.Invoices));
+
+            return repo.GetReferenceData("Invoices");
+        }
+
         
         public HttpResponseMessage GetInvoiceFile()
         {
@@ -408,16 +438,40 @@ namespace AUDash.Controllers
             {
                 IEnumerable<string> headerValues = Request.Headers.GetValues("fileID");
                 string invoiceNo = headerValues.First();
-                MemoryStream invoiceMS = repo.GetInvoiceFile(invoiceNo);
-                if (invoiceMS.Length > 0)
+
+                if (invoiceNo == "All")
                 {
-                    result = Request.CreateResponse(HttpStatusCode.OK);
-                    invoiceMS.Seek(0, SeekOrigin.Begin);
-                    result.Content = new StreamContent(invoiceMS);
-                    result.Content.Headers.ContentType = new MediaTypeHeaderValue("application/pdf");
-                    result.Content.Headers.Add("x-filename", invoiceNo.ToString() + ".pdf");
-                    result.Content.Headers.ContentDisposition = new System.Net.Http.Headers.ContentDispositionHeaderValue("attachment");
-                    result.Content.Headers.ContentDisposition.FileName = invoiceNo.ToString();
+
+                    MemoryStream invoiceMS = new MemoryStream();
+                    List<Invoice> invoices = JsonConvert.DeserializeObject<List<Invoice>>(repo.GetReferenceData("Invoices"));                    
+                    using (ExcelPackage pck = new ExcelPackage(new FileInfo("Invoices")))
+                    {
+                        ExcelWorksheet ws = pck.Workbook.Worksheets.Add("Invoices");
+                        ws.Cells["A1"].LoadFromCollection<Invoice>(invoices, true);
+                        pck.SaveAs(invoiceMS);
+                        
+                        result = Request.CreateResponse(HttpStatusCode.OK);
+                        invoiceMS.Seek(0, SeekOrigin.Begin);
+                        result.Content = new StreamContent(invoiceMS);
+                        result.Content.Headers.ContentType = new MediaTypeHeaderValue("application/xls");
+                        result.Content.Headers.Add("x-filename", "Invoices.xls");
+                        result.Content.Headers.ContentDisposition = new System.Net.Http.Headers.ContentDispositionHeaderValue("attachment");
+                        result.Content.Headers.ContentDisposition.FileName = "Invoices.xls";
+                    }                    
+                }
+                else
+                {
+                    MemoryStream invoiceMS = repo.GetInvoiceFile(invoiceNo);
+                    if (invoiceMS.Length > 0)
+                    {
+                        result = Request.CreateResponse(HttpStatusCode.OK);
+                        invoiceMS.Seek(0, SeekOrigin.Begin);
+                        result.Content = new StreamContent(invoiceMS);
+                        result.Content.Headers.ContentType = new MediaTypeHeaderValue("application/pdf");
+                        result.Content.Headers.Add("x-filename", invoiceNo.ToString() + ".pdf");
+                        result.Content.Headers.ContentDisposition = new System.Net.Http.Headers.ContentDispositionHeaderValue("attachment");
+                        result.Content.Headers.ContentDisposition.FileName = invoiceNo.ToString();
+                    }
                 }
                 return result;
             }
@@ -426,7 +480,6 @@ namespace AUDash.Controllers
                 return Request.CreateResponse(HttpStatusCode.BadRequest);
             }
         }
-
 
         private string GetResourceDataCount(int resourceCount, string currentDate)
         {

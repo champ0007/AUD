@@ -78,7 +78,7 @@
     <!--End Three Charts-->
     <div class="panel panel-blue">
         <div class="panel-heading">
-            <i class="fa fa-info-circle fa-fw"></i> Invoices
+            <i class="fa fa-cloud-download" ng-click="DownloadInvoice('All', 'xls')"></i> Invoices            
             <i class="fa fa-search"></i> <input ng-model="searchInvoice" class="textSearch" />
             <span class="pull-right">
                 Show
@@ -86,7 +86,7 @@
                     <option value="">All</option>
                     <option>Pending</option>
                 </select>
-                <i class="fa fa-plus" data-toggle="modal" data-target=".bs-AddInvoice-modal-lg"></i>&nbsp;&nbsp;&nbsp;
+                <i class="fa fa-plus" data-toggle="modal" ng-click="OpenAddInvoice()" data-target=".bs-AddInvoice-modal-lg"></i>&nbsp;&nbsp;&nbsp;
             </span>
         </div>
         <div class="panel-body">
@@ -116,7 +116,7 @@
                             <label for="file-input">
                                 <i class="fa fa-cloud-upload"></i> 
                             </label>
-                            <i ng-click="DownloadInvoice(invoice.InvoiceNo)" class="fa fa-cloud-download"></i>
+                            <i ng-click="DownloadInvoice(invoice.InvoiceNo,'pdf')" class="fa fa-cloud-download"></i>
                             <input id="file-input" type="file" nv-file-select="" uploader="invoiceuploader"/>
                         </div>
                         
@@ -134,7 +134,7 @@
                     <td class="hidden-sm hidden-xs"><i class="fa fa-check" ng-show="ShowReceived(invoice.InvoiceRaised)"></i><i class="fa fa-clock-o" ng-show="ShowPending(invoice.InvoiceRaised)"></i></td>
                     <td>{{invoice.InvoiceNo}}</td>
                     <!--<td>{{invoice.InvoiceRaisedOn}}</td>-->
-                    <td class="hidden-sm hidden-xs" width="300px">{{invoice.Comments}}</tdclass>
+                    <td class="hidden-sm hidden-xs" width="300px">{{invoice.Comments}}</td>
                     <td><i class="fa fa-check" ng-show="ShowReceived(invoice.PaymentReceived)"></i><i class="fa fa-clock-o" ng-show="ShowPending(invoice.PaymentReceived)"></i></td>
                 </tr>
             </table>
@@ -158,7 +158,8 @@
                     </div>
                     <div class="panel-body">
                         <form class="form-horizontal" name="addForm" role="form">
-                            <input type="hidden" ng-model="InvoiceEntity.index" />
+                            <input type="hidden" ng-model="InvoiceEntity.index"/>
+                            <input type="hidden" ng-model="InvoiceEntity.InvoiceId" />
                             <div class="form-group">
                                 <label for="inputProjectName" class="col-sm-2 control-label">Project</label>
                                 <div class="col-sm-4">
@@ -255,7 +256,7 @@
 
                             <div class="form-group">
                                 <div class="col-sm-offset-4 col-sm-10">
-                                    <button type="submit" class="btn btn-success" data-dismiss="modal" ng-click="AddInvoice(InvoiceEntity)">Save</button> &nbsp;
+                                    <button type="submit" class="btn btn-success" data-dismiss="modal" ng-click="AddInvoice(InvoiceEntity, 'Upsert')">Save</button> &nbsp;
                                     <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
                                 </div>
                             </div>

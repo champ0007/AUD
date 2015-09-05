@@ -22,7 +22,7 @@ namespace AUDash.Repository
 
             if (connSection.ConnectionStrings.Count > 0)
             {
-                connString = connSection.ConnectionStrings["AUDashboardAzureConnection"];
+                connString = connSection.ConnectionStrings["AUDashboardConnection"];
                 if (connString != null)
                     connectionString = connString.ConnectionString;
                 else

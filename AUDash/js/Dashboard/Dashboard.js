@@ -2,7 +2,7 @@
 /// <reference path="../jquery-1.10.2.intellisense.js" />
 var todos;
 
-var AUDashboardApp = angular.module("AUDashboardApp", ["ngRoute", "tc.chartjs", "angularFileUpload", "angularUtils.directives.dirPagination", "ngToast"]);
+var AUDashboardApp = angular.module("AUDashboardApp", ["ngRoute", "tc.chartjs", "angularFileUpload", "angularUtils.directives.dirPagination"]);
 
 AUDashboardApp.config(['$routeProvider',
     function ($routeProvider) {
@@ -1577,7 +1577,7 @@ AUDashboardApp.controller('OperationsController', ['$scope', '$http', function (
 
 }]);
 
-AUDashboardApp.controller('InvoicesController', ['$scope', '$filter', '$http', 'FileUploader','ngToast', function ($scope, $filter, $http, FileUploader,ngToast) {
+AUDashboardApp.controller('InvoicesController', ['$scope', '$filter', '$http', 'FileUploader', function ($scope, $filter, $http, FileUploader) {
     var STORAGE_ID = 'Invoices';
     $scope.EditMode = "false";
     $scope.currentPage = 1;
@@ -1648,25 +1648,44 @@ AUDashboardApp.controller('InvoicesController', ['$scope', '$filter', '$http', '
             );
     };
 
-    $scope.$watch('InvoiceDetails', function (newValue, oldValue) {
-        if (newValue !== oldValue) { // This prevents unneeded calls to the local storage
-            $scope.setInvoices(InvoiceDetails);
-        }
-    }, true);
-
-    $scope.AddInvoice = function (InvoiceEntity) {
-        ////debugger;
-        if (InvoiceEntity.index >= 0) {
-            InvoiceDetails[InvoiceEntity.index] = InvoiceEntity;
-        } else {
-            InvoiceDetails.push(InvoiceEntity);
-        }
-
-        $scope.InvoiceDetails = InvoiceDetails;
+    $scope.OpenAddInvoice = function () {
         $scope.InvoiceEntity = '';
     };
 
-    $scope.DownloadInvoice = function (InvoiceNo) {
+    //$scope.$watch('InvoiceDetails', function (newValue, oldValue) {
+    //    if (newValue !== oldValue) { // This prevents unneeded calls to the local storage
+    //        $scope.setInvoices(InvoiceDetails);
+    //    }
+    //}, true);
+
+    $scope.AddInvoice = function (InvoiceEntity, action) {
+        var invoiceRequest = new Object();
+        invoiceRequest.Invoices = InvoiceDetails;
+        invoiceRequest.InvoiceEntity = InvoiceEntity;
+        invoiceRequest.action = action;
+        invoiceRequest.authToken = $scope.UserIdentity + "-" + $scope.UserPassword;
+        
+        $http({
+            method: 'POST',
+            url: 'api/Dashboard/UpsertInvoice',
+            data: invoiceRequest
+        }).
+       success(function (data, status, headers, config) {
+           //success logic
+           if (data != 'null') {
+               InvoiceDetails = $scope.InvoiceDetails = JSON.parse(JSON.parse(data));
+               $scope.$parent.PendingInvoices = $filter('filter')(InvoiceDetails, { PaymentReceived: "Pending" }).length;
+
+           }
+       }).
+       error(function (data, status, headers, config) {
+           //error handling logic
+       });
+
+    
+    };
+
+    $scope.DownloadInvoice = function (InvoiceNo, DownloadType) {
         debugger;
         $http({
             method: 'GET',
@@ -1676,9 +1695,11 @@ AUDashboardApp.controller('InvoicesController', ['$scope', '$filter', '$http', '
             headers: {
                 'Content-Type': 'application/json; charset=utf-8',
                 'fileID': InvoiceNo
-            }
+            }           
         }).success(function (data, status, headers) {
-            var octetStreamMime = 'application/pdf';
+            var octetStreamMime = 'application/pdf'; 
+            if (DownloadType == 'xls') { octetStreamMime = 'application/xls'; }
+            
             var success = false;
 
             // Get the headers
@@ -1806,18 +1827,6 @@ AUDashboardApp.controller('InvoicesController', ['$scope', '$filter', '$http', '
             return '|pdf|'.indexOf(type) !== -1;
         }
     });
-
-    invoiceuploader.onCompleteItem = function (fileItem, response, status, headers) {
-        debugger;
-        var myToastMsg = ngToast.info({
-            content: 'File uploaded successfully !'
-        });
-
-        ngToast.create('a toast message...');
-    };
-
-
-    
 
     // FILTERS
 

@@ -139,7 +139,7 @@
 
                 </tr>
                 <!--<tr ng-repeat="project in ActiveProjectDetails | filter:{Stage: searchProject} | orderBy:predicate:reverse track by $index">-->
-                <tr dir-paginate="project in ActiveProjectDetails | orderBy:predicate:reverse | filter: searchProject |itemsPerPage: 10" current-page="currentProjectPage" pagination-id="ProjectPagination">
+                <tr dir-paginate="project in ActiveProjectDetails |  filter: searchProject | orderBy:predicate:reverse  |itemsPerPage: 10" current-page="currentProjectPage" pagination-id="ProjectPagination">
                     <td><i class="fa fa-edit" ng-click="EditProject(project, $index)" data-toggle="modal" data-target=".bs-AddProjects-modal-lg"> </i></td>
                     <td>{{project.Client}}</td>
                     <td>{{project.ProjectName}}</td>

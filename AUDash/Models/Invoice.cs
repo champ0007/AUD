@@ -21,6 +21,7 @@ namespace AUDash.Models
         public string InvoiceRaisedOn { get; set; }
         public string Comments { get; set; }
         public string PaymentReceived { get; set; }
+        public string InvoiceId { get; set; }
     }
 
     public class RevenueByYear
@@ -33,4 +34,14 @@ namespace AUDash.Models
         public int month { get; set; }
         public double amount { get; set; }
     }
+
+
+    public class InvoiceRequest
+    {
+        public List<Invoice> Invoices { get; set; }
+        public Invoice InvoiceEntity { get; set; }
+        public RequestedAction action { get; set; }
+
+    }
+   
 }
