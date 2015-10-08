@@ -20,6 +20,7 @@
     <IISExpressAnonymousAuthentication />
     <IISExpressWindowsAuthentication />
     <IISExpressUseClassicPipelineMode />
+    <UseGlobalApplicationHostFile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -53,6 +54,8 @@
     <Reference Include="System.ComponentModel.DataAnnotations" />
     <Reference Include="System.Core" />
     <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="System.Web.Extensions" />
+    <Reference Include="System.Web.Services" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Web" />
     <Reference Include="System.Web.Abstractions" />
@@ -118,6 +121,7 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
+    <Folder Include="Reports\" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="App_Start\BundleConfig.cs" />
@@ -168,6 +172,10 @@
     <Compile Include="Models\Resource.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Repository\DBRespository.cs" />
+    <Compile Include="SendMail.asmx.cs">
+      <DependentUpon>SendMail.asmx</DependentUpon>
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="SessionManagement\SessionableControllableHandler.cs" />
     <Compile Include="SessionManagement\SessionStateRouteHandler.cs" />
     <Compile Include="TESTConnection.aspx.cs">
@@ -364,6 +372,8 @@
     <Content Include="js\plugins\flot\jquery.flot.pie.js" />
     <Content Include="js\plugins\flot\jquery.flot.resize.js" />
     <Content Include="js\plugins\flot\jquery.flot.tooltip.min.js" />
+    <Content Include="js\plugins\html2canvas\html2canvas.js" />
+    <Content Include="js\plugins\html2canvas\html2canvas.svg.js" />
     <Content Include="js\plugins\metisMenu\metisMenu.js" />
     <Content Include="js\plugins\metisMenu\metisMenu.min.js" />
     <Content Include="js\plugins\morris\morris-data.js" />
@@ -393,6 +403,7 @@
     <Content Include="partials\ActionItems.html">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+    <Content Include="partials\CurrentStatus.html" />
     <Content Include="partials\Invoices.html">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
@@ -435,6 +446,7 @@
     <Content Include="js\jquery-ui-1.11.2.min.js">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+    <Content Include="SendMail.asmx" />
     <Content Include="TESTConnection.aspx" />
     <Content Include="Web.config">
       <SubType>Designer</SubType>

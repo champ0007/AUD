@@ -35,19 +35,371 @@ AUDashboardApp.config(['$routeProvider',
             templateUrl: 'partials/Invoices.html',
             controller: 'InvoicesController'
         }).
+        when('/CurrentStatus', {
+            templateUrl: 'partials/CurrentStatus.html',
+            controller: "CurrentStatusController"
+        }).
         otherwise({
             redirectTo: '/Dashboard'
         });
     }
 ]);
 
+AUDashboardApp.controller("CurrentStatusController", ['$scope', '$http','$timeout','$filter', function ($scope, $http,$timeout,$filter) {
+    var STORAGE_ID = 'Projects';
+    $scope.AllProjectDetails = {};
+    $scope.ProposedProjectDetails = {};
+
+    $scope.$on('$viewContentLoaded', function () {
+        $timeout(function () {
+            var downloadServiceUrl = "SendMail.asmx/SendReport";
+            $scope.Download = function () {
+                html2canvas(document.body, {
+                    onrendered: function (canvas) {
+                        var Pic = canvas.toDataURL("image/png");
+                        Pic = Pic.replace(/^data:image\/(png|jpg);base64,/, "");
+
+                        // Sending the image data to Server
+                        
+                        $http({
+                            method: 'POST',
+                            //url: 'SendMail.asmx/UploadPic',
+                            url: 'api/Dashboard/UploadCurrentStatus',
+                            data: Pic,//JSON.stringify(JSON.stringify(Pic))
+                            //data: {
+                            //    imageData: Pic
+                            //},
+                            contentType: 'application/json, charset=utf-8',
+                            //dataType: 'json',
+                        }).success(function (msg) {
+                            alert(msg);
+                        }).error(function (msg) {
+                            alert(msg);
+                        });
+                    }
+                });
+            }
+            $scope.Download();
+        }, 5000);
+    });
+
+    // get proposed/all projects
+    $scope.getProjects = function () {
+        $http({
+            method: 'GET',
+            url: 'api/Dashboard/GetReferenceData?storageId=' + STORAGE_ID + '&authToken=' + $scope.UserIdentity + "-" + $scope.UserPassword,
+        }).
+        success(function (data, status, headers, config) {
+            if (data != 'null') {
+                $scope.AllProjectDetails = JSON.parse(JSON.parse(data));
+                $scope.ProposedProjectDetails = $filter('filter')($scope.AllProjectDetails, { Stage: "Proposal" });
+            }
+        }).
+        error(function (data, status, headers, config) {
+            // called asynchronously if an error occurs
+            // or server returns response with an error status.
+        });
+
+    };
+
+    // get key updates
+    $scope.getKeyUpdates = function () {
+        $http({
+            method: 'GET',
+            url: 'api/Dashboard/GetReferenceData?storageId=KeyUpdates&authToken=' + $scope.UserIdentity + "-" + $scope.UserPassword
+        }).
+        success(function (data, status, headers, config) {
+            if (data != 'null') {
+                $scope.keyUpdates = JSON.parse(JSON.parse(data));
+            }
+        }).
+        error(function (data, status, headers, config) {
+        });
+    };
+
+    // get dashboard count
+    $scope.getDashboardCount = function () {
+        $http({
+            method: 'GET',
+            url: 'api/Dashboard/GetDashboardCounts?authToken=' + $scope.UserIdentity + "-" + $scope.UserPassword
+        }).success(function (data, status, headers, config) {
+            $scope.$parent.PendingInvoices = JSON.parse(JSON.parse(data))[0];
+            $scope.$parent.ActiveProjects = JSON.parse(JSON.parse(data))[1];
+            $scope.$parent.OpenActionItems = JSON.parse(JSON.parse(data))[2];
+            $scope.$parent. ActiveResources = JSON.parse(JSON.parse(data))[3];
+
+        }).error(function (data, status, headers, config) {
+            // called asynchronously if an error occurs
+            // or server returns response with an error status.
+            $scope.ActiveProjects = -1;
+            $scope.PendingInvoices = -1;
+            $scope.ActiveResources = -1;
+            $scope.OpenActionItems = -1;
+        });
+    }
+
+    // Competency Distribution Chart
+    $scope.UpdateTechChart = function () {
+        $http({
+            method: 'GET',
+            url: 'api/Dashboard/GetTechChartData?authToken=' + $scope.UserIdentity + "-" + $scope.UserPassword
+        }).
+      success(function (data, status, headers, config) {
+          if (data != null) {
+              debugger;
+              var colors = ['#F7464A', '#46BFBD', '#FDB45C', '#40C000', '#FF8000', '#F7464A', '#46BFBD', '#FDB45C', '#46BFBA', '#FDB4AC', '#F7464A', '#46BFBD', '#FDB45C', '#46BFBA', '#FDB4AC', '#F7464A', '#46BFBD', '#FDB45C', '#46BFBA', '#FDB4AC'];
+              var highlights = ['#FF5A5E', '#5AD3D1', '#FFC870', '#40C000', '#FFC870', '#FF5A5E', '#5AD3D1', '#FFC870', '#5AD3D1', '#FFC870', '#FF5A5E', '#5AD3D1', '#FFC870', '#5AD3D1', '#FFC870', '#FF5A5E', '#5AD3D1', '#FFC870', '#5AD3D1', '#FFC870'];
+              $scope.ProjectChartData = [];
+              var ProjectChartDataList = JSON.parse(data[0]);
+              for (i = 0; i < ProjectChartDataList.length; i++) {
+                  var dataItem = new Object();
+                  dataItem.value = ProjectChartDataList[i].value;
+                  dataItem.label = ProjectChartDataList[i].label;
+                  dataItem.color = colors[i];
+                  dataItem.highlight = highlights[i];
+                  $scope.ProjectChartData.push(dataItem);
+              }
+          }
+      }).
+      error(function (data, status, headers, config) {
+          // called asynchronously if an error occurs
+          // or server returns response with an error status.
+          $scope.AllResources = -1;
+      });
+    };
+
+    $scope.ProjectChartOptions = {
+
+        // Sets the chart to be responsive
+        responsive: true,
+
+        //Boolean - Whether we should show a stroke on each segment
+        segmentShowStroke: true,
+
+        //String - The colour of each segment stroke
+        segmentStrokeColor: '#fff',
+
+        //Number - The width of each segment stroke
+        segmentStrokeWidth: 2,
+
+        //Number - The percentage of the chart that we cut out of the middle
+        percentageInnerCutout: 50, // This is 0 for Pie charts
+
+        //Number - Amount of animation steps
+        animationSteps: 100,
+
+        //String - Animation easing effect
+        animationEasing: 'easeOutQuint',
+
+        //Boolean - Whether we animate the rotation of the Doughnut
+        animateRotate: true,
+
+        //Boolean - Whether we animate scaling the Doughnut from the centre
+        animateScale: false,
+
+        //String - A legend template
+        legendTemplate: '<ul class="tc-chart-js-legend"><% for (var i=0; i<segments.length; i++){%><li><span style="background-color:<%=segments[i].fillColor%>"></span><%if(segments[i].label){%><%=segments[i].label%><%}%></li><%}%></ul>'
+
+    };
+
+    // Project Distribution Chart
+    $scope.UpdateProjectDistributionChart = function () {
+        $http({
+            method: 'GET',
+            url: 'api/Dashboard/GetProjectDistributionChartData?authToken=' + $scope.UserIdentity + "-" + $scope.UserPassword
+        }).
+      success(function (data, status, headers, config) {
+          if (data != null) {
+              //debugger;
+
+              $scope.ProjectDistLabels = JSON.parse(data[0]);
+              $scope.ProjectDistData = JSON.parse(data[1]);
+
+              $scope.ProjectDistributionData.labels = JSON.parse(data[0]);
+              $scope.ProjectDistributionData.datasets[0].data = JSON.parse(data[1]);
+
+          }
+      }).
+      error(function (data, status, headers, config) {
+          // called asynchronously if an error occurs
+          // or server returns response with an error status.
+
+      });
+    };
+
+    $scope.ProjectDistributionData = {
+        labels: $scope.ProjectDistLabels,
+        datasets: [
+          {
+              label: 'No. of projects by month',
+              fillColor: '#0cc09f',
+              strokeColor: 'rgba(220,220,220,0.8)',
+              highlightFill: '#0aac8e',
+              highlightStroke: 'rgba(220,220,220,1)',
+              data: $scope.ProjectDistData
+          }
+        ]
+    };
+
+    $scope.ProjectDistributionOptions = {
+
+        // Sets the chart to be responsive
+        responsive: true,
+
+        //Boolean - Whether the scale should start at zero, or an order of magnitude down from the lowest value
+        scaleBeginAtZero: true,
+
+        //Boolean - Whether grid lines are shown across the chart
+        scaleShowGridLines: true,
+
+        //String - Colour of the grid lines
+        scaleGridLineColor: "rgba(0,0,0,.05)",
+
+        //Number - Width of the grid lines
+        scaleGridLineWidth: 1,
+
+        //Boolean - If there is a stroke on each bar
+        barShowStroke: true,
+
+        //Number - Pixel width of the bar stroke
+        barStrokeWidth: 2,
+
+        //Number - Spacing between each of the X value sets
+        barValueSpacing: 5,
+
+        //Number - Spacing between data sets within X values
+        barDatasetSpacing: 1,
+
+        //String - A legend template
+        legendTemplate: '<div class="tc-chart-js-legend"><% for (var i=0; i<datasets.length; i+=3){%><span style="background-color:<%=datasets[i].fillColor%>"></span><%if(i<datasets.length){%><%=datasets[i].label%><%}%><%if(i+1<datasets.length){%><span style="background-color:<%=datasets[i+1].fillColor%>"></span> &nbsp; <%=datasets[i+1].label%><%}%><%if(i+2<datasets.length){%><span style="background-color:<%=datasets[i+2].fillColor%>"></span><%=datasets[i+2].label%><%}%><%}%></div>'
+    };
+
+    // Resource Demand Chart
+    $scope.UpdateSoldProposedChart = function () {
+        $http({
+            method: 'GET',
+            url: 'api/Dashboard/GetSoldProposedChartData?authToken=' + $scope.UserIdentity + "-" + $scope.UserPassword
+        }).
+      success(function (data, status, headers, config) {
+          if (data != null) {
+              //debugger;
+              $scope.SoldProposedChartLabels = JSON.parse(data[0]);
+              $scope.SoldProjectsChartData = JSON.parse(data[1]);
+              $scope.ProposedProjectsChartData = JSON.parse(data[2]);
+
+              $scope.SoldProposedData.labels = $scope.SoldProposedChartLabels;
+              $scope.SoldProposedData.datasets[0].data = $scope.SoldProjectsChartData;
+              $scope.SoldProposedData.datasets[1].data = $scope.ProposedProjectsChartData;
+          }
+      }).
+      error(function (data, status, headers, config) {
+          // called asynchronously if an error occurs
+          // or server returns response with an error status.
+          $scope.AllResources = -1;
+      });
+    };
+
+    $scope.SoldProposedData = {
+        labels: $scope.SoldProposedChartLabels,
+        datasets: [
+          {
+              label: 'Sold resource needs',
+              fillColor: 'rgba(320,220,220,0.2)',
+              strokeColor: 'rgba(220,220,220,1)',
+              pointColor: 'rgba(220,220,220,1)',
+              pointStrokeColor: '#fff',
+              pointHighlightFill: '#fff',
+              pointHighlightStroke: 'rgba(220,220,220,1)',
+              data: $scope.SoldProjectsChartData
+          },
+          {
+              label: 'Proposed resource needs',
+              fillColor: 'rgba(151,187,205,0.2)',
+              strokeColor: 'rgba(151,187,205,1)',
+              pointColor: 'rgba(151,187,205,1)',
+              pointStrokeColor: '#fff',
+              pointHighlightFill: '#fff',
+              pointHighlightStroke: 'rgba(151,187,205,1)',
+              data: $scope.ProposedProjectsChartData
+          }
+        ]
+    };
+
+    $scope.SoldProposedOptions = {
+
+        // Sets the chart to be responsive
+        responsive: true,
+
+        ///Boolean - Whether grid lines are shown across the chart
+        scaleShowGridLines: true,
+
+        //String - Colour of the grid lines
+        scaleGridLineColor: "rgba(0,0,0,.05)",
+
+        //Number - Width of the grid lines
+        scaleGridLineWidth: 1,
+
+        //Boolean - Whether the line is curved between points
+        bezierCurve: true,
+
+        //Number - Tension of the bezier curve between points
+        bezierCurveTension: 0.4,
+
+        //Boolean - Whether to show a dot for each point
+        pointDot: true,
+
+        //Number - Radius of each point dot in pixels
+        pointDotRadius: 4,
+
+        //Number - Pixel width of point dot stroke
+        pointDotStrokeWidth: 1,
+
+        //Number - amount extra to add to the radius to cater for hit detection outside the drawn point
+        pointHitDetectionRadius: 20,
+
+        //Boolean - Whether to show a stroke for datasets
+        datasetStroke: true,
+
+        //Number - Pixel width of dataset stroke
+        datasetStrokeWidth: 2,
+
+        //Boolean - Whether to fill the dataset with a colour
+        datasetFill: true,
+
+        // Function - on animation progress
+        onAnimationProgress: function () { },
+
+        // Function - on animation complete
+        onAnimationComplete: function () { },
+
+        //String - A legend template
+        legendTemplate: '<ul class="tc-chart-js-legend"><% for (var i=0; i<datasets.length; i++){%><li><span style="background-color:<%=datasets[i].strokeColor%>"></span><%if(datasets[i].label){%><%=datasets[i].label%><%}%></li><%}%></ul>'
+    };
+
+    $scope.getKeyUpdates();
+    $scope.getProjects();
+    $scope.getDashboardCount();
+    $scope.UpdateTechChart();
+    $scope.UpdateProjectDistributionChart();
+    $scope.UpdateSoldProposedChart();
+}]);
 AUDashboardApp.controller('DashboardController', ['$scope', '$http', function ($scope, $http) {
 
     $scope.UserIdentity = null;
     $scope.UserPassword = null;
     $scope.UserValidated = false;
     $scope.LoginMessage = null;
+
     debugger;
+    if (getCookie('UserIdentity') != "") {
+        $scope.UserIdentity = getCookie('UserIdentity');
+    }
+    if (getCookie('UserPassword') != "") {
+        $scope.UserPassword = getCookie('UserPassword');
+    }
+    if (getCookie('UserValidated') != "") {
+        $scope.UserValidated = getCookie('UserValidated');
+    }   
     $scope.ValidateUserLogin = function () {
         $http({
             method: 'GET',
@@ -60,8 +412,9 @@ AUDashboardApp.controller('DashboardController', ['$scope', '$http', function ($
                 $scope.LoginMessage = "* user name/password not correct";
             else {
                 $scope.LoginMessage = null;
-
-
+                document.cookie = "UserIdentity=" + $scope.UserIdentity + "; path=/";
+                document.cookie = "UserPassword=" + $scope.UserPassword + "; path=/";
+                document.cookie = "UserValidated=" + $scope.UserValidated + "; path=/";
                 $http({
                     method: 'GET',
                     url: 'api/Dashboard/GetDashboardCounts?authToken=' + $scope.UserIdentity + "-" + $scope.UserPassword
@@ -185,7 +538,7 @@ AUDashboardApp.controller('DashboardController', ['$scope', '$http', function ($
                           debugger;
                           $scope.ProjectChartData = [];
                           var ProjectChartDataList = JSON.parse(data[0]);
-                          for (i = 0; i <= ProjectChartDataList.length; i++) {
+                          for (i = 0; i < ProjectChartDataList.length; i++) {
                               var dataItem = new Object();
                               dataItem.value = ProjectChartDataList[i].Count;
                               dataItem.label = ProjectChartDataList[i].ProjectStatus;
@@ -293,8 +646,10 @@ AUDashboardApp.controller('DashboardController', ['$scope', '$http', function ($
         $scope.LoginMessage = null;
     }
 
-
-
+    var downloadServiceUrl = "SendMail.asmx/SendReport";
+    $scope.Download = function () {
+        window.open('#/CurrentStatus', '_blank');
+    }
 }]);
 
 AUDashboardApp.controller('ActionItemsController', ['$scope', '$filter', '$http', function ($scope, $filter, $http) {
@@ -1403,7 +1758,7 @@ AUDashboardApp.controller('OperationsController', ['$scope', '$http', function (
               var highlights = ['#FF5A5E', '#5AD3D1', '#FFC870', '#40C000', '#FFC870', '#FF5A5E', '#5AD3D1', '#FFC870', '#5AD3D1', '#FFC870', '#FF5A5E', '#5AD3D1', '#FFC870', '#5AD3D1', '#FFC870', '#FF5A5E', '#5AD3D1', '#FFC870', '#5AD3D1', '#FFC870'];
               $scope.ProjectChartData = [];
               var ProjectChartDataList = JSON.parse(data[0]);
-              for (i = 0; i <= ProjectChartDataList.length; i++) {
+              for (i = 0; i < ProjectChartDataList.length; i++) {
                   var dataItem = new Object();
                   dataItem.value = ProjectChartDataList[i].value;
                   dataItem.label = ProjectChartDataList[i].label;
@@ -1915,3 +2270,15 @@ angular.module('AUDashboardApp').filter('changeDateFormat', function($filter)
         //return new Date(input);
     };
 });
+
+//javascript function to cookie manipulation
+function getCookie(cname) {
+    var name = cname + "=";
+    var ca = document.cookie.split(';');
+    for (var i = 0; i < ca.length; i++) {
+        var c = ca[i];
+        while (c.charAt(0) == ' ') c = c.substring(1);
+        if (c.indexOf(name) == 0) return c.substring(name.length, c.length);
+    }
+    return "";
+}

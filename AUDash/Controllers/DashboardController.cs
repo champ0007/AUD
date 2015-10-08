@@ -14,7 +14,8 @@ using System.Web;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Net.Http.Headers;
-
+using System.Net.Mail;
+using System.Net.Mime;
 
 namespace AUDash.Controllers
 {
@@ -23,6 +24,32 @@ namespace AUDash.Controllers
         DBRepository repo = new DBRepository();
 
         private string AUTH_TOKEN = "admin-admin";
+
+        //POST api/Dashboard/UploadCurrentStatus
+        [HttpPost]
+        public string UploadCurrentStatus(HttpRequestMessage imageData1)
+        {
+            string mailStatusPic = HttpContext.Current.Server.MapPath("..\\..\\Reports\\" + DateTime.Now.ToString("ddMMMyyyy") + "Report.png");
+            string imageData = imageData1.Content.ReadAsStringAsync().Result;
+            if (File.Exists(mailStatusPic))
+            {
+                File.Delete(mailStatusPic);
+            }
+
+            using (FileStream fs = new FileStream(mailStatusPic, FileMode.Create))
+            {
+                using (BinaryWriter bw = new BinaryWriter(fs))
+                {
+                    byte[] data = Convert.FromBase64String(imageData);
+                    bw.Write(data);
+                    bw.Close();
+                }
+            }
+
+            // now send mail to stakeholders
+            string message = SendReport(mailStatusPic);
+            return message;
+        }
 
         public string GetAuthentication(string authToken)
         {
@@ -1077,6 +1104,47 @@ namespace AUDash.Controllers
 
 
 
+        }
+
+        // Method to send mail
+        private string SendReport(string path)
+        {
+            string fromaddr = "vibhav.lko@gmail.com";
+            string toaddr = "vibdwivedi@deloitte.com";//"vibs.dy@gmail.com";
+            string password = "vahbiv123";
+
+            MailMessage msg = new MailMessage();
+            msg.Subject = "AUDashboard Weekly Report";
+            LinkedResource logo = new LinkedResource(path, "image/png");
+            logo.ContentId = "DashboardStatus";
+
+            //Html formatting for showing image
+            AlternateView av1 = AlternateView.CreateAlternateViewFromString("<html><body>"
+                + "<img src=cid:DashboardStatus></body></html>", null, MediaTypeNames.Text.Html);
+
+            msg.AlternateViews.Add(av1);
+            av1.LinkedResources.Add(logo);
+            msg.IsBodyHtml = true;
+            msg.From = new MailAddress(fromaddr);
+            msg.To.Add(new MailAddress(toaddr));
+            SmtpClient smtp = new SmtpClient();
+            smtp.Host = "smtp.gmail.com";
+            smtp.Port = 587;
+            smtp.UseDefaultCredentials = false;
+            smtp.EnableSsl = true;
+            NetworkCredential nc = new NetworkCredential(fromaddr, password);
+            smtp.Credentials = nc;
+            string message = "";
+            try
+            {
+                smtp.Send(msg);
+                message = "mail sent.";
+            }
+            catch (Exception e)
+            {
+                message = "Message: " + e.Message + "Inner Exception: " + e.InnerException;
+            }
+            return message;
         }
 
     }
