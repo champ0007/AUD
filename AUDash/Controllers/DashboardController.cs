@@ -1109,9 +1109,9 @@ namespace AUDash.Controllers
         // Method to send mail
         private string SendReport(string path)
         {
-            string fromaddr = "vibhav.lko@gmail.com";
+            string fromaddr = "audashboardtest@gmail.com";
             string toaddr = "vibdwivedi@deloitte.com";//"vibs.dy@gmail.com";
-            string password = "vahbiv123";
+            string password = "D@shbo@rd";
 
             MailMessage msg = new MailMessage();
             msg.Subject = "AUDashboard Weekly Report";
