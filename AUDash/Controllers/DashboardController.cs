@@ -31,23 +31,28 @@ namespace AUDash.Controllers
         {
             string mailStatusPic = HttpContext.Current.Server.MapPath("..\\..\\Reports\\" + DateTime.Now.ToString("ddMMMyyyy") + "Report.png");
             string imageData = imageData1.Content.ReadAsStringAsync().Result;
-            if (File.Exists(mailStatusPic))
-            {
-                File.Delete(mailStatusPic);
-            }
+            //if (File.Exists(mailStatusPic))
+            //{
+            //    File.Delete(mailStatusPic);
+            //}
 
-            using (FileStream fs = new FileStream(mailStatusPic, FileMode.Create))
-            {
-                using (BinaryWriter bw = new BinaryWriter(fs))
-                {
-                    byte[] data = Convert.FromBase64String(imageData);
-                    bw.Write(data);
-                    bw.Close();
-                }
-            }
+            //using (FileStream fs = new FileStream(mailStatusPic, FileMode.Create))
+            //{
+            //    using (BinaryWriter bw = new BinaryWriter(fs))
+            //    {
+            //        byte[] data = Convert.FromBase64String(imageData);
+            //        bw.Write(data);
+            //        bw.Close();
+            //    }
+            //}
+
+            byte[] d = Convert.FromBase64String(imageData);
+            
+            MemoryStream ms = new MemoryStream(d);
 
             // now send mail to stakeholders
-            string message = SendReport(mailStatusPic);
+            //string message = SendReport(mailStatusPic);
+            string message = SendReport(ms);
             return message;
         }
 
@@ -1107,7 +1112,7 @@ namespace AUDash.Controllers
         }
 
         // Method to send mail
-        private string SendReport(string path)
+        private string SendReport(Stream path)
         {
             string fromaddr = "audashboardtest@gmail.com";
             string toaddr = "vibdwivedi@deloitte.com";//"vibs.dy@gmail.com";
@@ -1115,7 +1120,8 @@ namespace AUDash.Controllers
 
             MailMessage msg = new MailMessage();
             msg.Subject = "AUDashboard Weekly Report";
-            LinkedResource logo = new LinkedResource(path, "image/png");
+            //LinkedResource logo = new LinkedResource(path, "image/png");
+            LinkedResource logo = new LinkedResource(path);
             logo.ContentId = "DashboardStatus";
 
             //Html formatting for showing image

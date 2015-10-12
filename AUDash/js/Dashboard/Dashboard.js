@@ -49,39 +49,41 @@ AUDashboardApp.controller("CurrentStatusController", ['$scope', '$http','$timeou
     var STORAGE_ID = 'Projects';
     $scope.AllProjectDetails = {};
     $scope.ProposedProjectDetails = {};
+    $scope.watchingYou = 0;
 
-    $scope.$on('$viewContentLoaded', function () {
-        $timeout(function () {
-            var downloadServiceUrl = "SendMail.asmx/SendReport";
-            $scope.Download = function () {
-                html2canvas(document.body, {
-                    onrendered: function (canvas) {
-                        var Pic = canvas.toDataURL("image/png");
-                        Pic = Pic.replace(/^data:image\/(png|jpg);base64,/, "");
+    $scope.Download = function () {
+        html2canvas(document.body, {
+            onrendered: function (canvas) {
+                var Pic = canvas.toDataURL("image/png");
+                Pic = Pic.replace(/^data:image\/(png|jpg);base64,/, "");
 
-                        // Sending the image data to Server
-                        
-                        $http({
-                            method: 'POST',
-                            //url: 'SendMail.asmx/UploadPic',
-                            url: 'api/Dashboard/UploadCurrentStatus',
-                            data: Pic,//JSON.stringify(JSON.stringify(Pic))
-                            //data: {
-                            //    imageData: Pic
-                            //},
-                            contentType: 'application/json, charset=utf-8',
-                            //dataType: 'json',
-                        }).success(function (msg) {
-                            alert(msg);
-                        }).error(function (msg) {
-                            alert(msg);
-                        });
-                    }
+                // Sending the image data to Server
+
+                $http({
+                    method: 'POST',
+                    //url: 'SendMail.asmx/UploadPic',
+                    url: 'api/Dashboard/UploadCurrentStatus',
+                    data: Pic,//JSON.stringify(JSON.stringify(Pic))
+                    //data: {
+                    //    imageData: Pic
+                    //},
+                    contentType: 'application/json, charset=utf-8',
+                    //dataType: 'json',
+                }).success(function (msg) {
+                    alert(msg);
+                }).error(function (msg) {
+                    alert(msg.ExceptionMessage);
                 });
             }
-            $scope.Download();
-        }, 5000);
-    });
+        });
+    }
+
+    //$scope.$on('$viewContentLoaded', function () {
+    //    $timeout(function () {
+    //        var downloadServiceUrl = "SendMail.asmx/SendReport";
+                        
+    //    }, 5000);
+    //});
 
     // get proposed/all projects
     $scope.getProjects = function () {
@@ -93,6 +95,8 @@ AUDashboardApp.controller("CurrentStatusController", ['$scope', '$http','$timeou
             if (data != 'null') {
                 $scope.AllProjectDetails = JSON.parse(JSON.parse(data));
                 $scope.ProposedProjectDetails = $filter('filter')($scope.AllProjectDetails, { Stage: "Proposal" });
+
+                $scope.watchingYou = $scope.watchingYou + 1;
             }
         }).
         error(function (data, status, headers, config) {
@@ -101,7 +105,14 @@ AUDashboardApp.controller("CurrentStatusController", ['$scope', '$http','$timeou
         });
 
     };
-
+    $scope.$watch('watchingYou', function (newValue, oldValue) {
+        // when all service calls are over.
+        if (oldValue != newValue && newValue == 6) {
+            $timeout(function(){
+                $scope.Download();
+            },500);
+        }
+    })
     // get key updates
     $scope.getKeyUpdates = function () {
         $http({
@@ -111,6 +122,7 @@ AUDashboardApp.controller("CurrentStatusController", ['$scope', '$http','$timeou
         success(function (data, status, headers, config) {
             if (data != 'null') {
                 $scope.keyUpdates = JSON.parse(JSON.parse(data));
+                $scope.watchingYou = $scope.watchingYou + 1;
             }
         }).
         error(function (data, status, headers, config) {
@@ -126,7 +138,9 @@ AUDashboardApp.controller("CurrentStatusController", ['$scope', '$http','$timeou
             $scope.$parent.PendingInvoices = JSON.parse(JSON.parse(data))[0];
             $scope.$parent.ActiveProjects = JSON.parse(JSON.parse(data))[1];
             $scope.$parent.OpenActionItems = JSON.parse(JSON.parse(data))[2];
-            $scope.$parent. ActiveResources = JSON.parse(JSON.parse(data))[3];
+            $scope.$parent.ActiveResources = JSON.parse(JSON.parse(data))[3];
+
+            $scope.watchingYou = $scope.watchingYou + 1;
 
         }).error(function (data, status, headers, config) {
             // called asynchronously if an error occurs
@@ -159,6 +173,8 @@ AUDashboardApp.controller("CurrentStatusController", ['$scope', '$http','$timeou
                   dataItem.highlight = highlights[i];
                   $scope.ProjectChartData.push(dataItem);
               }
+
+              $scope.watchingYou = $scope.watchingYou + 1;
           }
       }).
       error(function (data, status, headers, config) {
@@ -192,7 +208,7 @@ AUDashboardApp.controller("CurrentStatusController", ['$scope', '$http','$timeou
         animationEasing: 'easeOutQuint',
 
         //Boolean - Whether we animate the rotation of the Doughnut
-        animateRotate: true,
+        animateRotate: false,
 
         //Boolean - Whether we animate scaling the Doughnut from the centre
         animateScale: false,
@@ -218,6 +234,7 @@ AUDashboardApp.controller("CurrentStatusController", ['$scope', '$http','$timeou
               $scope.ProjectDistributionData.labels = JSON.parse(data[0]);
               $scope.ProjectDistributionData.datasets[0].data = JSON.parse(data[1]);
 
+              $scope.watchingYou = $scope.watchingYou + 1;
           }
       }).
       error(function (data, status, headers, config) {
@@ -242,7 +259,7 @@ AUDashboardApp.controller("CurrentStatusController", ['$scope', '$http','$timeou
     };
 
     $scope.ProjectDistributionOptions = {
-
+        animation: false,
         // Sets the chart to be responsive
         responsive: true,
 
@@ -290,6 +307,8 @@ AUDashboardApp.controller("CurrentStatusController", ['$scope', '$http','$timeou
               $scope.SoldProposedData.labels = $scope.SoldProposedChartLabels;
               $scope.SoldProposedData.datasets[0].data = $scope.SoldProjectsChartData;
               $scope.SoldProposedData.datasets[1].data = $scope.ProposedProjectsChartData;
+
+              $scope.watchingYou = $scope.watchingYou + 1;
           }
       }).
       error(function (data, status, headers, config) {
@@ -326,7 +345,7 @@ AUDashboardApp.controller("CurrentStatusController", ['$scope', '$http','$timeou
     };
 
     $scope.SoldProposedOptions = {
-
+        animation: false,
         // Sets the chart to be responsive
         responsive: true,
 
