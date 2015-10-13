@@ -79,6 +79,7 @@ AUDashboardApp.controller("CurrentStatusController", ['$scope', '$http','$timeou
                     //dataType: 'json',
                 }).success(function (msg) {
                     alert(msg);
+                    //window.close();
                 }).error(function (msg) {
                     alert(msg.ExceptionMessage);
                 });
@@ -809,6 +810,8 @@ AUDashboardApp.controller('ActiveProjectsController', ['$scope', '$filter', '$ht
     $scope.currentProjectPage = 1;
     $scope.pageSize = 10;
     $scope.ProjectPerPage = 10;
+    $scope.chartLabels = {};
+    $scope.chartData = {};
 
     var ProjectDetails = $scope.ActiveProjectDetails = [];
 
@@ -1277,6 +1280,7 @@ AUDashboardApp.controller('NewActionItemsController', ['$scope', '$filter', '$ht
     $scope.currentToDoPage = 1;
     $scope.pageSize = 5;
     $scope.ToDoPerPage = 5;
+    $scope.ActionItemChartData = {};
 
     var NewToDos = $scope.NewToDos = [];
 
@@ -1417,7 +1421,18 @@ AUDashboardApp.controller('NewActionItemsController', ['$scope', '$filter', '$ht
 }]);
 
 AUDashboardApp.controller('OperationsController', ['$scope', '$http', function ($scope, $http) {
-
+    $scope.ProjectChartData = {};
+    $scope.ProjectDistLabels = {};
+    $scope.ProjectDistData = {};
+    $scope.ResourceMonthData = {};
+    $scope.ResourceMonthLabels = {};
+    $scope.revenueChartCurrData = {};
+    $scope.revenueChartPrevData = {};
+    $scope.YoYLabels = {};
+    $scope.YoYInnerData = {};
+    $scope.SoldProposedChartLabels = {};
+    $scope.SoldProjectsChartData = {};
+    $scope.ProposedProjectsChartData = {};
     //Start Key Updates
     var keyUpdates = $scope.keyUpdates = [];
 
