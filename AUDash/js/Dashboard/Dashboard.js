@@ -49,6 +49,14 @@ AUDashboardApp.controller("CurrentStatusController", ['$scope', '$http','$timeou
     var STORAGE_ID = 'Projects';
     $scope.AllProjectDetails = {};
     $scope.ProposedProjectDetails = {};
+    $scope.ProjectChartData = {};
+    $scope.ProjectDistributionData = {};
+    $scope.ProjectDistLabels = {};
+    $scope.ProjectDistData = {};
+    $scope.SoldProposedChartLabels = {};
+    $scope.SoldProjectsChartData = {};
+    $scope.ProposedProjectsChartData = {};
+
     $scope.watchingYou = 0;
 
     $scope.Download = function () {
@@ -1052,6 +1060,8 @@ AUDashboardApp.controller('ActiveResourcesController', ['$scope', '$http', 'File
     $scope.currentPage = 1;
     $scope.currentGSSPage = 1;
     $scope.pageSize = 10;
+    $scope.chartLabels = {},
+    $scope.chartData = {};
 
     var resources = $scope.AllResources = [];
 
@@ -1154,8 +1164,6 @@ AUDashboardApp.controller('ActiveResourcesController', ['$scope', '$http', 'File
 
     };
 
-    var chartLabels, chartData;
-
     $scope.UpdateChart = function () {
         $http({
             method: 'GET',
@@ -1163,8 +1171,11 @@ AUDashboardApp.controller('ActiveResourcesController', ['$scope', '$http', 'File
         }).
       success(function (data, status, headers, config) {
           if (data != null) {
-              chartLabels = JSON.parse(data[0]);
-              chartData = JSON.parse(data[1]);
+              $scope.chartLabels = JSON.parse(data[0]);
+              $scope.chartData = JSON.parse(data[1]);
+              //$scope.UpdateResourceChart();
+              $scope.ResourceChartData.datasets[0].data = $scope.chartData;
+              $scope.ResourceChartData.labels = $scope.chartLabels;
           }
       }).
       error(function (data, status, headers, config) {
@@ -1175,8 +1186,9 @@ AUDashboardApp.controller('ActiveResourcesController', ['$scope', '$http', 'File
 
 
         // Chart.js Data
+        //$scope.UpdateResourceChart = function (){
         $scope.ResourceChartData = {
-            labels: chartLabels, // ['AMP', 'Telstra', 'QUU', 'AusSuper', 'ANZ', 'Caltex'],
+            labels: $scope.chartLabels, // ['AMP', 'Telstra', 'QUU', 'AusSuper', 'ANZ', 'Caltex'],
             datasets: [
               {
                   label: 'My First dataset',
@@ -1184,11 +1196,12 @@ AUDashboardApp.controller('ActiveResourcesController', ['$scope', '$http', 'File
                   strokeColor: '#000000',
                   highlightFill: '#000000',
                   highlightStroke: '#FFFFFF',
-                  data: chartData //[65, 59, 80, 81, 56, 55]
+                  data: $scope.chartData //[65, 59, 80, 81, 56, 55]
               }
 
             ]
         };
+        //};
 
         // Chart.js Options
         $scope.ResourceChartOptions = {
@@ -1215,7 +1228,7 @@ AUDashboardApp.controller('ActiveResourcesController', ['$scope', '$http', 'File
             barStrokeWidth: 2,
 
             //Number - Spacing between each of the X value sets
-            barValueSpacing: 15,
+            barValueSpacing: 10,//15,
 
             //Number - Spacing between data sets within X values
             barDatasetSpacing: 1,
