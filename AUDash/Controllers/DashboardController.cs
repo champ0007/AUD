@@ -23,7 +23,7 @@ namespace AUDash.Controllers
     {
         DBRepository repo = new DBRepository();
 
-        private string AUTH_TOKEN = "admin-admin";
+        private string AUTH_TOKEN = "admin-Gu3ssWh@t?";
 
         //POST api/Dashboard/UploadCurrentStatus
         [HttpPost]
