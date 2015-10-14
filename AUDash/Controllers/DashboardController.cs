@@ -29,30 +29,38 @@ namespace AUDash.Controllers
         [HttpPost]
         public string UploadCurrentStatus(HttpRequestMessage imageData1)
         {
-            string mailStatusPic = HttpContext.Current.Server.MapPath("..\\..\\Reports\\" + DateTime.Now.ToString("ddMMMyyyy") + "Report.png");
-            string imageData = imageData1.Content.ReadAsStringAsync().Result;
-            //if (File.Exists(mailStatusPic))
-            //{
-            //    File.Delete(mailStatusPic);
-            //}
+            string message = "";
+            try
+            {
+                //string mailStatusPic = HttpContext.Current.Server.MapPath("..\\..\\Reports\\" + DateTime.Now.ToString("ddMMMyyyy") + "Report.png");
+                string imageData = imageData1.Content.ReadAsStringAsync().Result;
+                //if (File.Exists(mailStatusPic))
+                //{
+                //    File.Delete(mailStatusPic);
+                //}
 
-            //using (FileStream fs = new FileStream(mailStatusPic, FileMode.Create))
-            //{
-            //    using (BinaryWriter bw = new BinaryWriter(fs))
-            //    {
-            //        byte[] data = Convert.FromBase64String(imageData);
-            //        bw.Write(data);
-            //        bw.Close();
-            //    }
-            //}
+                //using (FileStream fs = new FileStream(mailStatusPic, FileMode.Create))
+                //{
+                //    using (BinaryWriter bw = new BinaryWriter(fs))
+                //    {
+                //        byte[] data = Convert.FromBase64String(imageData);
+                //        bw.Write(data);
+                //        bw.Close();
+                //    }
+                //}
 
-            byte[] d = Convert.FromBase64String(imageData);
-            
-            MemoryStream ms = new MemoryStream(d);
+                byte[] d = Convert.FromBase64String(imageData);
 
-            // now send mail to stakeholders
-            //string message = SendReport(mailStatusPic);
-            string message = SendReport(ms);
+                MemoryStream ms = new MemoryStream(d);
+
+                // now send mail to stakeholders
+                //string message = SendReport(mailStatusPic);
+                message = SendReport(ms);
+            }
+            catch (Exception e)
+            {
+                message = "Message: " + e.Message + " \n Inner Exception: " + e.InnerException;
+            }
             return message;
         }
 
@@ -363,7 +371,7 @@ namespace AUDash.Controllers
                 }
             }
             catch (Exception ex) { }
-            
+
 
         }
 
@@ -462,7 +470,7 @@ namespace AUDash.Controllers
             return repo.GetReferenceData("Invoices");
         }
 
-        
+
         public HttpResponseMessage GetInvoiceFile()
         {
             HttpResponseMessage result = null;
@@ -475,13 +483,13 @@ namespace AUDash.Controllers
                 {
 
                     MemoryStream invoiceMS = new MemoryStream();
-                    List<Invoice> invoices = JsonConvert.DeserializeObject<List<Invoice>>(repo.GetReferenceData("Invoices"));                    
+                    List<Invoice> invoices = JsonConvert.DeserializeObject<List<Invoice>>(repo.GetReferenceData("Invoices"));
                     using (ExcelPackage pck = new ExcelPackage(new FileInfo("Invoices")))
                     {
                         ExcelWorksheet ws = pck.Workbook.Worksheets.Add("Invoices");
                         ws.Cells["A1"].LoadFromCollection<Invoice>(invoices, true);
                         pck.SaveAs(invoiceMS);
-                        
+
                         result = Request.CreateResponse(HttpStatusCode.OK);
                         invoiceMS.Seek(0, SeekOrigin.Begin);
                         result.Content = new StreamContent(invoiceMS);
@@ -489,7 +497,7 @@ namespace AUDash.Controllers
                         result.Content.Headers.Add("x-filename", "Invoices.xls");
                         result.Content.Headers.ContentDisposition = new System.Net.Http.Headers.ContentDispositionHeaderValue("attachment");
                         result.Content.Headers.ContentDisposition.FileName = "Invoices.xls";
-                    }                    
+                    }
                 }
                 else
                 {
@@ -1117,38 +1125,37 @@ namespace AUDash.Controllers
             string fromaddr = "audashboardtest@gmail.com";
             string toaddr = "vibdwivedi@deloitte.com";//"vibs.dy@gmail.com";
             string password = "D@shbo@rd";
-
-            MailMessage msg = new MailMessage();
-            msg.Subject = "AUDashboard Weekly Report";
-            //LinkedResource logo = new LinkedResource(path, "image/png");
-            LinkedResource logo = new LinkedResource(path);
-            logo.ContentId = "DashboardStatus";
-
-            //Html formatting for showing image
-            AlternateView av1 = AlternateView.CreateAlternateViewFromString("<html><body>"
-                + "<img src=cid:DashboardStatus></body></html>", null, MediaTypeNames.Text.Html);
-
-            msg.AlternateViews.Add(av1);
-            av1.LinkedResources.Add(logo);
-            msg.IsBodyHtml = true;
-            msg.From = new MailAddress(fromaddr);
-            msg.To.Add(new MailAddress(toaddr));
-            SmtpClient smtp = new SmtpClient();
-            smtp.Host = "smtp.gmail.com";
-            smtp.Port = 587;
-            smtp.UseDefaultCredentials = false;
-            smtp.EnableSsl = true;
-            NetworkCredential nc = new NetworkCredential(fromaddr, password);
-            smtp.Credentials = nc;
             string message = "";
             try
             {
+                MailMessage msg = new MailMessage();
+                msg.Subject = "AUDashboard Weekly Report";
+                //LinkedResource logo = new LinkedResource(path, "image/png");
+                LinkedResource logo = new LinkedResource(path);
+                logo.ContentId = "DashboardStatus";
+
+                //Html formatting for showing image
+                AlternateView av1 = AlternateView.CreateAlternateViewFromString("<html><body>"
+                    + "<img src=cid:DashboardStatus></body></html>", null, MediaTypeNames.Text.Html);
+
+                msg.AlternateViews.Add(av1);
+                av1.LinkedResources.Add(logo);
+                msg.IsBodyHtml = true;
+                msg.From = new MailAddress(fromaddr);
+                msg.To.Add(new MailAddress(toaddr));
+                SmtpClient smtp = new SmtpClient();
+                smtp.Host = "smtp.gmail.com";
+                smtp.Port = 587;
+                smtp.UseDefaultCredentials = false;
+                smtp.EnableSsl = true;
+                NetworkCredential nc = new NetworkCredential(fromaddr, password);
+                smtp.Credentials = nc;
                 smtp.Send(msg);
                 message = "mail sent.";
             }
             catch (Exception e)
             {
-                message = "Message: " + e.Message + "Inner Exception: " + e.InnerException;
+                message = "Message: " + e.Message + " \n Inner Exception: " + e.InnerException;
             }
             return message;
         }
