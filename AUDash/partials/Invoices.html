@@ -79,7 +79,7 @@
     <div class="panel panel-blue">
         <div class="panel-heading">
             <i class="fa fa-cloud-download" ng-click="DownloadInvoice('All', 'xls')"></i> Invoices            
-            <i class="fa fa-search"></i> <input ng-model="searchInvoice" class="textSearch" />
+            <i class="fa fa-search"></i> <input ng-model="searchInvoiceFreeText" class="textSearch" />
             <span class="pull-right">
                 Show
                 <select id="filterProjectStage" ng-model="searchInvoice">
@@ -109,7 +109,7 @@
                     <th class="hidden-sm hidden-xs">Comments</th>
                     <th>Payment Received</th>
                 </tr>
-                <tr dir-paginate="invoice in InvoiceDetails  | filter:{PaymentReceived: searchInvoice} | orderBy:sort:reverse | itemsPerPage: 10 track by $index" current-page="currentPage">
+                <tr dir-paginate="invoice in InvoiceDetails  | filter:{PaymentReceived: searchInvoice} | filter: searchInvoiceFreeText | orderBy:sort:reverse | itemsPerPage: 10 track by $index" current-page="currentPage">
                     <td><i class="fa fa-edit" ng-click="EditInvoice(invoice, $index)" data-toggle="modal" data-target=".bs-AddInvoice-modal-lg"> </i></td>
                     <td>
                         <div class="image-upload">
