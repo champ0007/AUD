@@ -1739,6 +1739,12 @@ AUDashboardApp.controller('OperationsController', ['$scope', '$http', function (
         //Number - Spacing between data sets within X values
         barDatasetSpacing: 1,
 
+        // Change Y Axis numbers to Currency Type
+        scaleLabel: function (label) { return '$' + label.value.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ","); },
+
+        // Change Tooltip data numbers to Currency Type
+        multiTooltipTemplate: function (label) { return '$' + label.value.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ","); },
+
         //String - A legend template
         legendTemplate: '<div class="tc-chart-js-legend"><% for (var i=0; i<datasets.length; i+=3){%><span style="background-color:<%=datasets[i].fillColor%>"></span><%if(i<datasets.length){%><%=datasets[i].label%><%}%><%if(i+1<datasets.length){%><span style="background-color:<%=datasets[i+1].fillColor%>"></span> &nbsp; <%=datasets[i+1].label%><%}%><%if(i+2<datasets.length){%><span style="background-color:<%=datasets[i+2].fillColor%>"></span><%=datasets[i+2].label%><%}%><%}%></div>'
         //legendTemplate: '<ul class="tc-chart-js-legend"><% for (var i=0; i<datasets.length; i++){%><li><span style="background-color:<%=datasets[i].fillColor%>"></span><%if(datasets[i].label){%><%=datasets[i].label%><%}%></li><%}%></ul>'
@@ -1788,6 +1794,12 @@ AUDashboardApp.controller('OperationsController', ['$scope', '$http', function (
 
         //Number - Spacing between data sets within X values
         barDatasetSpacing: 5,
+
+        // Change Y Axis numbers to Currency Type
+        scaleLabel: function (label) { return '$' + label.value.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ","); },
+
+        // Change Tooltip data numbers to Currency Type
+        tooltipTemplate: function (label) { return '$' + label.value.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ","); },
 
         //String - A legend template
         legendTemplate: '<div class="tc-chart-js-legend"><% for (var i=0; i<datasets.length; i+=3){%><span style="background-color:<%=datasets[i].fillColor%>"></span><%if(i<datasets.length){%><%=datasets[i].label%><%}%><%if(i+1<datasets.length){%><span style="background-color:<%=datasets[i+1].fillColor%>"></span> &nbsp; <%=datasets[i+1].label%><%}%><%if(i+2<datasets.length){%><span style="background-color:<%=datasets[i+2].fillColor%>"></span><%=datasets[i+2].label%><%}%><%}%></div>'
@@ -2088,7 +2100,7 @@ AUDashboardApp.controller('InvoicesController', ['$scope', '$filter', '$http', '
     };
 
     $scope.DownloadInvoice = function (InvoiceNo, DownloadType) {
-        debugger;
+        //debugger;
         $http({
             method: 'GET',
             cache: false,
@@ -2133,7 +2145,7 @@ AUDashboardApp.controller('InvoicesController', ['$scope', '$filter', '$http', '
                 console.log("saveBlob method failed with the following exception:");
                 console.log(ex);
             }
-            debugger;
+            //debugger;
             if (!success) {
                 // Get the blob url creator
                 var urlCreator = window.URL || window.webkitURL || window.mozURL || window.msURL;
@@ -2318,6 +2330,7 @@ angular.module('AUDashboardApp').filter('changeDateFormat', function($filter)
     };
 });
 
+/******************Helper Methods************************/
 //javascript function to cookie manipulation
 function getCookie(cname) {
     var name = cname + "=";
