@@ -21,6 +21,7 @@ namespace AUDash.Controllers
 {
     public class DashboardController : ApiController
     {
+
         DBRepository repo = new DBRepository();
 
         private string AUTH_TOKEN = "admin-Gu3ssWh@t?";
@@ -121,9 +122,10 @@ namespace AUDash.Controllers
         //GET api/GetSoldProposedChartData
         public List<string> GetSoldProposedChartData(string authToken)
         {
-            //return ParseSoldProposedData(repo.GetReferenceData("Projects"));
+            
             if (authToken.Equals(AUTH_TOKEN))
-                return ParseSoldProposedData(repo.GetReferenceData("Resources"), repo.GetReferenceData("GSSResources"));
+                return ParseSoldProposedData(repo.GetReferenceData("Projects"));
+                //return ParseSoldProposedData(repo.GetReferenceData("Resources"), repo.GetReferenceData("GSSResources"));
             else
                 return new List<string>();
 
@@ -661,6 +663,7 @@ namespace AUDash.Controllers
             {
                 if (ParseProjectStatus(project.Stage) == "Sold")
                 {
+                    
                     PopulateProjects(soldProjects, project, ProjectAttribute.Resources);
                     PopulateProjects(proposedProjects, project, ProjectAttribute.Resources);
                 }
@@ -671,7 +674,7 @@ namespace AUDash.Controllers
             }
 
             List<string> chartData = new List<string>();
-
+            
             chartData.Add(JsonConvert.SerializeObject(soldProjects.Keys.ToList<string>()));
             chartData.Add(JsonConvert.SerializeObject(soldProjects.Values.ToList<int>()));
             chartData.Add(JsonConvert.SerializeObject(proposedProjects.Values.ToList<int>()));
@@ -711,7 +714,7 @@ namespace AUDash.Controllers
                     projectStatus = "Sold";
                     break;
                 case "Completed":
-                    projectStatus = "Sold";
+                    projectStatus = "Completed";
                     break;
                 case "Abandoned / Lost":
                     projectStatus = "Lost";
@@ -729,20 +732,19 @@ namespace AUDash.Controllers
 
             if (attribute.Equals(ProjectAttribute.Resources))
             {
-                incrementedAttribute = Convert.ToInt32(project.TotalResources);
+                incrementedAttribute = Convert.ToInt32(project.TotalResources);                
             }
             else if (attribute.Equals(ProjectAttribute.Project))
             {
                 incrementedAttribute = 1;
 
-            }
-
+            }           
 
             for (DateTime projectDate = Convert.ToDateTime(project.StartDate); projectDate <= Convert.ToDateTime(project.EndDate); projectDate = projectDate.AddMonths(1))
             {
                 if (projects.ContainsKey(((ChartMonths)projectDate.Month).ToString() + projectDate.Year.ToString().Substring(2, 2)))
                 {
-                    projects[((ChartMonths)projectDate.Month).ToString() + projectDate.Year.ToString().Substring(2, 2)] += incrementedAttribute;
+                    projects[((ChartMonths)projectDate.Month).ToString() + projectDate.Year.ToString().Substring(2, 2)] += incrementedAttribute;                   
                 }
             }
         }
@@ -806,6 +808,7 @@ namespace AUDash.Controllers
             }
 
             List<string> chartData = new List<string>();
+            
 
             chartData.Add(JsonConvert.SerializeObject(totalProjects.Keys.ToList<string>()));
             chartData.Add(JsonConvert.SerializeObject(totalProjects.Values.ToList<int>()));
@@ -925,6 +928,7 @@ namespace AUDash.Controllers
             return returnList;
 
         }
+
 
         private List<string> ParseSoldProposedData(string resources, string GSSresources)
         {
@@ -1123,7 +1127,7 @@ namespace AUDash.Controllers
         private string SendReport(Stream path)
         {
             string fromaddr = "audashboardtest@gmail.com";
-            string toaddr = "vibdwivedi@deloitte.com";//"vibs.dy@gmail.com";
+            string toaddr = "tusharma@deloitte.com";//"vibs.dy@gmail.com";
             string password = "D@shbo@rd";
             string message = "";
             try
@@ -1145,7 +1149,7 @@ namespace AUDash.Controllers
                 msg.To.Add(new MailAddress(toaddr));
                 SmtpClient smtp = new SmtpClient();
                 smtp.Host = "smtp.gmail.com";
-                smtp.Port = 587;
+                smtp.Port = 465;
                 smtp.UseDefaultCredentials = false;
                 smtp.EnableSsl = true;
                 NetworkCredential nc = new NetworkCredential(fromaddr, password);

@@ -29,7 +29,7 @@
                 <span class="pull-right">
                     Show
                     <select id="filterProjectStage" ng-model="searchProject">
-                        <option value="">All</option>
+                        <option value="">Sold</option>
                     </select>
                     <!--<i class="fa fa-plus" data-toggle="modal" data-target=".bs-AddProjects-modal-lg" ng-click="OpenAddProject()"></i>-->
                 </span>
@@ -48,7 +48,7 @@
 
                     </tr>
                     <!--<tr ng-repeat="project in ActiveProjectDetails | filter:{Stage: searchProject} | orderBy:predicate:reverse track by $index">-->
-                    <tr dir-paginate="project in AllProjectDetails |  filter: searchProject | orderBy:predicate:reverse  |itemsPerPage: 5">
+                    <tr dir-paginate="project in AllProjectDetails |  filter: {Stage: searchProject} | orderBy:predicate:reverse  |itemsPerPage:10">
                         <!--<td><i class="fa fa-edit" ng-click="EditProject(project, $index)" data-toggle="modal" data-target=".bs-AddProjects-modal-lg"> </i></td>-->
                         <td>{{project.Client}}</td>
                         <td>{{project.ProjectName}}</td>
