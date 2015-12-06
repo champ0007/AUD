@@ -16,6 +16,7 @@ using System.Text.RegularExpressions;
 using System.Net.Http.Headers;
 using System.Net.Mail;
 using System.Net.Mime;
+using SendGrid;
 
 namespace AUDash.Controllers
 {
@@ -122,10 +123,10 @@ namespace AUDash.Controllers
         //GET api/GetSoldProposedChartData
         public List<string> GetSoldProposedChartData(string authToken)
         {
-            
+
             if (authToken.Equals(AUTH_TOKEN))
                 return ParseSoldProposedData(repo.GetReferenceData("Projects"));
-                //return ParseSoldProposedData(repo.GetReferenceData("Resources"), repo.GetReferenceData("GSSResources"));
+            //return ParseSoldProposedData(repo.GetReferenceData("Resources"), repo.GetReferenceData("GSSResources"));
             else
                 return new List<string>();
 
@@ -663,7 +664,7 @@ namespace AUDash.Controllers
             {
                 if (ParseProjectStatus(project.Stage) == "Sold")
                 {
-                    
+
                     PopulateProjects(soldProjects, project, ProjectAttribute.Resources);
                     PopulateProjects(proposedProjects, project, ProjectAttribute.Resources);
                 }
@@ -674,7 +675,7 @@ namespace AUDash.Controllers
             }
 
             List<string> chartData = new List<string>();
-            
+
             chartData.Add(JsonConvert.SerializeObject(soldProjects.Keys.ToList<string>()));
             chartData.Add(JsonConvert.SerializeObject(soldProjects.Values.ToList<int>()));
             chartData.Add(JsonConvert.SerializeObject(proposedProjects.Values.ToList<int>()));
@@ -732,19 +733,19 @@ namespace AUDash.Controllers
 
             if (attribute.Equals(ProjectAttribute.Resources))
             {
-                incrementedAttribute = Convert.ToInt32(project.TotalResources);                
+                incrementedAttribute = Convert.ToInt32(project.TotalResources);
             }
             else if (attribute.Equals(ProjectAttribute.Project))
             {
                 incrementedAttribute = 1;
 
-            }           
+            }
 
             for (DateTime projectDate = Convert.ToDateTime(project.StartDate); projectDate <= Convert.ToDateTime(project.EndDate); projectDate = projectDate.AddMonths(1))
             {
                 if (projects.ContainsKey(((ChartMonths)projectDate.Month).ToString() + projectDate.Year.ToString().Substring(2, 2)))
                 {
-                    projects[((ChartMonths)projectDate.Month).ToString() + projectDate.Year.ToString().Substring(2, 2)] += incrementedAttribute;                   
+                    projects[((ChartMonths)projectDate.Month).ToString() + projectDate.Year.ToString().Substring(2, 2)] += incrementedAttribute;
                 }
             }
         }
@@ -808,7 +809,7 @@ namespace AUDash.Controllers
             }
 
             List<string> chartData = new List<string>();
-            
+
 
             chartData.Add(JsonConvert.SerializeObject(totalProjects.Keys.ToList<string>()));
             chartData.Add(JsonConvert.SerializeObject(totalProjects.Values.ToList<int>()));
@@ -1126,35 +1127,56 @@ namespace AUDash.Controllers
         // Method to send mail
         private string SendReport(Stream path)
         {
-            string fromaddr = "audashboardtest@gmail.com";
-            string toaddr = "tusharma@deloitte.com";//"vibs.dy@gmail.com";
-            string password = "D@shbo@rd";
-            string message = "";
-            try
-            {
-                MailMessage msg = new MailMessage();
-                msg.Subject = "AUDashboard Weekly Report";
-                //LinkedResource logo = new LinkedResource(path, "image/png");
-                LinkedResource logo = new LinkedResource(path);
-                logo.ContentId = "DashboardStatus";
 
-                //Html formatting for showing image
-                AlternateView av1 = AlternateView.CreateAlternateViewFromString("<html><body>"
-                    + "<img src=cid:DashboardStatus></body></html>", null, MediaTypeNames.Text.Html);
+            // Create the email object first, then add the properties.
+            SendGridMessage myMessage = new SendGridMessage();
+            myMessage.AddTo("tusharma@deloitte.com");
+            myMessage.From = new MailAddress("tusharma@deloitte.com", "NoReply AUDashboard");
+            myMessage.Subject = "Testing the SendGrid Library";
+            myMessage.Text = "Hello World!";
 
-                msg.AlternateViews.Add(av1);
-                av1.LinkedResources.Add(logo);
-                msg.IsBodyHtml = true;
-                msg.From = new MailAddress(fromaddr);
-                msg.To.Add(new MailAddress(toaddr));
-                SmtpClient smtp = new SmtpClient();
-                smtp.Host = "smtp.gmail.com";
-                smtp.Port = 465;
-                smtp.UseDefaultCredentials = false;
-                smtp.EnableSsl = true;
-                NetworkCredential nc = new NetworkCredential(fromaddr, password);
-                smtp.Credentials = nc;
-                smtp.Send(msg);
+            // Create credentials, specifying your user name and password.
+            var credentials = new NetworkCredential("azure_caba571c232c5241814931d615e146a9@azure.com", "Gu3ssWh@t?");
+
+            // Create an Web transport for sending email.
+            var transportWeb = new Web(credentials);
+
+            // Send the email, which returns an awaitable task.
+            transportWeb.DeliverAsync(myMessage);
+
+            // If developing a Console Application, use the following
+            // transportWeb.DeliverAsync(mail).Wait();
+
+
+            //string fromaddr = "audashboardtest@gmail.com";
+            //string toaddr = "tusharma@deloitte.com";//"vibs.dy@gmail.com";
+            //string password = "D@shbo@rd";
+            //string message = "";
+            //try
+            //{
+            //    MailMessage msg = new MailMessage();
+            //    msg.Subject = "AUDashboard Weekly Report";
+            //    //LinkedResource logo = new LinkedResource(path, "image/png");
+            //    LinkedResource logo = new LinkedResource(path);
+            //    logo.ContentId = "DashboardStatus";
+
+            //    //Html formatting for showing image
+            //    AlternateView av1 = AlternateView.CreateAlternateViewFromString("<html><body>"
+            //        + "<img src=cid:DashboardStatus></body></html>", null, MediaTypeNames.Text.Html);
+
+            //    msg.AlternateViews.Add(av1);
+            //    av1.LinkedResources.Add(logo);
+            //    msg.IsBodyHtml = true;
+            //    msg.From = new MailAddress(fromaddr);
+            //    msg.To.Add(new MailAddress(toaddr));
+            //    SmtpClient smtp = new SmtpClient();
+            //    smtp.Host = "smtp.gmail.com";
+            //    smtp.Port = 587;// 465;
+            //    //smtp.UseDefaultCredentials = false;
+            //    smtp.EnableSsl = true;
+            //    NetworkCredential nc = new NetworkCredential(fromaddr, password);
+            //    smtp.Credentials = nc;
+            //    smtp.Send(msg);
                 message = "mail sent.";
             }
             catch (Exception e)
