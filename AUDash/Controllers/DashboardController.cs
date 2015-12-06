@@ -1144,6 +1144,8 @@ namespace AUDash.Controllers
             // Send the email, which returns an awaitable task.
             transportWeb.DeliverAsync(myMessage);
 
+            return "Mail sent";
+
             // If developing a Console Application, use the following
             // transportWeb.DeliverAsync(mail).Wait();
 
@@ -1177,13 +1179,13 @@ namespace AUDash.Controllers
             //    NetworkCredential nc = new NetworkCredential(fromaddr, password);
             //    smtp.Credentials = nc;
             //    smtp.Send(msg);
-                message = "mail sent.";
-            }
-            catch (Exception e)
-            {
-                message = "Message: " + e.Message + " \n Inner Exception: " + e.InnerException;
-            }
-            return message;
+            //    message = "mail sent.";
+            //}
+            //catch (Exception e)
+            //{
+            //    message = "Message: " + e.Message + " \n Inner Exception: " + e.InnerException;
+            //}
+            
         }
 
     }
