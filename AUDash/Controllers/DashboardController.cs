@@ -1130,10 +1130,30 @@ namespace AUDash.Controllers
 
             // Create the email object first, then add the properties.
             SendGridMessage myMessage = new SendGridMessage();
+
+            //string img = @"C:\\logo.png";
+            //ContentType ctype = new ContentType("image/png");
+            //var attachment = new Attachment(img, ctype);
+            //var linkedResource = new LinkedResource(img, ctype);
+            //myMessage.AddAttachment(attachment.ContentStream, attachment.Name);
+            //myMessage.EmbedImage(attachment.Name, linkedResource.ContentId);
+
+
+            //string html = "<img src=cid:" + linkedResource.ContentId + " />";
+            //myMessage.Html = html;
             myMessage.AddTo("tusharma@deloitte.com");
-            myMessage.From = new MailAddress("tusharma@deloitte.com", "NoReply AUDashboard");
-            myMessage.Subject = "Testing the SendGrid Library";
-            myMessage.Text = "Hello World!";
+            myMessage.From = new MailAddress("tusharma@deloitte.com", "Tushar");
+            myMessage.Subject = "AUDashboard Weekly Report";
+            
+            LinkedResource logo = new LinkedResource(path);
+            logo.ContentId = "DashboardStatus";
+
+            //Html formatting for showing image
+            string htmlContent = "<html><body><img src=cid:DashboardStatus></body></html>";
+            myMessage.Html = htmlContent;
+            myMessage.EmbedStreamImage(path, "DashboardStatus");
+            //myMessage.AlternateViews.Add(av1);
+            //av1.LinkedResources.Add(logo);
 
             // Create credentials, specifying your user name and password.
             var credentials = new NetworkCredential("azure_caba571c232c5241814931d615e146a9@azure.com", "Gu3ssWh@t?");
@@ -1185,7 +1205,7 @@ namespace AUDash.Controllers
             //{
             //    message = "Message: " + e.Message + " \n Inner Exception: " + e.InnerException;
             //}
-            
+
         }
 
     }

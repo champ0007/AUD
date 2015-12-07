@@ -20,6 +20,19 @@
             </div>
             <!-- /.panel-body -->
         </div>
+
+        <div class="panel panel-blue">
+            <div class="panel-heading">
+                <i class="fa fa-bell fa-fw"></i> Competency Distribution
+            </div>
+            <!-- /.panel-heading -->
+            <div class="panel-body panel-chart">
+                <canvas tc-chartjs-doughnut chart-options="ProjectChartOptions" chart-data="ProjectChartData" class="col-lg-4" auto-legend></canvas>
+            </div>
+            <!-- /.panel-body -->
+        </div>
+
+
     </div>
     <!--Begin Three Charts-->
     <div class="col-lg-4">
@@ -54,9 +67,6 @@
                         <td>{{project.ProjectName}}</td>
                         <td>{{project.Stage}}</td>
                         <td class="hidden-xs">{{project.Technology}}</td>
-                        <!--<td class="hidden-xs">{{project.GDM}}</td>-->
-                        <!--<td class="hidden-xs">{{project.AUPM}}</td>-->
-                        <!--<td><i class="fa fa-times" ng-click="AddProject(project, 'Delete')"> </i></td>-->
                     </tr>
                 </table>
                 <!--<div class="text-center">
@@ -64,6 +74,19 @@
                 </div>-->
             </div>
         </div>
+              
+        <div class="panel panel-blue">
+                <div class="panel-heading">
+                    <i class="fa fa-bell fa-fw"></i> Project Distribution
+                </div>
+                <!-- /.panel-heading -->
+                <div class="panel-body panel-chart">
+                    <canvas tc-chartjs-bar chart-options="ProjectDistributionOptions" chart-data="ProjectDistributionData" auto-legend></canvas>
+                </div>
+                <!-- /.panel-body -->
+            </div>
+        
+
     </div>
     <div class="col-lg-4" style="min-height:380px">
         <div class="panel panel-blue">
@@ -107,36 +130,7 @@
                 </div>-->
             </div>
         </div>
-    </div>
-</div>
-<div>
-    <div class="col-lg-4">
-        <div class="panel panel-blue">
-            <div class="panel-heading">
-                <i class="fa fa-bell fa-fw"></i> Competency Distribution
-            </div>
-            <!-- /.panel-heading -->
-            <div class="panel-body panel-chart">
-                <canvas tc-chartjs-doughnut chart-options="ProjectChartOptions" chart-data="ProjectChartData" class="col-lg-4" auto-legend></canvas>
-            </div>
-            <!-- /.panel-body -->
-        </div>
-    </div>
 
-    <div class="col-lg-4">
-        <div class="panel panel-blue">
-            <div class="panel-heading">
-                <i class="fa fa-bell fa-fw"></i> Project Distribution
-            </div>
-            <!-- /.panel-heading -->
-            <div class="panel-body panel-chart">
-                <canvas tc-chartjs-bar chart-options="ProjectDistributionOptions" chart-data="ProjectDistributionData" auto-legend></canvas>
-            </div>
-            <!-- /.panel-body -->
-        </div>
-    </div>
-
-    <div class="col-lg-4">
         <div class="panel panel-blue">
             <div class="panel-heading">
                 <i class="fa fa-ma fa-fw"></i> Resource Demand - Sold vs Proposed
@@ -146,5 +140,6 @@
             </div>
             <!-- /.panel-body -->
         </div>
+
     </div>
 </div>

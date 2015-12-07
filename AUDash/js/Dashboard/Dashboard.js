@@ -411,6 +411,7 @@ AUDashboardApp.controller("CurrentStatusController", ['$scope', '$http','$timeou
     $scope.UpdateProjectDistributionChart();
     $scope.UpdateSoldProposedChart();
 }]);
+
 AUDashboardApp.controller('DashboardController', ['$scope', '$http', function ($scope, $http) {
 
     $scope.UserIdentity = null;
