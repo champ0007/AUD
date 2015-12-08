@@ -1,0 +1,159 @@
+﻿<div class="col-lg-4">
+
+    <div class="panel panel-blue">
+        <div class="panel-heading">
+            <i class="fa fa-usd fa-fw"></i> Financial Update
+        </div>
+        <!-- /.panel-heading -->
+        <div class="panel-body">
+            <ul>
+                <li>This is text 1</li>
+                <li>This is text 2</li>
+                <li>This is text 3</li>
+            </ul>
+        </div>
+        <!-- /.panel-body -->
+    </div>
+
+    <div class="panel panel-blue">
+        <div class="panel-heading">
+            <i class="fa fa-money fa-fw"></i> Revenue at cost
+        </div>
+        <div class="panel-body panel-chart">
+            <canvas tc-chartjs-bar chart-options="RevAtCostOptions" chart-data="RevAtCostData" auto-legend></canvas>
+        </div>
+        <!-- /.panel-body -->
+    </div>  
+
+    <div class="panel panel-blue">
+        <div class="panel-heading">
+            <i class="fa fa-usd fa-fw"></i> Revenue at cost by cluster
+        </div>
+        <div class="panel-body panel-chart">
+            <canvas tc-chartjs-bar chart-options="RevAtCostOptions" chart-data="RevAtCostData" auto-legend></canvas>
+        </div>
+        <!-- /.panel-body -->
+    </div>
+
+    <div class="panel panel-blue">
+        <div class="panel-heading">
+            <i class="fa fa-usd fa-fw"></i> FX Tracking AUD | USD
+        </div>
+        <div class="panel-body panel-chart">
+            <canvas tc-chartjs-line chart-options="CumulativeHoursOptions" chart-data="FXData" auto-legend></canvas>
+        </div>  
+        <!-- /.panel-body -->
+    </div>  
+</div>
+
+<div class="col-lg-4">
+  
+    <div class="panel panel-blue">
+        <div class="panel-heading">            
+            <i class="fa fa-users fa-fw"></i> Headcount Analysis
+        </div>
+        <!-- /.panel-heading -->
+        <div class="panel-body">
+            <ul>
+                <li>This is text 1</li>
+                <li>This is text 2</li>
+                <li>This is text 3</li>
+            </ul>
+        </div>
+        <!-- /.panel-body -->
+    </div>
+    
+    <div class="panel panel-blue">
+        <div class="panel-heading">
+            
+            <i class="fa fa-clock-o fa-fw"></i> Resource Hours
+        </div>
+        <div class="panel-body panel-chart">
+            <canvas tc-chartjs-bar chart-options="RevAtCostOptions" chart-data="RevAtCostData" auto-legend></canvas>
+        </div>
+        <!-- /.panel-body -->
+    </div>
+
+    <div class="panel panel-blue">
+        <div class="panel-heading">
+
+            <i class="fa fa-clock-o fa-fw"></i> Cumulative Hours
+        </div>
+        <div class="panel-body panel-chart">
+            <canvas tc-chartjs-line chart-options="CumulativeHoursOptions" chart-data="CumulativeHoursData" auto-legend></canvas>
+        </div>        <!-- /.panel-body -->
+    </div>
+
+    <div class="panel panel-blue">
+        <div class="panel-heading">
+
+            <i class="fa fa-users fa-fw"></i> Headcount
+        </div>
+        <div class="panel-body panel-chart">
+            <canvas tc-chartjs-bar chart-options="RevAtCostOptions" chart-data="RevAtCostData" auto-legend></canvas>
+        </div>
+        <!-- /.panel-body -->
+    </div>
+
+  
+</div>
+
+<div class="col-lg-4">
+
+    <div class="panel panel-blue">
+        <div class="panel-heading">            
+            <i class="fa fa-arrow-circle-right fa-fw"></i> Projects & Pipeline
+        </div>
+        <div class="panel-body">
+            <ul>
+                <li>This is text 1</li>
+                <li>This is text 2</li>
+                <li>This is text 3</li>
+            </ul>
+        </div>
+        <!-- /.panel-body -->
+    </div>
+
+    <div class="panel panel-blue">
+        <div class="panel-heading">
+            <i class="fa fa-bar-chart-o fa-fw"></i> EDC Projects in progress
+        </div>
+        <div class="panel-body panel-chart">
+            <canvas tc-chartjs-bar chart-options="RevAtCostOptions" chart-data="RevAtCostData" auto-legend></canvas>
+        </div>
+        <!-- /.panel-body -->
+    </div>
+    <div class="panel panel-blue">
+        <div class="panel-heading">
+            <i class="fa fa-bar-chart-o fa-fw"></i> EDC Consulting Pipeline
+        </div>
+        <div class="panel-body panel-chart">
+            <table class="table table-striped table-responsive table-striped">
+                <tr>                
+                    <th ng-click="predicate = 'Client'; reverse=false">Client</th>
+                    <th ng-click="predicate = 'ProjectName'; reverse=false">Project Name</th>
+                    <th ng-click="predicate = 'Status'; reverse=false">Status</th>
+                    <th class="hidden-xs" ng-click="predicate = 'Scope'; reverse=false">Scope</th>
+                    <th class="hidden-xs" ng-click="predicate = 'TeamSize'; reverse=false">Team Size</th>                                        
+                </tr>
+                <tr ng-repeat="project in EDCPipeline">                
+                    <td>{{project.Client}}</td>
+                    <td>{{project.ProjectName}}</td>
+                    <td>{{project.Status}}</td>
+                    <td class="hidden-xs">{{project.Scope}}</td>
+                    <td class="hidden-xs">{{project.TeamSize}}</td>                    
+                </tr>
+            </table>  
+          
+        </div>
+        <!-- /.panel-body -->
+    </div>
+
+
+</div>
+
+<script>
+        //$(function () { // when the DOM is ready...
+        //    $("html, body").animate({ scrollTop: $(document).height()}, 1000);
+        //});
+</script>

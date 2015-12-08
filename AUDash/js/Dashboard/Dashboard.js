@@ -39,6 +39,10 @@ AUDashboardApp.config(['$routeProvider',
             templateUrl: 'partials/CurrentStatus.html',
             controller: "CurrentStatusController"
         }).
+        when('/ConsultingExecDashboard', {
+            templateUrl: 'partials/ConsultingExecDashboard.html',
+            controller: "ConsultingExecDashboardController"
+        }).
         otherwise({
             redirectTo: '/Dashboard'
         });
@@ -2330,6 +2334,186 @@ angular.module('AUDashboardApp').filter('changeDateFormat', function($filter)
         //return new Date(input);
     };
 });
+
+AUDashboardApp.controller('ConsultingExecDashboardController', ['$scope', '$http', function ($scope, $http) {
+    // Chart.js Data
+    $scope.RevAtCostData = {
+        labels: ['Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec','Jan', 'Feb', 'Mar', 'Apr','May' ],
+        datasets: [
+            {
+                label: 'FY16',
+                fillColor: '#00b0f0',
+                strokeColor: 'rgba(151,187,205,1)',
+                highlightFill: 'rgba(151,187,205,1)',
+                highlightStroke: 'rgba(151,187,205,1)',
+                data: [210000, 310000, 310000, 398000, 398000, 300000, 210000, 200000, 210000, 280000, 420000, 410000]
+            },
+            {
+              label: 'FY15',
+              fillColor: '#7ec351',
+              strokeColor: 'rgba(69,201,102,0.9)',
+              highlightFill: 'rgba(69,201,102,0.9)',
+              highlightStroke: 'rgba(220,220,220,1)',
+              data: [510000, 520000, 520000, 620000, 500000]
+          }
+          
+        ]
+    };
+
+    // Chart.js Options
+    $scope.RevAtCostOptions = {
+
+        // Sets the chart to be responsive
+        responsive: true,
+
+        //Boolean - Whether the scale should start at zero, or an order of magnitude down from the lowest value
+        scaleBeginAtZero: true,
+
+        //Boolean - Whether grid lines are shown across the chart
+        scaleShowGridLines:false,
+
+        scaleShowHorizontalLines:false,
+
+        scaleShowVerticalLines:true,
+
+        //String - Colour of the grid lines
+        scaleGridLineColor: "white",       
+
+
+        //Number - Width of the grid lines
+        scaleGridLineWidth: 1,
+
+        //Boolean - If there is a stroke on each bar
+        barShowStroke: true,
+
+        //Number - Pixel width of the bar stroke
+        barStrokeWidth: 2,
+
+        //Number - Spacing between each of the X value sets
+        barValueSpacing: 5,
+
+        //Number - Spacing between data sets within X values
+        barDatasetSpacing: 1,
+
+        // Change Y Axis numbers to Currency Type
+        scaleLabel: function (label) { return '$' + label.value.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ","); },
+
+        // Change Tooltip data numbers to Currency Type
+        multiTooltipTemplate: function (label) { return '$' + label.value.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ","); },
+
+        //String - A legend template
+        legendTemplate: '<ul class="tc-chart-js-legend"><% for (var i=0; i<datasets.length; i++){%><li><span style="background-color:<%=datasets[i].fillColor%>"></span><%if(datasets[i].label){%><%=datasets[i].label%><%}%></li><%}%></ul>'
+    };
+
+
+    $scope.CumulativeHoursData = {
+        labels: ['Jun', 'Jul', 'Aug', 'Sep', 'Oct'],
+        datasets: [
+          {
+              label: 'YTD',
+              fillColor: 'rgba(320,220,220,0.2)',
+              strokeColor: 'rgba(220,220,220,1)',
+              pointColor: 'rgba(220,220,220,1)',
+              pointStrokeColor: '#fff',
+              pointHighlightFill: '#fff',
+              pointHighlightStroke: 'rgba(220,220,220,1)',
+              data: [0, 20, 40, 60]
+          },
+          {
+              label: 'Plan',
+              fillColor: 'rgba(151,187,205,0.2)',
+              strokeColor: 'rgba(151,187,205,1)',
+              pointColor: 'rgba(151,187,205,1)',
+              pointStrokeColor: '#fff',
+              pointHighlightFill: '#fff',
+              pointHighlightStroke: 'rgba(151,187,205,1)',
+              data: [90, 90, 90, 90,90]
+          }
+        ]
+    };
+
+    $scope.CumulativeHoursOptions = {
+        animation: false,
+        // Sets the chart to be responsive
+        responsive: true,
+
+        ///Boolean - Whether grid lines are shown across the chart
+        scaleShowGridLines: true,
+
+        //String - Colour of the grid lines
+        scaleGridLineColor: "rgba(0,0,0,.05)",
+
+        //Number - Width of the grid lines
+        scaleGridLineWidth: 1,
+
+        //Boolean - Whether the line is curved between points
+        bezierCurve: true,
+
+        //Number - Tension of the bezier curve between points
+        bezierCurveTension: 0.2,
+
+        //Boolean - Whether to show a dot for each point
+        pointDot: true,
+
+        //Number - Radius of each point dot in pixels
+        pointDotRadius: 2,
+
+        //Number - Pixel width of point dot stroke
+        pointDotStrokeWidth: 1,
+
+        //Number - amount extra to add to the radius to cater for hit detection outside the drawn point
+        pointHitDetectionRadius: 10,
+
+        //Boolean - Whether to show a stroke for datasets
+        datasetStroke: true,
+
+        //Number - Pixel width of dataset stroke
+        datasetStrokeWidth: 2,
+
+        //Boolean - Whether to fill the dataset with a colour
+        datasetFill: false,
+
+        // Function - on animation progress
+        onAnimationProgress: function () { },
+
+        // Function - on animation complete
+        onAnimationComplete: function () { },
+
+        //String - A legend template
+        legendTemplate: '<ul class="tc-chart-js-legend"><% for (var i=0; i<datasets.length; i++){%><li><span style="background-color:<%=datasets[i].strokeColor%>"></span><%if(datasets[i].label){%><%=datasets[i].label%><%}%></li><%}%></ul>'
+    };
+
+    $scope.FXData = {
+        labels: ['Jun-14', 'Jul-14', 'Aug-14', 'Sep-14', 'Oct-14','Nov-14', 'Dec-14','Jan-15', 'Feb-15','Mar-15','Apr-15','May-15','Jun-15','Jul-15','Aug-15','Sep-15','Oct-15'] ,
+        datasets: [         
+          {
+              label: 'Plan',
+              fillColor: 'rgba(151,187,205,0.2)',
+              strokeColor: 'rgba(151,187,205,1)',
+              pointColor: 'rgba(151,187,205,1)',
+              pointStrokeColor: '#fff',
+              pointHighlightFill: '#fff',
+              pointHighlightStroke: 'rgba(151,187,205,1)',
+              data: [0.95, 0.94, 0.93, 0.93, 0.9, 0.9, 0.98, 0.9, 0.9, 0.9, 0.89, 0.89, 0.88, 0.89, 0.89, 0.89, 0.88]
+          }
+        ]
+    };
+
+    $scope.EDCPipeline = [
+        { Client: 'Digital Inside', ProjectName: 'Digital Inside', Status: 'InProgress', Scope: '', TeamSize: 7 },
+        { Client: 'Digital Inside', ProjectName: 'Digital Inside', Status: 'InProgress', Scope: '', TeamSize: 7 },
+        { Client: 'Digital Inside', ProjectName: 'Digital Inside', Status: 'InProgress', Scope: '', TeamSize: 7 },
+        { Client: 'Digital Inside', ProjectName: 'Digital Inside', Status: 'InProgress', Scope: '', TeamSize: 7 },
+        { Client: 'Digital Inside', ProjectName: 'Digital Inside', Status: 'InProgress', Scope: '', TeamSize: 7 },
+        { Client: 'Digital Inside', ProjectName: 'Digital Inside', Status: 'InProgress', Scope: '', TeamSize: 7 },
+        { Client: 'Digital Inside', ProjectName: 'Digital Inside', Status: 'InProgress', Scope: '', TeamSize: 7 }
+    ];
+
+   
+
+
+
+}]);
 
 /******************Helper Methods************************/
 //javascript function to cookie manipulation

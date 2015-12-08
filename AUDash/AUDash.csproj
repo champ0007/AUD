@@ -238,6 +238,8 @@
     <Content Include="css\bootstrap.css" />
     <Content Include="css\bootstrap.min.css" />
     <Content Include="css\datepicker.css" />
+    <Content Include="css\font-awesome.css" />
+    <Content Include="css\font-awesome.min.css" />
     <Content Include="css\plugins\dataTables.bootstrap.css" />
     <Content Include="css\plugins\metisMenu\metisMenu.css" />
     <Content Include="css\plugins\metisMenu\metisMenu.min.css" />
@@ -257,6 +259,7 @@
     <Content Include="font-awesome-4.1.0\css\font-awesome.css" />
     <Content Include="font-awesome-4.1.0\css\font-awesome.min.css" />
     <Content Include="font-awesome-4.1.0\fonts\fontawesome-webfont.svg" />
+    <Content Include="fonts\fontawesome-webfont.svg" />
     <Content Include="fonts\glyphicons-halflings-regular.svg" />
     <Content Include="Global.asax" />
     <Content Include="images\DD_RGB_black-small.jpg" />
@@ -433,6 +436,9 @@
     <Content Include="partials\ManageDashboard.html">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+    <Content Include="partials\ConsultingExecDashboard.html">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <Content Include="partials\Operations.html">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
@@ -497,6 +503,11 @@
     <Content Include="DocumentTemplates\FY15_EDC_India_Billing_Expense_Policy.pdf" />
     <Content Include="js\angular-animate.min.js.map" />
     <Content Include="js\angular-sanitize.min.js.map" />
+    <Content Include="fonts\fontawesome-webfont.woff2" />
+    <Content Include="fonts\fontawesome-webfont.woff" />
+    <Content Include="fonts\fontawesome-webfont.ttf" />
+    <Content Include="fonts\fontawesome-webfont.eot" />
+    <Content Include="fonts\FontAwesome.otf" />
     <None Include="Properties\PublishProfiles\audashboard.pubxml" />
     <None Include="Properties\PublishProfiles\IISDeploy.pubxml" />
     <None Include="Properties\PublishProfiles\Tushar.pubxml" />
