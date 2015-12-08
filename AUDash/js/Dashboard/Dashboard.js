@@ -2398,11 +2398,13 @@ AUDashboardApp.controller('ConsultingExecDashboardController', ['$scope', '$http
         // Change Y Axis numbers to Currency Type
         scaleLabel: function (label) { return '$' + label.value.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ","); },
 
+        scaleFontSize: 9,
+
         // Change Tooltip data numbers to Currency Type
         multiTooltipTemplate: function (label) { return '$' + label.value.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ","); },
 
         //String - A legend template
-        legendTemplate: '<ul class="tc-chart-js-legend"><% for (var i=0; i<datasets.length; i++){%><li><span style="background-color:<%=datasets[i].fillColor%>"></span><%if(datasets[i].label){%><%=datasets[i].label%><%}%></li><%}%></ul>'
+        legendTemplate: '<ul class="tc-chart-js-legend x-small-font text-center col-lg-12"><% for (var i=0; i<datasets.length; i++){%><li><span style="background-color:<%=datasets[i].fillColor%>"></span><%if(datasets[i].label){%><%=datasets[i].label%><%}%></li><%}%></ul>'
     };
 
 
@@ -2473,6 +2475,8 @@ AUDashboardApp.controller('ConsultingExecDashboardController', ['$scope', '$http
         //Boolean - Whether to fill the dataset with a colour
         datasetFill: false,
 
+        scaleFontSize: 9,
+
         // Function - on animation progress
         onAnimationProgress: function () { },
 
@@ -2480,7 +2484,7 @@ AUDashboardApp.controller('ConsultingExecDashboardController', ['$scope', '$http
         onAnimationComplete: function () { },
 
         //String - A legend template
-        legendTemplate: '<ul class="tc-chart-js-legend"><% for (var i=0; i<datasets.length; i++){%><li><span style="background-color:<%=datasets[i].strokeColor%>"></span><%if(datasets[i].label){%><%=datasets[i].label%><%}%></li><%}%></ul>'
+        legendTemplate: '<ul class="tc-chart-js-legend x-small-font text-center col-lg-12"><% for (var i=0; i<datasets.length; i++){%><li><span style="background-color:<%=datasets[i].strokeColor%>"></span><%if(datasets[i].label){%><%=datasets[i].label%><%}%></li><%}%></ul>'
     };
 
     $scope.FXData = {

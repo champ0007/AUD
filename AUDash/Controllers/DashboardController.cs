@@ -26,6 +26,8 @@ namespace AUDash.Controllers
         DBRepository repo = new DBRepository();
 
         private string AUTH_TOKEN = "admin-Gu3ssWh@t?";
+        private List<string> AUTH_TOKENS = new List<string>() { "admin-Gu3ssWh@t?", "kyla-KyL@dmin" };
+        
 
         //POST api/Dashboard/UploadCurrentStatus
         [HttpPost]
@@ -69,8 +71,8 @@ namespace AUDash.Controllers
         public string GetAuthentication(string authToken)
         {
             string uid = authToken.Split('-').First();
-            string pass = authToken.Split('-').Last();
-            if (authToken.Equals(AUTH_TOKEN))
+            string pass = authToken.Split('-').Last();            
+            if (AUTH_TOKENS.Contains(authToken))
                 return "true";
             else
                 return "false";
@@ -80,7 +82,7 @@ namespace AUDash.Controllers
         public string GetDashboardCounts(string authToken)
         {
             List<string> dashboardCounts = new List<string>();
-            if (authToken.Equals(AUTH_TOKEN))
+            if (AUTH_TOKENS.Contains(authToken))
                 dashboardCounts = ParseDashboardCounts(repo.GetDashboardCounts());
             return JsonConvert.SerializeObject(dashboardCounts);
         }
@@ -88,7 +90,7 @@ namespace AUDash.Controllers
         //GET api/Dashboard/GetProjectChartData //Added by Vibhav
         public List<string> GetProjectChartData(string authToken)
         {
-            if (authToken.Equals(AUTH_TOKEN))
+            if (AUTH_TOKENS.Contains(authToken))
                 return ParseProjectData(repo.GetReferenceData("Projects"));
             else
                 return new List<string>();
@@ -97,7 +99,7 @@ namespace AUDash.Controllers
         //GET api/Dashboard/GetRevenueChartData //Added by Vibhav
         public List<string> GetRevenueChartData(string authToken)
         {
-            if (authToken.Equals(AUTH_TOKEN))
+            if (AUTH_TOKENS.Contains(authToken))
                 return ParseRevenueData(repo.GetReferenceData("Invoices"));
             else
                 return new List<string>();
@@ -106,7 +108,7 @@ namespace AUDash.Controllers
         //GET api/Dashboard/GetTechChartData //Added by Vibhav
         public List<string> GetTechChartData(string authToken)
         {
-            if (authToken.Equals(AUTH_TOKEN))
+            if (AUTH_TOKENS.Contains(authToken))
                 return ParseSKillData(repo.GetReferenceData("Projects"));
             else
                 return new List<string>();
@@ -115,7 +117,7 @@ namespace AUDash.Controllers
         //GET api/Dashboard/GetProjChartData //Added by Vibhav
         public List<string> GetProjChartData(string authToken)
         {
-            if (authToken.Equals(AUTH_TOKEN))
+            if (AUTH_TOKENS.Contains(authToken))
                 return ParseProjBySkillData(repo.GetReferenceData("Projects"));
             else
                 return new List<string>();
@@ -124,7 +126,7 @@ namespace AUDash.Controllers
         public List<string> GetSoldProposedChartData(string authToken)
         {
 
-            if (authToken.Equals(AUTH_TOKEN))
+            if (AUTH_TOKENS.Contains(authToken))
                 return ParseSoldProposedData(repo.GetReferenceData("Projects"));
             //return ParseSoldProposedData(repo.GetReferenceData("Resources"), repo.GetReferenceData("GSSResources"));
             else
@@ -136,7 +138,7 @@ namespace AUDash.Controllers
         public string GetReferenceData(string storageId, string authToken)
         {
             string response = string.Empty;
-            if (authToken.Equals(AUTH_TOKEN))
+            if (AUTH_TOKENS.Contains(authToken))
                 response = repo.GetReferenceData(storageId);
 
             return response == string.Empty ? null : response;
@@ -145,7 +147,7 @@ namespace AUDash.Controllers
         //GET api/Dashboard/GetResourceChartData
         public List<string> GetResourceChartData(string authToken)
         {
-            if (authToken.Equals(AUTH_TOKEN))
+            if (AUTH_TOKENS.Contains(authToken))
                 return ParseResourceData(repo.GetReferenceData("GSSResources"));
             else
                 return new List<string>();
@@ -154,7 +156,7 @@ namespace AUDash.Controllers
         //GET api/Dashboard/GetProjectDistributionChartData
         public List<string> GetProjectDistributionChartData(string authToken)
         {
-            if (authToken.Equals(AUTH_TOKEN))
+            if (AUTH_TOKENS.Contains(authToken))
                 return ParseProjectDistributionData(repo.GetReferenceData("Projects"));
             else
                 return new List<string>();
@@ -163,7 +165,7 @@ namespace AUDash.Controllers
         //GET api/Dashboard/GetResourceDeploymentChartData
         public List<string> GetResourceDeploymentChartData(string authToken)
         {
-            if (authToken.Equals(AUTH_TOKEN))
+            if (AUTH_TOKENS.Contains(authToken))
                 return ParseResourceDeploymentChartData(repo.GetReferenceData("ResourceDataCount"));
             else
                 return new List<string>();
@@ -192,7 +194,7 @@ namespace AUDash.Controllers
             //Resources.Add(new Resource() { FirstName = "Shakil", LastName = "Shaikh", CurrentProject = "Telstra", ProposedProject = "None", Level = "Manager", AvailableOn = "01-Dec-2014", Skills = "Adobe CQ", StartDate = "01-Mar-2014" });
             //Resources.Add(new Resource() { FirstName = "Shakil", LastName = "Shaikh", CurrentProject = "Telstra", ProposedProject = "None", Level = "Manager", AvailableOn = "01-Dec-2014", Skills = "Adobe CQ", StartDate = "01-Mar-2014" });
             //Resources.Add(new Resource() { FirstName = "Shakil", LastName = "Shaikh", CurrentProject = "Telstra", ProposedProject = "None", Level = "Manager", AvailableOn = "01-Dec-2014", Skills = "Adobe CQ", StartDate = "01-Mar-2014" });
-            if (authToken.Equals(AUTH_TOKEN))
+            if (AUTH_TOKENS.Contains(authToken))
                 return JSONConcat(repo.GetAllResources());
             else
                 return string.Empty;
@@ -237,7 +239,7 @@ namespace AUDash.Controllers
         public string GetKeyUpdates(string authToken)
         {
             List<KeyUpdates> kUpdates = new List<KeyUpdates>();
-            if (authToken.Equals(AUTH_TOKEN))
+            if (AUTH_TOKENS.Contains(authToken))
             {
                 kUpdates.Add(new KeyUpdates()
                 {

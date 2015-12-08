@@ -465,3 +465,10 @@ cursor: pointer;
 {
     display: none;
 }
+.x-small-font {
+    font-size: x-small;
+}
+
+.small-font {
+    font-size: small;
+}
