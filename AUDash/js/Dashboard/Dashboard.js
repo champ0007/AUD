@@ -422,6 +422,7 @@ AUDashboardApp.controller('DashboardController', ['$scope', '$http', function ($
     $scope.UserPassword = null;
     $scope.UserValidated = false;
     $scope.LoginMessage = null;
+    $scope.IsUserAdmin = false;
 
     debugger;
     if (getCookie('UserIdentity') != "") {
@@ -453,6 +454,7 @@ AUDashboardApp.controller('DashboardController', ['$scope', '$http', function ($
                     url: 'api/Dashboard/GetDashboardCounts?authToken=' + $scope.UserIdentity + "-" + $scope.UserPassword
                 }).
                 success(function (data, status, headers, config) {
+                    debugger;
                     $scope.PendingInvoices = JSON.parse(JSON.parse(data))[0];
                     $scope.ActiveProjects = JSON.parse(JSON.parse(data))[1];
                     $scope.OpenActionItems = JSON.parse(JSON.parse(data))[2];
@@ -2336,6 +2338,8 @@ angular.module('AUDashboardApp').filter('changeDateFormat', function($filter)
 });
 
 AUDashboardApp.controller('ConsultingExecDashboardController', ['$scope', '$http', function ($scope, $http) {
+
+    
     // Chart.js Data
     $scope.RevAtCostData = {
         labels: ['Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec','Jan', 'Feb', 'Mar', 'Apr','May' ],
@@ -2512,10 +2516,6 @@ AUDashboardApp.controller('ConsultingExecDashboardController', ['$scope', '$http
         { Client: 'Digital Inside', ProjectName: 'Digital Inside', Status: 'InProgress', Scope: '', TeamSize: 7 },
         { Client: 'Digital Inside', ProjectName: 'Digital Inside', Status: 'InProgress', Scope: '', TeamSize: 7 }
     ];
-
-   
-
-
 
 }]);
 

@@ -241,6 +241,8 @@
     <Content Include="css\font-awesome.css" />
     <Content Include="css\font-awesome.min.css" />
     <Content Include="css\plugins\dataTables.bootstrap.css" />
+    <Content Include="css\plugins\fusioncharts\mainstyle.css" />
+    <Content Include="css\plugins\fusioncharts\style.css" />
     <Content Include="css\plugins\metisMenu\metisMenu.css" />
     <Content Include="css\plugins\metisMenu\metisMenu.min.css" />
     <Content Include="css\plugins\morris.css" />
@@ -333,6 +335,7 @@
     <Content Include="js\angular-file-upload.min.map">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+    <Content Include="js\Dashboard\ExecutiveDashboard.js" />
     <Content Include="js\jquery-1.10.2.intellisense.js">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
@@ -389,6 +392,20 @@
     <Content Include="js\plugins\flot\jquery.flot.pie.js" />
     <Content Include="js\plugins\flot\jquery.flot.resize.js" />
     <Content Include="js\plugins\flot\jquery.flot.tooltip.min.js" />
+    <Content Include="js\plugins\fusioncharts\angular-fusioncharts.min.js" />
+    <Content Include="js\plugins\fusioncharts\fusioncharts.charts.js" />
+    <Content Include="js\plugins\fusioncharts\fusioncharts.gantt.js" />
+    <Content Include="js\plugins\fusioncharts\fusioncharts.js" />
+    <Content Include="js\plugins\fusioncharts\fusioncharts.maps.js" />
+    <Content Include="js\plugins\fusioncharts\fusioncharts.powercharts.js" />
+    <Content Include="js\plugins\fusioncharts\fusioncharts.widgets.js" />
+    <Content Include="js\plugins\fusioncharts\maps\fusioncharts.usa.js" />
+    <Content Include="js\plugins\fusioncharts\maps\fusioncharts.world.js" />
+    <Content Include="js\plugins\fusioncharts\maps\readme.txt" />
+    <Content Include="js\plugins\fusioncharts\themes\fusioncharts.theme.carbon.js" />
+    <Content Include="js\plugins\fusioncharts\themes\fusioncharts.theme.fint.js" />
+    <Content Include="js\plugins\fusioncharts\themes\fusioncharts.theme.ocean.js" />
+    <Content Include="js\plugins\fusioncharts\themes\fusioncharts.theme.zune.js" />
     <Content Include="js\plugins\html2canvas\html2canvas.js" />
     <Content Include="js\plugins\html2canvas\html2canvas.svg.js" />
     <Content Include="js\plugins\metisMenu\metisMenu.js" />
@@ -508,6 +525,7 @@
     <Content Include="fonts\fontawesome-webfont.ttf" />
     <Content Include="fonts\fontawesome-webfont.eot" />
     <Content Include="fonts\FontAwesome.otf" />
+    <Content Include="css\plugins\fusioncharts\style.less" />
     <None Include="Properties\PublishProfiles\audashboard.pubxml" />
     <None Include="Properties\PublishProfiles\IISDeploy.pubxml" />
     <None Include="Properties\PublishProfiles\Tushar.pubxml" />
