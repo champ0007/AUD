@@ -42,5 +42,12 @@ namespace AUDash.Models
         public RequestedAction action { get; set; }
 
     }
+
+    public class ConsultingChartEntity
+    {
+        public int FiscalYear { get; set; }
+        public string Month { get; set; }        
+        public int Count { get; set; }
+    }
    
 }

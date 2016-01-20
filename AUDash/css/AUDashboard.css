@@ -472,3 +472,16 @@ cursor: pointer;
 .small-font {
     font-size: small;
 }
+
+.navbar-fixed-top { border-bottom-width: 0px; }
+.navbar-inverse { background-color: #000 !important; border-bottom: solid 3px #222; }
+.navbar a.navbar-brand { color: #5cb85c; font-family: 'Microsoft YaHei UI'; font-weight: bolder; font-size: 30px; }
+.navbar a.navbar-brand:hover { color: #fff; }
+.navbar a.navbar-brand:visited { color: #5cb85c; !important }
+.navbar .navbar-nav > li > a { color: #fff; font-family: 'Microsoft YaHei UI'; border-radius: 0px; }
+.navbar .navbar-nav > li > a:hover { color: #fff; background-color: #444; }
+.navbar-brand span { color: #fff; }
+.navbar-collapse > ul > li span.fa { font-size: 150%; }
+.navbar-inverse .navbar-nav .open .dropdown-menu { background-color: #333; border-color: #333; }
+.navbar-inverse .navbar-nav .open .dropdown-menu > li > a { color: #fff; }
+.navbar-inverse .navbar-nav .open .dropdown-menu > li > a:focus, .navbar-inverse .navbar-nav .open .dropdown-menu > li > a:hover { color: #fff; background-color: transparent; }

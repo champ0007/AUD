@@ -71,4 +71,17 @@ namespace AUDash.Models
         public string color { get; set; }
         public string highlight { get; set; }
     }
+
+    public class ResourceHours
+    {
+        public int FiscalYear { get; set; }
+        public int Period { get; set; }
+
+        public decimal ServiceHours { get; set; }
+
+        public decimal CumulativeHours { get; set; }
+
+    }
+
+  
 }

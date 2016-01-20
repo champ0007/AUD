@@ -1,0 +1,17 @@
+﻿<style type="text/css">
+    #infoRow {
+        display: none !important;
+    }
+
+    /*svg text:last-child{
+        display:none !important;
+    }*/
+</style>
+<div id="uploaderModule">
+    <input type="file" nv-file-select="" uploader="uploader" />
+    <div ng-repeat="item in uploader.queue">
+        <span ng-show="item.isSuccess"><i class="glyphicon glyphicon-ok"></i></span>
+        <span ng-show="item.isCancel"><i class="glyphicon glyphicon-ban-circle"></i></span>
+        <span ng-show="item.isError"><i class="glyphicon glyphicon-remove"></i></span>
+    </div>
+</div>

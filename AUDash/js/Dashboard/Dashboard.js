@@ -43,6 +43,10 @@ AUDashboardApp.config(['$routeProvider',
             templateUrl: 'partials/ConsultingExecDashboard.html',
             controller: "ConsultingExecDashboardController"
         }).
+        when('/ConsultingExecAdmin', {
+            templateUrl: 'partials/ConsultingExecReportAdmin.html',
+            controller: "ConsultingExecDashboardController"
+        }).
         otherwise({
             redirectTo: '/Dashboard'
         });
@@ -89,7 +93,7 @@ AUDashboardApp.controller("CurrentStatusController", ['$scope', '$http','$timeou
                 });
             }
         });
-    }
+    };
 
     //$scope.$on('$viewContentLoaded', function () {
     //    $timeout(function () {
@@ -173,7 +177,7 @@ AUDashboardApp.controller("CurrentStatusController", ['$scope', '$http','$timeou
         }).
       success(function (data, status, headers, config) {
           if (data != null) {
-              debugger;
+              //debugger;
               var colors = ['#F7464A', '#46BFBD', '#FDB45C', '#40C000', '#FF8000', '#F7464A', '#46BFBD', '#FDB45C', '#46BFBA', '#FDB4AC', '#F7464A', '#46BFBD', '#FDB45C', '#46BFBA', '#FDB4AC', '#F7464A', '#46BFBD', '#FDB45C', '#46BFBA', '#FDB4AC'];
               var highlights = ['#FF5A5E', '#5AD3D1', '#FFC870', '#40C000', '#FFC870', '#FF5A5E', '#5AD3D1', '#FFC870', '#5AD3D1', '#FFC870', '#FF5A5E', '#5AD3D1', '#FFC870', '#5AD3D1', '#FFC870', '#FF5A5E', '#5AD3D1', '#FFC870', '#5AD3D1', '#FFC870'];
               $scope.ProjectChartData = [];
@@ -424,7 +428,7 @@ AUDashboardApp.controller('DashboardController', ['$scope', '$http', function ($
     $scope.LoginMessage = null;
     $scope.IsUserAdmin = false;
 
-    debugger;
+    //debugger;
     if (getCookie('UserIdentity') != "") {
         $scope.UserIdentity = getCookie('UserIdentity');
     }
@@ -454,7 +458,7 @@ AUDashboardApp.controller('DashboardController', ['$scope', '$http', function ($
                     url: 'api/Dashboard/GetDashboardCounts?authToken=' + $scope.UserIdentity + "-" + $scope.UserPassword
                 }).
                 success(function (data, status, headers, config) {
-                    debugger;
+                    
                     $scope.PendingInvoices = JSON.parse(JSON.parse(data))[0];
                     $scope.ActiveProjects = JSON.parse(JSON.parse(data))[1];
                     $scope.OpenActionItems = JSON.parse(JSON.parse(data))[2];
@@ -570,7 +574,7 @@ AUDashboardApp.controller('DashboardController', ['$scope', '$http', function ($
                     }).
                   success(function (data, status, headers, config) {
                       if (data != null) {
-                          debugger;
+                          
                           $scope.ProjectChartData = [];
                           var ProjectChartDataList = JSON.parse(data[0]);
                           for (i = 0; i < ProjectChartDataList.length; i++) {
@@ -1252,6 +1256,7 @@ AUDashboardApp.controller('ActiveResourcesController', ['$scope', '$http', 'File
     //File upload functionality
     var uploader = $scope.uploader = new FileUploader({
         url: 'api/Dashboard/UploadResources',
+        //url: 'api/Dashboard/UploadConsultingReport',
         autoUpload: true
         //removeAfterUpload: true
     });
@@ -1669,7 +1674,7 @@ AUDashboardApp.controller('OperationsController', ['$scope', '$http', function (
         }).
       success(function (data, status, headers, config) {
           if (data != null) {
-              debugger;
+              
               $scope.revenueChartPrevData = JSON.parse(data[1]);
               $scope.revenueChartCurrData = JSON.parse(data[0]);
 
@@ -1819,7 +1824,6 @@ AUDashboardApp.controller('OperationsController', ['$scope', '$http', function (
         }).
       success(function (data, status, headers, config) {
           if (data != null) {
-              debugger;
               var colors = ['#F7464A', '#46BFBD', '#FDB45C', '#40C000', '#FF8000', '#F7464A', '#46BFBD', '#FDB45C', '#46BFBA', '#FDB4AC', '#F7464A', '#46BFBD', '#FDB45C', '#46BFBA', '#FDB4AC', '#F7464A', '#46BFBD', '#FDB45C', '#46BFBA', '#FDB4AC'];
               var highlights = ['#FF5A5E', '#5AD3D1', '#FFC870', '#40C000', '#FFC870', '#FF5A5E', '#5AD3D1', '#FFC870', '#5AD3D1', '#FFC870', '#FF5A5E', '#5AD3D1', '#FFC870', '#5AD3D1', '#FFC870', '#FF5A5E', '#5AD3D1', '#FFC870', '#5AD3D1', '#FFC870'];
               $scope.ProjectChartData = [];
@@ -2337,185 +2341,71 @@ angular.module('AUDashboardApp').filter('changeDateFormat', function($filter)
     };
 });
 
-AUDashboardApp.controller('ConsultingExecDashboardController', ['$scope', '$http', function ($scope, $http) {
-
-    
-    // Chart.js Data
-    $scope.RevAtCostData = {
-        labels: ['Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec','Jan', 'Feb', 'Mar', 'Apr','May' ],
-        datasets: [
-            {
-                label: 'FY16',
-                fillColor: '#00b0f0',
-                strokeColor: 'rgba(151,187,205,1)',
-                highlightFill: 'rgba(151,187,205,1)',
-                highlightStroke: 'rgba(151,187,205,1)',
-                data: [210000, 310000, 310000, 398000, 398000, 300000, 210000, 200000, 210000, 280000, 420000, 410000]
-            },
-            {
-              label: 'FY15',
-              fillColor: '#7ec351',
-              strokeColor: 'rgba(69,201,102,0.9)',
-              highlightFill: 'rgba(69,201,102,0.9)',
-              highlightStroke: 'rgba(220,220,220,1)',
-              data: [510000, 520000, 520000, 620000, 500000]
-          }
-          
-        ]
-    };
-
-    // Chart.js Options
-    $scope.RevAtCostOptions = {
-
-        // Sets the chart to be responsive
-        responsive: true,
-
-        //Boolean - Whether the scale should start at zero, or an order of magnitude down from the lowest value
-        scaleBeginAtZero: true,
-
-        //Boolean - Whether grid lines are shown across the chart
-        scaleShowGridLines:false,
-
-        scaleShowHorizontalLines:false,
-
-        scaleShowVerticalLines:true,
-
-        //String - Colour of the grid lines
-        scaleGridLineColor: "white",       
-
-
-        //Number - Width of the grid lines
-        scaleGridLineWidth: 1,
-
-        //Boolean - If there is a stroke on each bar
-        barShowStroke: true,
-
-        //Number - Pixel width of the bar stroke
-        barStrokeWidth: 2,
-
-        //Number - Spacing between each of the X value sets
-        barValueSpacing: 5,
-
-        //Number - Spacing between data sets within X values
-        barDatasetSpacing: 1,
-
-        // Change Y Axis numbers to Currency Type
-        scaleLabel: function (label) { return '$' + label.value.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ","); },
-
-        scaleFontSize: 9,
-
-        // Change Tooltip data numbers to Currency Type
-        multiTooltipTemplate: function (label) { return '$' + label.value.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ","); },
-
-        //String - A legend template
-        legendTemplate: '<ul class="tc-chart-js-legend x-small-font text-center col-lg-12"><% for (var i=0; i<datasets.length; i++){%><li><span style="background-color:<%=datasets[i].fillColor%>"></span><%if(datasets[i].label){%><%=datasets[i].label%><%}%></li><%}%></ul>'
-    };
-
-
-    $scope.CumulativeHoursData = {
-        labels: ['Jun', 'Jul', 'Aug', 'Sep', 'Oct'],
-        datasets: [
-          {
-              label: 'YTD',
-              fillColor: 'rgba(320,220,220,0.2)',
-              strokeColor: 'rgba(220,220,220,1)',
-              pointColor: 'rgba(220,220,220,1)',
-              pointStrokeColor: '#fff',
-              pointHighlightFill: '#fff',
-              pointHighlightStroke: 'rgba(220,220,220,1)',
-              data: [0, 20, 40, 60]
-          },
-          {
-              label: 'Plan',
-              fillColor: 'rgba(151,187,205,0.2)',
-              strokeColor: 'rgba(151,187,205,1)',
-              pointColor: 'rgba(151,187,205,1)',
-              pointStrokeColor: '#fff',
-              pointHighlightFill: '#fff',
-              pointHighlightStroke: 'rgba(151,187,205,1)',
-              data: [90, 90, 90, 90,90]
-          }
-        ]
-    };
-
-    $scope.CumulativeHoursOptions = {
-        animation: false,
-        // Sets the chart to be responsive
-        responsive: true,
-
-        ///Boolean - Whether grid lines are shown across the chart
-        scaleShowGridLines: true,
-
-        //String - Colour of the grid lines
-        scaleGridLineColor: "rgba(0,0,0,.05)",
-
-        //Number - Width of the grid lines
-        scaleGridLineWidth: 1,
-
-        //Boolean - Whether the line is curved between points
-        bezierCurve: true,
-
-        //Number - Tension of the bezier curve between points
-        bezierCurveTension: 0.2,
-
-        //Boolean - Whether to show a dot for each point
-        pointDot: true,
-
-        //Number - Radius of each point dot in pixels
-        pointDotRadius: 2,
-
-        //Number - Pixel width of point dot stroke
-        pointDotStrokeWidth: 1,
-
-        //Number - amount extra to add to the radius to cater for hit detection outside the drawn point
-        pointHitDetectionRadius: 10,
-
-        //Boolean - Whether to show a stroke for datasets
-        datasetStroke: true,
-
-        //Number - Pixel width of dataset stroke
-        datasetStrokeWidth: 2,
-
-        //Boolean - Whether to fill the dataset with a colour
-        datasetFill: false,
-
-        scaleFontSize: 9,
-
-        // Function - on animation progress
-        onAnimationProgress: function () { },
-
-        // Function - on animation complete
-        onAnimationComplete: function () { },
-
-        //String - A legend template
-        legendTemplate: '<ul class="tc-chart-js-legend x-small-font text-center col-lg-12"><% for (var i=0; i<datasets.length; i++){%><li><span style="background-color:<%=datasets[i].strokeColor%>"></span><%if(datasets[i].label){%><%=datasets[i].label%><%}%></li><%}%></ul>'
-    };
-
-    $scope.FXData = {
-        labels: ['Jun-14', 'Jul-14', 'Aug-14', 'Sep-14', 'Oct-14','Nov-14', 'Dec-14','Jan-15', 'Feb-15','Mar-15','Apr-15','May-15','Jun-15','Jul-15','Aug-15','Sep-15','Oct-15'] ,
-        datasets: [         
-          {
-              label: 'Plan',
-              fillColor: 'rgba(151,187,205,0.2)',
-              strokeColor: 'rgba(151,187,205,1)',
-              pointColor: 'rgba(151,187,205,1)',
-              pointStrokeColor: '#fff',
-              pointHighlightFill: '#fff',
-              pointHighlightStroke: 'rgba(151,187,205,1)',
-              data: [0.95, 0.94, 0.93, 0.93, 0.9, 0.9, 0.98, 0.9, 0.9, 0.9, 0.89, 0.89, 0.88, 0.89, 0.89, 0.89, 0.88]
-          }
-        ]
-    };
+AUDashboardApp.controller('ConsultingExecDashboardController', ['$scope', '$http', 'FileUploader', '$location', function ($scope, $http, FileUploader, $location) {
 
     $scope.EDCPipeline = [
-        { Client: 'Digital Inside', ProjectName: 'Digital Inside', Status: 'InProgress', Scope: '', TeamSize: 7 },
-        { Client: 'Digital Inside', ProjectName: 'Digital Inside', Status: 'InProgress', Scope: '', TeamSize: 7 },
-        { Client: 'Digital Inside', ProjectName: 'Digital Inside', Status: 'InProgress', Scope: '', TeamSize: 7 },
-        { Client: 'Digital Inside', ProjectName: 'Digital Inside', Status: 'InProgress', Scope: '', TeamSize: 7 },
-        { Client: 'Digital Inside', ProjectName: 'Digital Inside', Status: 'InProgress', Scope: '', TeamSize: 7 },
-        { Client: 'Digital Inside', ProjectName: 'Digital Inside', Status: 'InProgress', Scope: '', TeamSize: 7 },
-        { Client: 'Digital Inside', ProjectName: 'Digital Inside', Status: 'InProgress', Scope: '', TeamSize: 7 }
+        { Client: 'Digital Inside', ProjectName: 'Digital Inside', Status: 'InProgress', Scope: '.NET', TeamSize: 7, Cluster:'Digital' },
+        { Client: 'VicRoads', ProjectName: 'VicRoads2', Status: 'InProgress', Scope: 'Sitecore', TeamSize: 18, Cluster:'Digital' },
+        { Client: 'Aus Super', ProjectName: 'Aus Super', Status: 'InProgress', Scope: 'Sitecore', TeamSize: 2 },
+        { Client: 'QBE', ProjectName: 'QBE', Status: 'InProgress', Scope: 'Sitecore', TeamSize: 6 },
+        { Client: 'ING', ProjectName: 'ING Platform Redesign', Status: 'InProgress', Scope: '', TeamSize: 60 },
+        { Client: 'TfNSW', ProjectName: 'TfNSW', Status: 'InProgress', Scope: '', TeamSize: 22 },
+        { Client: 'JnJ', ProjectName: 'JnJ', Status: 'InProgress', Scope: 'SFDC', TeamSize: 6 }
     ];
+
+    $scope.ShowReport = false;
+
+    //File upload functionality
+    var uploader = $scope.uploader = new FileUploader({        
+        url: 'api/Dashboard/UploadConsultingReport',
+        autoUpload: true
+        //removeAfterUpload: true
+    });
+
+    uploader.onCompleteItem = function (fileItem, response, status, headers) {
+        $location.path("/ConsultingExecDashboard")
+    };
+
+
+    
+
+
+  
+
+
+    //$scope.DownloadConsultingReport = function () {
+    //    $interval.cancel();        
+    //    html2canvas(document.body, {
+    //        useCORS: true,
+    //        allowTaint: true,
+    //        onrendered: function (canvas) {
+    //            var Pic = canvas.toDataURL("image/png");
+    //            Pic = Pic.replace(/^data:image\/(png|jpg);base64,/, "");
+
+    //            // Sending the image data to Server
+                
+    //            $http({
+    //                method: 'POST',
+    //                //url: 'SendMail.asmx/UploadPic',
+    //                url: 'api/Dashboard/UploadCurrentStatus',
+    //                data: Pic,//JSON.stringify(JSON.stringify(Pic))
+    //                //data: {
+    //                //    imageData: Pic
+    //                //},
+    //                contentType: 'application/json, charset=utf-8',
+    //                //dataType: 'json',
+    //            }).success(function (msg) {
+    //                alert(msg);
+    //                //window.close();
+    //            }).error(function (msg) {
+    //                alert(msg.ExceptionMessage);
+    //            });
+    //        }
+    //    });
+    //};
+
+
+    //$interval($scope.DownloadConsultingReport(), 9000);
 
 }]);
 

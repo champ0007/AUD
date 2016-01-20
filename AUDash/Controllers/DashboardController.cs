@@ -17,6 +17,7 @@ using System.Net.Http.Headers;
 using System.Net.Mail;
 using System.Net.Mime;
 using SendGrid;
+using HiQPdf;
 
 namespace AUDash.Controllers
 {
@@ -27,7 +28,7 @@ namespace AUDash.Controllers
 
         private string AUTH_TOKEN = "admin-Gu3ssWh@t?";
         private List<string> AUTH_TOKENS = new List<string>() { "admin-Gu3ssWh@t?", "kyla-KyL@dmin" };
-        
+
 
         //POST api/Dashboard/UploadCurrentStatus
         [HttpPost]
@@ -71,7 +72,7 @@ namespace AUDash.Controllers
         public string GetAuthentication(string authToken)
         {
             string uid = authToken.Split('-').First();
-            string pass = authToken.Split('-').Last();            
+            string pass = authToken.Split('-').Last();
             if (AUTH_TOKENS.Contains(authToken))
                 return "true";
             else
@@ -1146,7 +1147,7 @@ namespace AUDash.Controllers
             myMessage.AddTo("tusharma@deloitte.com");
             myMessage.From = new MailAddress("tusharma@deloitte.com", "Tushar");
             myMessage.Subject = "AUDashboard Weekly Report";
-            
+
             LinkedResource logo = new LinkedResource(path);
             logo.ContentId = "DashboardStatus";
 
@@ -1209,6 +1210,290 @@ namespace AUDash.Controllers
             //}
 
         }
+
+
+        //POST api/Dashboard/UploadConsultingReport
+        [HttpPost]
+        public void UploadConsultingReport()
+        {
+            DBRepository repo = new DBRepository();
+
+            HttpPostedFile uploadedFile = HttpContext.Current.Request.Files[0];
+
+            List<FXMaster> FXrates = new List<FXMaster>();
+            FXrates = repo.GetFXRates();
+            List<ClusterWBSMapping> clusterMapper = new List<ClusterWBSMapping>();
+            clusterMapper = repo.GetClusterMapping();
+            List<InvoiceEntity> invoices = new List<InvoiceEntity>();
+            string strError;
+            int rowCount = 4;
+            Stream inputStream = uploadedFile.InputStream;
+            using (ExcelPackage package = new ExcelPackage(inputStream))
+            {
+                ExcelWorksheet invoiceWorkSheet;
+
+                try
+                {
+                    invoiceWorkSheet = package.Workbook.Worksheets["All Functions"];
+                }
+                catch
+                {
+                    invoiceWorkSheet = package.Workbook.Worksheets["All Functions"];
+                }
+
+
+                while (invoiceWorkSheet.Cells[rowCount, 1].Value != null)
+                {
+                    InvoiceEntity InvoiceRow = new InvoiceEntity();
+
+                    InvoiceRow.FunctionArea = Convert.ToString(invoiceWorkSheet.Cells[rowCount, 1].Value);
+                    InvoiceRow.Client = Convert.ToInt32(invoiceWorkSheet.Cells[rowCount, 2].Value);
+                    InvoiceRow.ClientName = Convert.ToString(invoiceWorkSheet.Cells[rowCount, 3].Value);
+                    InvoiceRow.Country = Convert.ToString(invoiceWorkSheet.Cells[rowCount, 4].Value);
+                    InvoiceRow.CountryName = Convert.ToString(invoiceWorkSheet.Cells[rowCount, 5].Value);                    
+                    InvoiceRow.MemberFirms = Convert.ToString(invoiceWorkSheet.Cells[rowCount, 7].Value);
+                    InvoiceRow.Industry = Convert.ToString(invoiceWorkSheet.Cells[rowCount, 8].Value);
+                    InvoiceRow.LCSP = Convert.ToString(invoiceWorkSheet.Cells[rowCount, 9].Value);
+                    InvoiceRow.Sector = Convert.ToString(invoiceWorkSheet.Cells[rowCount, 10].Value);
+                    InvoiceRow.WBSElement = Convert.ToString(invoiceWorkSheet.Cells[rowCount, 11].Value);
+                    InvoiceRow.Cluster = clusterMapper.Where(x => x.WBSElement == InvoiceRow.WBSElement).Count() >0 ? clusterMapper.First(x => x.WBSElement == InvoiceRow.WBSElement).cluster : string.Empty;//Convert.ToString(invoiceWorkSheet.Cells[rowCount, 6].Value);
+                    InvoiceRow.PD = Convert.ToString(invoiceWorkSheet.Cells[rowCount, 12].Value);
+                    InvoiceRow.BillingManager = Convert.ToString(invoiceWorkSheet.Cells[rowCount, 13].Value);
+                    InvoiceRow.BillingPartner = Convert.ToString(invoiceWorkSheet.Cells[rowCount, 14].Value);
+                    InvoiceRow.ProjectController = Convert.ToString(invoiceWorkSheet.Cells[rowCount, 15].Value);
+                    InvoiceRow.ProjectManager = Convert.ToString(invoiceWorkSheet.Cells[rowCount, 16].Value);
+                    InvoiceRow.ProjectPartner = Convert.ToString(invoiceWorkSheet.Cells[rowCount, 17].Value);
+                    InvoiceRow.ServiceArea = Convert.ToString(invoiceWorkSheet.Cells[rowCount, 18].Value);
+                    InvoiceRow.ServiceLine = Convert.ToString(invoiceWorkSheet.Cells[rowCount, 19].Value);
+                    InvoiceRow.FiscalYear = Convert.ToInt32(Convert.ToString(invoiceWorkSheet.Cells[rowCount, 20].Value).Substring(10, 4));
+                    InvoiceRow.Period = Convert.ToInt32(Convert.ToString(invoiceWorkSheet.Cells[rowCount, 20].Value).Substring(7, 2));
+                    InvoiceRow.ServiceHrsR10YTD = Convert.ToDecimal(invoiceWorkSheet.Cells[rowCount, 21].Value);
+                    InvoiceRow.NSRYTDR10 = Convert.ToDecimal(invoiceWorkSheet.Cells[rowCount, 22].Value);
+                    InvoiceRow.FX = FXrates.Where(x => x.Period == InvoiceRow.Period && x.FiscalYear == InvoiceRow.FiscalYear).Select(x => x.FXRate).First();
+                    InvoiceRow.AUDNSR = InvoiceRow.NSRYTDR10 / InvoiceRow.FX;
+                    InvoiceRow.DiscRateYTDR10 = Convert.ToInt32(invoiceWorkSheet.Cells[rowCount, 23].Value);
+                    InvoiceRow.NSRPerHrYTDR10 = Convert.ToDecimal(invoiceWorkSheet.Cells[rowCount, 24].Value);
+                    InvoiceRow.MFUS = Convert.ToString(invoiceWorkSheet.Cells[rowCount, 25].Value);
+                    //InvoiceRow.ServiceHrsR10AP = Convert.ToInt32(invoiceWorkSheet.Cells[rowCount, 28].Value);
+
+                    invoices.Add(InvoiceRow);
+
+                    rowCount++;
+                }
+            }
+
+            repo.UpsertConsultingReport(invoices);
+        }
+
+        //GET api/Dashboard/GetConsultingReportData
+        public List<string> GetConsultingReportData(string authToken)
+        {
+            List<string> result = new List<string>();
+
+            if (AUTH_TOKENS.Contains(authToken))
+            {
+                DBRepository repo = new DBRepository();
+                // Revenue By Cluster 
+                List<Revenue> revByCluster = repo.GetRevenueByCluster(DateTime.Now.Month >= 4 ? DateTime.Now.Year + 1 : (DateTime.Now.Year));
+                List<ChartData> clusterChartData = new List<ChartData>();
+                clusterChartData = revByCluster.GroupBy(x => x.Cluster)
+                              .Select(g => new ChartData
+                              {
+                                  seriesname = g.Key,
+                                  data = g.Select(x => new ValueMini
+                                  {
+                                      value = x.TotalRevenue.ToString()
+                                  }).ToList()
+                              }).ToList();
+                List<LabelMini> clusterLabels = new List<LabelMini>();
+                clusterLabels = revByCluster.GroupBy(x => x.Period).Select(g => new LabelMini { label = "P" + g.Key.ToString() }).ToList();
+
+                //Revenue By Cost 
+                List<Revenue> revAtCost = repo.GetRevenueAtCost();
+                List<ValueMini> revByCostChartCurrentData = new List<ValueMini>();
+                List<ValueMini> revByCostChartPreviousData = new List<ValueMini>();
+                foreach (Revenue entity in revAtCost)
+                {
+                    if (entity.FiscalYear == (DateTime.Now.Month >= 4 ? DateTime.Now.Year + 1 : (DateTime.Now.Year)))
+                    {
+                        revByCostChartCurrentData.Add(new ValueMini() { value = entity.TotalRevenue.ToString() });
+                    }
+                    else
+                    {
+                        revByCostChartPreviousData.Add(new ValueMini() { value = entity.TotalRevenue.ToString() });
+                    }
+                }
+
+                //Resource Hours Chart
+                List<ResourceHours> resHours = repo.GetResourceHours();
+                List<ChartData> resourceHoursData = new List<ChartData>();
+                resourceHoursData = resHours.GroupBy(x => x.FiscalYear)
+                              .Select(g => new ChartData
+                              {
+                                  seriesname = g.Key == (DateTime.Now.Month >= 4 ? DateTime.Now.Year + 1 : (DateTime.Now.Year)) ? "Current Year" : "Previous Year",
+                                  data = g.Select(x => new ValueMini
+                                  {
+                                      value = x.ServiceHours.ToString()
+                                  }).ToList()
+                              }).ToList();
+
+                //Cumulative Hours Chart
+                List<ResourceHours> cumulativeHours = repo.GetCumulativeHours(DateTime.Now.Month >= 4 ? DateTime.Now.Year + 1 : (DateTime.Now.Year));
+                List<ChartData> cumulativeHoursData = new List<ChartData>();
+                cumulativeHoursData = cumulativeHours.GroupBy(x => x.FiscalYear)
+                              .Select(g => new ChartData
+                              {
+                                  seriesname = "YTD",
+                                  data = g.Select(x => new ValueMini
+                                  {
+                                      value = x.CumulativeHours.ToString()
+                                  }).ToList()
+                              }).ToList();
+                List<LabelMini> cumulativeHrsLabels = new List<LabelMini>();
+                cumulativeHrsLabels = cumulativeHours.GroupBy(x => x.Period).Select(g => new LabelMini { label = "P" + g.Key.ToString() }).ToList();
+
+                //FX Trend Chart
+                List<FXMaster> FXData = repo.GetFXRates();
+                FXData.ForEach(x => x.FiscalYear = 1); // Workaround for the GroupBy
+                List<ChartData> FXChartData = new List<ChartData>();
+                FXChartData = FXData.GroupBy(x => x.FiscalYear)
+                              .Select(g => new ChartData
+                              {
+                                  seriesname = "YTD",
+                                  data = g.Select(x => new ValueMini
+                                  {
+                                      value = x.FXRate.ToString()
+                                  }).ToList()
+                              }).ToList();
+                List<LabelMini> FXChartLabels = new List<LabelMini>();
+                FXChartLabels = FXData.Select(g => new LabelMini { label = "P" + g.Period.ToString() }).ToList();
+                // Projects by Period Chart
+                List<ConsultingChartEntity> projectData = new List<ConsultingChartEntity>();
+                projectData.Add(new ConsultingChartEntity() { Month = "Jun", FiscalYear = 2015, Count = 13 });
+                projectData.Add(new ConsultingChartEntity() { Month = "Jul", FiscalYear = 2015, Count = 10 });
+                projectData.Add(new ConsultingChartEntity() { Month = "Aug", FiscalYear = 2015, Count = 10 });
+                projectData.Add(new ConsultingChartEntity() { Month = "Sep", FiscalYear = 2015, Count = 10 });
+                projectData.Add(new ConsultingChartEntity() { Month = "Oct", FiscalYear = 2015, Count = 10 });
+                projectData.Add(new ConsultingChartEntity() { Month = "Nov", FiscalYear = 2015, Count = 9 });
+                projectData.Add(new ConsultingChartEntity() { Month = "Dec", FiscalYear = 2015, Count = 10 });
+                projectData.Add(new ConsultingChartEntity() { Month = "Jan", FiscalYear = 2015, Count = 9 });
+                projectData.Add(new ConsultingChartEntity() { Month = "Feb", FiscalYear = 2015, Count = 10 });
+                projectData.Add(new ConsultingChartEntity() { Month = "Mar", FiscalYear = 2015, Count = 10 });
+                projectData.Add(new ConsultingChartEntity() { Month = "Apr", FiscalYear = 2015, Count = 10 });
+                projectData.Add(new ConsultingChartEntity() { Month = "May", FiscalYear = 2015, Count = 10 });
+
+                projectData.Add(new ConsultingChartEntity() { Month = "Jun", FiscalYear = 2016, Count = 7 });
+                projectData.Add(new ConsultingChartEntity() { Month = "Jul", FiscalYear = 2016, Count = 6 });
+                projectData.Add(new ConsultingChartEntity() { Month = "Aug", FiscalYear = 2016, Count = 5 });
+                projectData.Add(new ConsultingChartEntity() { Month = "Sep", FiscalYear = 2016, Count = 6 });
+                projectData.Add(new ConsultingChartEntity() { Month = "Oct", FiscalYear = 2016, Count = 13 });
+                projectData.Add(new ConsultingChartEntity() { Month = "Nov", FiscalYear = 2016, Count = 18 });
+                projectData.Add(new ConsultingChartEntity() { Month = "Dec", FiscalYear = 2016, Count = 22 });
+
+                List<ChartData> projectChartData = new List<ChartData>();
+                projectChartData = projectData.GroupBy(x => x.FiscalYear)
+                              .Select(g => new ChartData
+                              {
+                                  seriesname = g.Key == (DateTime.Now.Month >= 4 ? DateTime.Now.Year + 1 : (DateTime.Now.Year)) ? "Current Year" : "Previous Year",
+                                  data = g.Select(x => new ValueMini
+                                  {
+                                      value = x.Count.ToString()
+                                  }).ToList()
+                              }).ToList();
+
+
+                List<ConsultingChartEntity> resourceData = new List<ConsultingChartEntity>();
+                resourceData.Add(new ConsultingChartEntity() { Month = "Jun", FiscalYear = 2015, Count = 53 });
+                resourceData.Add(new ConsultingChartEntity() { Month = "Jul", FiscalYear = 2015, Count = 50 });
+                resourceData.Add(new ConsultingChartEntity() { Month = "Aug", FiscalYear = 2015, Count = 30 });
+                resourceData.Add(new ConsultingChartEntity() { Month = "Sep", FiscalYear = 2015, Count = 54 });
+                resourceData.Add(new ConsultingChartEntity() { Month = "Oct", FiscalYear = 2015, Count = 31 });
+                resourceData.Add(new ConsultingChartEntity() { Month = "Nov", FiscalYear = 2015, Count = 54 });
+                resourceData.Add(new ConsultingChartEntity() { Month = "Dec", FiscalYear = 2015, Count = 26 });
+                resourceData.Add(new ConsultingChartEntity() { Month = "Jan", FiscalYear = 2015, Count = 33 });
+                resourceData.Add(new ConsultingChartEntity() { Month = "Feb", FiscalYear = 2015, Count = 52 });
+                resourceData.Add(new ConsultingChartEntity() { Month = "Mar", FiscalYear = 2015, Count = 66 });
+                resourceData.Add(new ConsultingChartEntity() { Month = "Apr", FiscalYear = 2015, Count = 76 });
+                resourceData.Add(new ConsultingChartEntity() { Month = "May", FiscalYear = 2015, Count = 75 });
+
+                resourceData.Add(new ConsultingChartEntity() { Month = "Jun", FiscalYear = 2016, Count = 84 });
+                resourceData.Add(new ConsultingChartEntity() { Month = "Jul", FiscalYear = 2016, Count = 113 });
+                resourceData.Add(new ConsultingChartEntity() { Month = "Aug", FiscalYear = 2016, Count = 115 });
+                resourceData.Add(new ConsultingChartEntity() { Month = "Sep", FiscalYear = 2016, Count = 136 });
+                resourceData.Add(new ConsultingChartEntity() { Month = "Oct", FiscalYear = 2016, Count = 178 });
+                resourceData.Add(new ConsultingChartEntity() { Month = "Nov", FiscalYear = 2016, Count = 203 });
+                resourceData.Add(new ConsultingChartEntity() { Month = "Dec", FiscalYear = 2016, Count = 210 });
+
+                List<ChartData> resourceChartData = new List<ChartData>();
+                resourceChartData = resourceData.GroupBy(x => x.FiscalYear)
+                              .Select(g => new ChartData
+                              {
+                                  seriesname = g.Key == (DateTime.Now.Month >= 4 ? DateTime.Now.Year + 1 : (DateTime.Now.Year)) ? "Current Year" : "Previous Year",
+                                  data = g.Select(x => new ValueMini
+                                  {
+                                      value = x.Count.ToString()
+                                  }).ToList()
+                              }).ToList();
+
+                result.Add(JsonConvert.SerializeObject(revByCostChartCurrentData));
+                result.Add(JsonConvert.SerializeObject(revByCostChartPreviousData));
+                result.Add(Convert.ToString(GetAverage(revByCostChartCurrentData)));
+                result.Add(Convert.ToString(GetAverage(revByCostChartPreviousData)));
+                result.Add(JsonConvert.SerializeObject(clusterChartData));
+                result.Add(JsonConvert.SerializeObject(clusterLabels));
+                result.Add(JsonConvert.SerializeObject(resourceHoursData));
+                result.Add(Convert.ToString(GetAverage(resourceHoursData.First(x => x.seriesname == "Current Year").data)));
+                result.Add(Convert.ToString(GetAverage(resourceHoursData.First(x => x.seriesname == "Previous Year").data)));
+                result.Add(JsonConvert.SerializeObject(cumulativeHoursData));
+                result.Add(JsonConvert.SerializeObject(cumulativeHrsLabels));
+                result.Add(JsonConvert.SerializeObject(FXChartData));
+                result.Add(JsonConvert.SerializeObject(FXChartLabels));
+                result.Add(Convert.ToString(GetAverage(FXChartData.First(x => x.seriesname == "YTD").data)));
+                result.Add(JsonConvert.SerializeObject(projectChartData));
+                result.Add(Convert.ToString(GetAverage(projectChartData.First(x => x.seriesname == "Current Year").data)));
+                result.Add(Convert.ToString(GetAverage(projectChartData.First(x => x.seriesname == "Previous Year").data)));
+                result.Add(JsonConvert.SerializeObject(resourceChartData));
+                result.Add(Convert.ToString(GetAverage(resourceChartData.First(x => x.seriesname == "Current Year").data)));
+                result.Add(Convert.ToString(GetAverage(resourceChartData.First(x => x.seriesname == "Previous Year").data)));
+
+
+
+            }
+
+            return result;
+        }
+
+        private decimal GetAverage(List<ValueMini> DataCollection)
+        {
+            decimal sumValue = 0;
+
+            foreach (ValueMini entity in DataCollection)
+            {
+                sumValue += Convert.ToDecimal(entity.value);
+            }
+
+            return sumValue / DataCollection.Count();
+        }
+
+        public System.Web.Mvc.FileResult GetConsultingReportPDF()
+        {
+            // create the HTML to PDF converter
+            HtmlToPdf htmlToPdfConverter = new HtmlToPdf();
+
+            // set a demo serial number
+            htmlToPdfConverter.SerialNumber = "YCgJMTAE-BiwJAhIB-EhlWTlBA-UEBRQFBA-U1FOUVJO-WVlZWQ==";
+            string url = "http://localhost:2083/Dashboard.html#/ConsultingExecDashboard";
+            byte[] pdfBuffer = htmlToPdfConverter.ConvertUrlToMemory(url);
+            System.Web.Mvc.FileResult fileResult = new System.Web.Mvc.FileContentResult(pdfBuffer, "application/pdf");
+            // send the PDF document to browser
+
+            fileResult.FileDownloadName = "HtmlToPdf.pdf";
+
+
+            return fileResult;
+        }
+
+
 
     }
 }

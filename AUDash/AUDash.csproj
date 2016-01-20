@@ -45,6 +45,10 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>bin\EPPlus.dll</HintPath>
     </Reference>
+    <Reference Include="HiQPdf, Version=9.6.0.0, Culture=neutral, PublicKeyToken=acd8b62594985b24, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>bin\HiQPdf.dll</HintPath>
+    </Reference>
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="Newtonsoft.Json, Version=7.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
       <HintPath>..\packages\Newtonsoft.Json.7.0.1\lib\net45\Newtonsoft.Json.dll</HintPath>
@@ -177,13 +181,16 @@
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
     <Compile Include="Models\ActionItem.cs" />
+    <Compile Include="Models\FXMaster.cs" />
     <Compile Include="Models\Invoice.cs" />
+    <Compile Include="Models\InvoiceEntity.cs" />
     <Compile Include="Models\KeyUpdates.cs" />
     <Compile Include="Models\Enumerations.cs" />
     <Compile Include="Models\Notification.cs" />
     <Compile Include="Models\Project.cs" />
     <Compile Include="Models\ReferenceData.cs" />
     <Compile Include="Models\Resource.cs" />
+    <Compile Include="Models\Revenue.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Repository\DBRespository.cs" />
     <Compile Include="SendMail.asmx.cs">
@@ -384,6 +391,7 @@
     <Content Include="js\modernizr-2.6.2.js">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+    <Content Include="js\numeral.min.js" />
     <Content Include="js\plugins\dataTables\dataTables.bootstrap.js" />
     <Content Include="js\plugins\dataTables\jquery.dataTables.js" />
     <Content Include="js\plugins\flot\excanvas.min.js" />
@@ -435,6 +443,9 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="partials\ActionItems.html">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="partials\ConsultingExecReportAdmin.html">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="partials\CurrentStatus.html" />

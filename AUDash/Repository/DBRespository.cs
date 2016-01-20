@@ -8,6 +8,7 @@ using System.Configuration;
 using System.Web.Configuration;
 using System.IO;
 using System.Data;
+using System.Text;
 namespace AUDash.Repository
 {
     public class DBRepository
@@ -150,7 +151,7 @@ namespace AUDash.Repository
             return memoryStream;
         }
 
-        public void InsertInvoiceFile(byte[] file, string fileName )
+        public void InsertInvoiceFile(byte[] file, string fileName)
         {
 
             using (var varConnection = GetConnection())
@@ -184,5 +185,184 @@ namespace AUDash.Repository
                 }
         }
 
+
+        public void UpsertConsultingReport(List<InvoiceEntity> invoices)
+        {
+            SqlCommand cmd = new SqlCommand();
+            cmd.Connection = GetConnection();
+
+            cmd.Connection.Open();
+            foreach (InvoiceEntity invoice in invoices)
+            {
+                StringBuilder commandText = new StringBuilder();
+                commandText.Append("Insert into ConsultingReport values(");
+                commandText.Append("'" + invoice.FunctionArea + "',");
+                commandText.Append(invoice.Client + ",");
+                commandText.Append("'" + invoice.ClientName + "',");
+                commandText.Append("'" + invoice.Country + "',");
+                commandText.Append("'" + invoice.CountryName + "',");
+                commandText.Append("'" + invoice.Cluster + "',");
+                commandText.Append("'" + invoice.MemberFirms + "',");
+                commandText.Append("'" + invoice.Industry + "',");
+                commandText.Append("'" + invoice.LCSP + "',");
+                commandText.Append("'" + invoice.Sector + "',");
+                commandText.Append("'" + invoice.WBSElement + "',");
+                commandText.Append("'" + invoice.PD + "',");
+                commandText.Append("'" + invoice.BillingManager + "',");
+                commandText.Append("'" + invoice.BillingPartner + "',");
+                commandText.Append("'" + invoice.ProjectController + "',");
+                commandText.Append("'" + invoice.ProjectManager + "',");
+                commandText.Append("'" + invoice.ProjectPartner + "',");
+                commandText.Append("'" + invoice.ServiceArea + "',");
+                commandText.Append("'" + invoice.ServiceLine + "',");
+                commandText.Append(invoice.FiscalYear + ",");
+                commandText.Append(invoice.Period + ",");
+                commandText.Append(invoice.ServiceHrsR10YTD + ",");
+                commandText.Append(invoice.NSRYTDR10 + ",");
+                commandText.Append(invoice.FX + ",");
+                commandText.Append(invoice.AUDNSR + ",");
+                commandText.Append(invoice.DiscRateYTDR10 + ",");
+                commandText.Append(invoice.NSRPerHrYTDR10 + ",");
+                commandText.Append("'" + invoice.MFUS + "',");
+                commandText.Append(invoice.ServiceHrsR10AP);
+                commandText.Append(");");
+
+                cmd.CommandText = commandText.ToString();
+                cmd.ExecuteNonQuery();
+            }
+            cmd.Connection.Close();
+        }
+
+        public List<FXMaster> GetFXRates()
+        {
+            List<FXMaster> FXrates = new List<FXMaster>();
+            SqlCommand cmd = new SqlCommand("select period, fiscalyear, fxrate from fxmaster", GetConnection());
+            cmd.Connection.Open();
+            SqlDataReader rdr = cmd.ExecuteReader();
+
+            while (rdr.Read())
+            {
+                FXrates.Add(new FXMaster()
+                {
+                    Period = rdr.GetInt32(0),
+                    FiscalYear = rdr.GetInt32(1),
+                    FXRate = rdr.GetDecimal(2)
+                });
+            }
+
+            cmd.Connection.Close();
+
+            return FXrates;
+        }
+
+        public List<Revenue> GetRevenueAtCost()
+        {
+            SqlCommand cmd = new SqlCommand("select fiscalyear, period, sum(AUDNSR) as RevenueAtCost from consultingreport group by FiscalYear, period order by 1,2", GetConnection());
+            List<Revenue> revenueResult = new List<Revenue>();
+            cmd.Connection.Open();
+            SqlDataReader rdr = cmd.ExecuteReader();
+
+            while (rdr.Read())
+            {
+                revenueResult.Add(new Revenue()
+                {
+                    FiscalYear = rdr.GetInt32(0),
+                    Period = rdr.GetInt32(1),
+                    TotalRevenue = rdr.GetDecimal(2)
+                });
+            }
+
+            cmd.Connection.Close();
+            return revenueResult;
+        }
+
+        public List<Revenue> GetRevenueByCluster(int fiscalYear)
+        {
+
+            SqlCommand cmd = new SqlCommand("select cluster,period, SUM(AUDNSR) as RevenueByCluster from ConsultingReport where fiscalyear = " + fiscalYear + " group by cluster, period order by 1,2", GetConnection());
+            List<Revenue> revenueResult = new List<Revenue>();
+            cmd.Connection.Open();
+            SqlDataReader rdr = cmd.ExecuteReader();
+
+            while (rdr.Read())
+            {
+                revenueResult.Add(new Revenue()
+                {
+                    Cluster = rdr.GetString(0),
+                    Period = rdr.GetInt32(1),
+                    TotalRevenue = rdr.GetDecimal(2)
+                });
+            }
+
+            cmd.Connection.Close();
+            return revenueResult;
+        }
+
+        public List<ResourceHours> GetResourceHours()
+        {
+            SqlCommand cmd = new SqlCommand("select fiscalyear, period, sum(ServiceHrsR10YTD) as ResourceHours from consultingreport group by FiscalYear, period order by 1,2", GetConnection());
+            List<ResourceHours> resourceHoursResult = new List<ResourceHours>();
+            cmd.Connection.Open();
+            SqlDataReader rdr = cmd.ExecuteReader();
+
+            while (rdr.Read())
+            {
+                resourceHoursResult.Add(new ResourceHours()
+                {
+                    FiscalYear = rdr.GetInt32(0),
+                    Period = rdr.GetInt32(1),
+                    ServiceHours = rdr.GetDecimal(2)
+                });
+            }
+
+            cmd.Connection.Close();
+            return resourceHoursResult;
+        }
+
+        public List<ResourceHours> GetCumulativeHours(int fiscalYear)
+        {
+            SqlCommand cmd = new SqlCommand("select t1.fiscalyear, t1.period, t1.resourcehours, sum(t2.resourcehours) as cumulativehours from (select fiscalyear, period, sum(ServiceHrsR10YTD) as ResourceHours from consultingreport where fiscalyear=" + fiscalYear + " group by FiscalYear, period) t1 inner join (select fiscalyear, period, sum(ServiceHrsR10YTD) as ResourceHours from consultingreport where fiscalyear=" + fiscalYear + " group by FiscalYear, period) t2 on t1.period >= t2.period group by t1.fiscalyear, t1.period, t1.resourcehours order by 1,2", GetConnection());
+            List<ResourceHours> resourceHoursResult = new List<ResourceHours>();
+            cmd.Connection.Open();
+            SqlDataReader rdr = cmd.ExecuteReader();
+
+            while (rdr.Read())
+            {
+                resourceHoursResult.Add(new ResourceHours()
+                {
+                    FiscalYear = rdr.GetInt32(0),
+                    Period = rdr.GetInt32(1),
+                    ServiceHours = rdr.GetDecimal(2),
+                    CumulativeHours = rdr.GetDecimal(3)
+                });
+            }
+
+            cmd.Connection.Close();
+            return resourceHoursResult;
+
+        }
+
+
+
+        public List<ClusterWBSMapping> GetClusterMapping()
+        {
+            List<ClusterWBSMapping> ClusterMapper = new List<ClusterWBSMapping>();
+            SqlCommand cmd = new SqlCommand("select cluster, wbselement from wbsclustermapping", GetConnection());
+            cmd.Connection.Open();
+            SqlDataReader rdr = cmd.ExecuteReader();
+
+            while (rdr.Read())
+            {
+                ClusterMapper.Add(new ClusterWBSMapping()
+                {
+                    cluster = rdr.GetString(0),
+                    WBSElement = rdr.GetString(1)
+                });
+            }
+
+            cmd.Connection.Close();
+
+            return ClusterMapper;
+        }
     }
 }
