@@ -28,6 +28,7 @@ namespace AUDash.Controllers
 
         private string AUTH_TOKEN = "admin-Gu3ssWh@t?";
         private List<string> AUTH_TOKENS = new List<string>() { "admin-Gu3ssWh@t?", "kyla-KyL@dmin" };
+        private List<string> ADMIN_AUTH_TOKENS = new List<string>() { "kyla-KyL@dmin" };
 
 
         //POST api/Dashboard/UploadCurrentStatus
@@ -79,6 +80,14 @@ namespace AUDash.Controllers
                 return "false";
         }
 
+        // check if user is admin, if yes, show Consulting Dashboard 
+        public string IsUserAdmin(string authToken)
+        {
+            if (AUTH_TOKENS.Contains(authToken) && ADMIN_AUTH_TOKENS.Contains(authToken))
+                return "true";
+            else
+                return "false";
+        }
         //GET api/Dashboard/GetDashboardCounts
         public string GetDashboardCounts(string authToken)
         {
