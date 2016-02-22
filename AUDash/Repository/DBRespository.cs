@@ -23,7 +23,7 @@ namespace AUDash.Repository
 
             if (connSection.ConnectionStrings.Count > 0)
             {
-                connString = connSection.ConnectionStrings["AUDashboardConnection"];
+                connString = connSection.ConnectionStrings["AUDashboardAzureConnection"];
                 if (connString != null)
                     connectionString = connString.ConnectionString;
                 else
@@ -236,7 +236,7 @@ namespace AUDash.Repository
         public List<FXMaster> GetFXRates()
         {
             List<FXMaster> FXrates = new List<FXMaster>();
-            SqlCommand cmd = new SqlCommand("select period, fiscalyear, fxrate from fxmaster", GetConnection());
+            SqlCommand cmd = new SqlCommand("select period, fiscalyear, fxrate from fxmaster order by 2,1", GetConnection());
             cmd.Connection.Open();
             SqlDataReader rdr = cmd.ExecuteReader();
 
