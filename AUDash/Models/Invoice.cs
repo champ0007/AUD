@@ -22,6 +22,7 @@ namespace AUDash.Models
         public string Comments { get; set; }
         public string PaymentReceived { get; set; }
         public string InvoiceId { get; set; }
+        public string EngagementNumber { get; set; }
     }
 
     public class RevenueByYear
@@ -43,5 +44,5 @@ namespace AUDash.Models
         public RequestedAction action { get; set; }
 
     }
-   
+
 }

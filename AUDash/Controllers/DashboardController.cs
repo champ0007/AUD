@@ -8,7 +8,6 @@ using System.Web.Http;
 using Newtonsoft;
 using Newtonsoft.Json;
 using AUDash.Repository;
-using OfficeOpenXml;
 using System.IO;
 using System.Web;
 using System.Text;
@@ -17,7 +16,8 @@ using System.Net.Http.Headers;
 using System.Net.Mail;
 using System.Net.Mime;
 using SendGrid;
-using HiQPdf;
+using OfficeOpenXml;
+
 
 namespace AUDash.Controllers
 {
@@ -1487,19 +1487,20 @@ namespace AUDash.Controllers
         public System.Web.Mvc.FileResult GetConsultingReportPDF()
         {
             // create the HTML to PDF converter
-            HtmlToPdf htmlToPdfConverter = new HtmlToPdf();
+            //HtmlToPdf htmlToPdfConverter = new HtmlToPdf();
 
-            // set a demo serial number
-            htmlToPdfConverter.SerialNumber = "YCgJMTAE-BiwJAhIB-EhlWTlBA-UEBRQFBA-U1FOUVJO-WVlZWQ==";
-            string url = "http://localhost:2083/Dashboard.html#/ConsultingExecDashboard";
-            byte[] pdfBuffer = htmlToPdfConverter.ConvertUrlToMemory(url);
-            System.Web.Mvc.FileResult fileResult = new System.Web.Mvc.FileContentResult(pdfBuffer, "application/pdf");
-            // send the PDF document to browser
+            //// set a demo serial number
+            //htmlToPdfConverter.SerialNumber = "YCgJMTAE-BiwJAhIB-EhlWTlBA-UEBRQFBA-U1FOUVJO-WVlZWQ==";
+            //string url = "http://localhost:2083/Dashboard.html#/ConsultingExecDashboard";
+            //byte[] pdfBuffer = htmlToPdfConverter.ConvertUrlToMemory(url);
+            //System.Web.Mvc.FileResult fileResult = new System.Web.Mvc.FileContentResult(pdfBuffer, "application/pdf");
+            //// send the PDF document to browser
 
-            fileResult.FileDownloadName = "HtmlToPdf.pdf";
+            //fileResult.FileDownloadName = "HtmlToPdf.pdf";
 
 
-            return fileResult;
+            //return fileResult;
+            return null;
         }
 
 

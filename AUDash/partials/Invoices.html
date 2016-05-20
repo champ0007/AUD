@@ -8,7 +8,6 @@
         <div class="panel-body">
             <div class="list-group">
                 <input type="file" nv-file-select="" uploader="uploader" />
-
                 <div style="margin-bottom: 40px">
                     <!--<h3>Upload queue</h3>
                     <p>Queue length: {{ uploader.queue.length }}</p>-->
@@ -68,7 +67,6 @@
                         </button>
                     </div>-->
                 </div>
-
             </div>
             <!-- /.list-group -->
         </div>
@@ -78,7 +76,7 @@
     <!--End Three Charts-->
     <div class="panel panel-blue">
         <div class="panel-heading">
-            <i class="fa fa-cloud-download" ng-click="DownloadInvoice('All', 'xls')"></i> Invoices            
+            <i class="fa fa-cloud-download" ng-click="DownloadInvoice('All', 'xls')"></i> Invoices
             <i class="fa fa-search"></i> <input ng-model="searchInvoiceFreeText" class="textSearch" />
             <span class="pull-right">
                 Show
@@ -106,6 +104,7 @@
                     <th class="hidden-sm hidden-xs">Invoice Raised</th>
                     <th ng-click="predicate = 'Invoice'; reverse=!reverse">Invoice No.</th>
                     <!--<th>InvoiceRaisedOn</th>-->
+                    <th>Engagement Number</th>
                     <th class="hidden-sm hidden-xs">Comments</th>
                     <th>Payment Received</th>
                 </tr>
@@ -114,28 +113,38 @@
                     <td>
                         <div class="image-upload">
                             <label for="file-input">
-                                <i class="fa fa-cloud-upload"></i> 
+                                <i class="fa fa-cloud-upload"></i>
                             </label>
                             <i ng-click="DownloadInvoice(invoice.InvoiceNo,'pdf')" class="fa fa-cloud-download"></i>
-                            <input id="file-input" type="file" nv-file-select="" uploader="invoiceuploader"/>
+                            <input id="file-input" type="file" nv-file-select="" uploader="invoiceuploader" />
                         </div>
-                        
-                        
+
+
                     </td>
                     <td>{{invoice.Project}}</td>
                     <td class="hidden-xs">{{invoice.Partner}}</td>
                     <!--<td width="300px">{{invoice.Resource}}</td>-->
-                    <td class="hidden-sm hidden-xs">{{invoice.Period | changeDateFormat}}</td>
+                    <td class="hidden-
+                    <td class=" hidden-sm hidden-xs">
+                        {{invoice.Period | changeDateFormat}}
+                    </td>
                     <!--<td>{{invoice.Date}}</td>-->
                     <!--<td>{{invoice.Hours}}</td>-->
                     <td class="hidden-xs">{{invoice.Amount | currency}}</td>
                     <td class="hidden-sm hidden-xs"><i class="fa fa-check" ng-show="ShowReceived(invoice.ATBApproval)"></i><i class="fa fa-clock-o" ng-show="ShowPending(invoice.ATBApproval)"></i></td>
                     <!--<td>{{invoice.ATBApprovalSentOn}}</td>-->
-                    <td class="hidden-sm hidden-xs"><i class="fa fa-check" ng-show="ShowReceived(invoice.InvoiceRaised)"></i><i class="fa fa-clock-o" ng-show="ShowPending(invoice.InvoiceRaised)"></i></td>
+                    <td class="hidden-
+                    <td class=" hidden-sm hidden-xs">
+                        <i class="fa fa-check" ng-show="ShowReceived(invoice.InvoiceRaised)"></i><i class="fa fa-clock-o" ng-show="ShowPending(invoice.InvoiceRaised)"></i>
+                    </td>
                     <td>{{invoice.InvoiceNo}}</td>
                     <!--<td>{{invoice.InvoiceRaisedOn}}</td>-->
-                    <td class="hidden-sm hidden-xs" width="300px">{{invoice.Comments}}</td>
+                    <td>{{invoice.EngagementNumber}}</td>
+                    <td class=" hidden-sm hidden-xs" width="225px">
+                        {{invoice.Comments}}
+                    </td>
                     <td><i class="fa fa-check" ng-show="ShowReceived(invoice.PaymentReceived)"></i><i class="fa fa-clock-o" ng-show="ShowPending(invoice.PaymentReceived)"></i></td>
+
                 </tr>
             </table>
         </div>
@@ -144,10 +153,8 @@
                 <dir-pagination-controls boundary-links="true" on-page-change="pageChangeHandler(newPageNumber)" template-url="/js/dirPagination.tpl.html"></dir-pagination-controls>
             </div>
         </div>
-
         <!-- /.panel-body -->
     </div>
-
     <div class="modal fade bs-AddInvoice-modal-lg" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-lg">
             <div class="modal-content">
@@ -158,7 +165,7 @@
                     </div>
                     <div class="panel-body">
                         <form class="form-horizontal" name="addForm" role="form">
-                            <input type="hidden" ng-model="InvoiceEntity.index"/>
+                            <input type="hidden" ng-model="InvoiceEntity.index" />
                             <input type="hidden" ng-model="InvoiceEntity.InvoiceId" />
                             <div class="form-group">
                                 <label for="inputProjectName" class="col-sm-2 control-label">Project</label>
@@ -207,13 +214,11 @@
                                         <option>Received</option>
                                     </select>
                                 </div>
-
                                 <label for="inputATBSentOn" class="col-sm-2 control-label">ATB Approval Sent On</label>
                                 <div class="col-sm-4">
                                     <input type="text" class="form-control" id="inputATBSentOn" placeholder="ATB Sent On" ng-model="InvoiceEntity.ATBApprovalSentOn">
                                 </div>
                             </div>
-
                             <div class="form-group">
                                 <label for="selectInvoiceRaised" class="col-sm-2 control-label">Invoice Raised</label>
                                 <div class="col-sm-4">
@@ -225,19 +230,16 @@
                                         <option>Received</option>
                                     </select>
                                 </div>
-
                                 <label for="inputInvoiceNo" class="col-sm-2 control-label">Invoice No.</label>
                                 <div class="col-sm-4">
                                     <input type="text" class="form-control" id="inputInvoiceNo" placeholder="Invoice No." ng-model="InvoiceEntity.InvoiceNo">
                                 </div>
-
                             </div>
                             <div class="form-group">
                                 <label for="inputInvoiceRaisedOn" class="col-sm-2 control-label">Invoice Raised On</label>
                                 <div class="col-sm-4">
                                     <input type="text" class="form-control" id="inputInvoiceRaisedOn" placeholder="Invoice Raised On" ng-model="InvoiceEntity.InvoiceRaisedOn">
                                 </div>
-
                                 <label for="selectPaymentReceived" class="col-sm-2 control-label">Payment Received</label>
                                 <div class="col-sm-4">
                                     <select class="form-control" id="selectPaymentReceived" ng-model="InvoiceEntity.PaymentReceived">
@@ -248,12 +250,20 @@
                                 </div>
                             </div>
                             <div class="form-group">
+                                <label for="inputEngagementNumber" class="col-sm-2 control-label">Engagement Number</label>
+                                <div class="col-sm-4">
+                                    <input type="text" class="form-control" id="inputEngagementNumber" placeholder="Engagement Number" ng-model="InvoiceEntity.EngagementNumber">
+                                </div>
+
+                                <div class="col-sm-4">
+                                </div>
+                            </div>
+                            <div class="form-group">
                                 <label for="inputComments" class="col-sm-2 control-label">Comments</label>
                                 <div class="col-sm-8">
                                     <textarea rows="4" class="form-control" id="inputResources" placeholder="Comments" ng-model="InvoiceEntity.Comments" />
                                 </div>
                             </div>
-
                             <div class="form-group">
                                 <div class="col-sm-offset-4 col-sm-10">
                                     <button type="submit" class="btn btn-success" data-dismiss="modal" ng-click="AddInvoice(InvoiceEntity, 'Upsert')">Save</button> &nbsp;
@@ -262,12 +272,10 @@
                             </div>
                         </form>
                     </div>
-
                 </div>
             </div>
         </div>
     </div>
-
 
     <div class="panel panel-blue">
         <div class="panel-heading">
@@ -279,12 +287,9 @@
                 <li><a href="#">Visa Invitation Letter</a></li>
                 <li><a href="#">EDC Authorization Letter</a></li>
                 <li><a href="#">Key Travel Tips</a></li>
-
             </ul>
         </div>
         <!-- /.panel-body -->
     </div>
 </div>
-
-
 
