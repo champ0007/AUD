@@ -532,6 +532,8 @@
     <Content Include="fonts\fontawesome-webfont.eot" />
     <Content Include="fonts\FontAwesome.otf" />
     <Content Include="css\plugins\fusioncharts\style.less" />
+    <None Include="Properties\PublishProfiles\audashboard - FTP.pubxml" />
+    <None Include="Properties\PublishProfiles\audashboard - Web Deploy.pubxml" />
     <None Include="Properties\PublishProfiles\audashboard.pubxml" />
     <None Include="Properties\PublishProfiles\IISDeploy.pubxml" />
     <None Include="Properties\PublishProfiles\Tushar.pubxml" />

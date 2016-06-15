@@ -1,0 +1,188 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="3.0" xmlns:edmx="http://schemas.microsoft.com/ado/2009/11/edmx">
+  <!-- EF Runtime content -->
+  <edmx:Runtime>
+    <!-- SSDL content -->
+    <edmx:StorageModels>
+    <Schema Namespace="AUDashboardModel.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2012" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
+        <EntityType Name="Invoices">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="nchar" MaxLength="10" Nullable="false" />
+          <Property Name="ResourceId" Type="nchar" MaxLength="10" />
+          <Property Name="ProjectId" Type="nchar" MaxLength="10" />
+        </EntityType>
+        <EntityType Name="Projects">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="nchar" MaxLength="10" Nullable="false" />
+          <Property Name="Name" Type="varchar" MaxLength="200" />
+        </EntityType>
+        <EntityType Name="Resources">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="nchar" MaxLength="10" Nullable="false" />
+          <Property Name="ResourceName" Type="varchar" MaxLength="200" />
+        </EntityType>
+        <Association Name="FK_Projects_Invoices">
+          <End Role="Projects" Type="Self.Projects" Multiplicity="1" />
+          <End Role="Invoices" Type="Self.Invoices" Multiplicity="0..1" />
+          <ReferentialConstraint>
+            <Principal Role="Projects">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="Invoices">
+              <PropertyRef Name="Id" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Resources_Invoices">
+          <End Role="Resources" Type="Self.Resources" Multiplicity="1" />
+          <End Role="Invoices" Type="Self.Invoices" Multiplicity="0..1" />
+          <ReferentialConstraint>
+            <Principal Role="Resources">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="Invoices">
+              <PropertyRef Name="Id" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <EntityContainer Name="AUDashboardModelStoreContainer">
+          <EntitySet Name="Invoices" EntityType="Self.Invoices" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Projects" EntityType="Self.Projects" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Resources" EntityType="Self.Resources" Schema="dbo" store:Type="Tables" />
+          <AssociationSet Name="FK_Projects_Invoices" Association="Self.FK_Projects_Invoices">
+            <End Role="Projects" EntitySet="Projects" />
+            <End Role="Invoices" EntitySet="Invoices" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Resources_Invoices" Association="Self.FK_Resources_Invoices">
+            <End Role="Resources" EntitySet="Resources" />
+            <End Role="Invoices" EntitySet="Invoices" />
+          </AssociationSet>
+        </EntityContainer>
+      </Schema></edmx:StorageModels>
+    <!-- CSDL content -->
+    <edmx:ConceptualModels>
+      <Schema Namespace="AUDashboardModel" Alias="Self" annotation:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
+        <EntityContainer Name="AUDashboardEntities" annotation:LazyLoadingEnabled="true">
+          <EntitySet Name="Invoices" EntityType="AUDashboardModel.Invoice" />
+          <EntitySet Name="Projects" EntityType="AUDashboardModel.Project" />
+          <EntitySet Name="Resources" EntityType="AUDashboardModel.Resource" />
+          <AssociationSet Name="FK_Projects_Invoices" Association="AUDashboardModel.FK_Projects_Invoices">
+            <End Role="Project" EntitySet="Projects" />
+            <End Role="Invoice" EntitySet="Invoices" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Resources_Invoices" Association="AUDashboardModel.FK_Resources_Invoices">
+            <End Role="Resource" EntitySet="Resources" />
+            <End Role="Invoice" EntitySet="Invoices" />
+          </AssociationSet>
+        </EntityContainer>
+        <EntityType Name="Invoice">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="String" Nullable="false" MaxLength="10" FixedLength="true" Unicode="true" />
+          <Property Name="ResourceId" Type="String" MaxLength="10" FixedLength="true" Unicode="true" />
+          <Property Name="ProjectId" Type="String" MaxLength="10" FixedLength="true" Unicode="true" />
+          <NavigationProperty Name="Project" Relationship="AUDashboardModel.FK_Projects_Invoices" FromRole="Invoice" ToRole="Project" />
+          <NavigationProperty Name="Resource" Relationship="AUDashboardModel.FK_Resources_Invoices" FromRole="Invoice" ToRole="Resource" />
+        </EntityType>
+        <EntityType Name="Project">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="String" Nullable="false" MaxLength="10" FixedLength="true" Unicode="true" />
+          <Property Name="Name" Type="String" MaxLength="200" FixedLength="false" Unicode="false" />
+          <NavigationProperty Name="Invoice" Relationship="AUDashboardModel.FK_Projects_Invoices" FromRole="Project" ToRole="Invoice" />
+        </EntityType>
+        <EntityType Name="Resource">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="String" Nullable="false" MaxLength="10" FixedLength="true" Unicode="true" />
+          <Property Name="ResourceName" Type="String" MaxLength="200" FixedLength="false" Unicode="false" />
+          <NavigationProperty Name="Invoice" Relationship="AUDashboardModel.FK_Resources_Invoices" FromRole="Resource" ToRole="Invoice" />
+        </EntityType>
+        <Association Name="FK_Projects_Invoices">
+          <End Type="AUDashboardModel.Project" Role="Project" Multiplicity="1" />
+          <End Type="AUDashboardModel.Invoice" Role="Invoice" Multiplicity="0..1" />
+          <ReferentialConstraint>
+            <Principal Role="Project">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="Invoice">
+              <PropertyRef Name="Id" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Resources_Invoices">
+          <End Type="AUDashboardModel.Resource" Role="Resource" Multiplicity="1" />
+          <End Type="AUDashboardModel.Invoice" Role="Invoice" Multiplicity="0..1" />
+          <ReferentialConstraint>
+            <Principal Role="Resource">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="Invoice">
+              <PropertyRef Name="Id" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        </Schema>
+    </edmx:ConceptualModels>
+    <!-- C-S mapping content -->
+    <edmx:Mappings>
+      <Mapping Space="C-S" xmlns="http://schemas.microsoft.com/ado/2009/11/mapping/cs">
+        <EntityContainerMapping StorageEntityContainer="AUDashboardModelStoreContainer" CdmEntityContainer="AUDashboardEntities">
+          <EntitySetMapping Name="Invoices">
+            <EntityTypeMapping TypeName="AUDashboardModel.Invoice">
+              <MappingFragment StoreEntitySet="Invoices">
+                <ScalarProperty Name="ProjectId" ColumnName="ProjectId" />
+                <ScalarProperty Name="ResourceId" ColumnName="ResourceId" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Projects">
+            <EntityTypeMapping TypeName="AUDashboardModel.Project">
+              <MappingFragment StoreEntitySet="Projects">
+                <ScalarProperty Name="Name" ColumnName="Name" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Resources">
+            <EntityTypeMapping TypeName="AUDashboardModel.Resource">
+              <MappingFragment StoreEntitySet="Resources">
+                <ScalarProperty Name="ResourceName" ColumnName="ResourceName" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+        </EntityContainerMapping>
+      </Mapping>
+    </edmx:Mappings>
+  </edmx:Runtime>
+  <!-- EF Designer content (DO NOT EDIT MANUALLY BELOW HERE) -->
+  <Designer xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
+    <Connection>
+      <DesignerInfoPropertySet>
+        <DesignerProperty Name="MetadataArtifactProcessing" Value="EmbedInOutputAssembly" />
+      </DesignerInfoPropertySet>
+    </Connection>
+    <Options>
+      <DesignerInfoPropertySet>
+        <DesignerProperty Name="ValidateOnBuild" Value="true" />
+        <DesignerProperty Name="EnablePluralization" Value="true" />
+        <DesignerProperty Name="IncludeForeignKeysInModel" Value="true" />
+        <DesignerProperty Name="UseLegacyProvider" Value="false" />
+        <DesignerProperty Name="CodeGenerationStrategy" Value="None" />
+      </DesignerInfoPropertySet>
+    </Options>
+    <!-- Diagram content (shape and connector positions) -->
+    <Diagrams></Diagrams>
+  </Designer>
+</edmx:Edmx>
