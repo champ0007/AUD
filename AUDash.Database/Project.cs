@@ -14,9 +14,21 @@ namespace AUDash.Database
     
     public partial class Project
     {
+        public Project()
+        {
+            this.Resources = new HashSet<Resource>();
+            this.Resources1 = new HashSet<Resource>();
+            this.Resources2 = new HashSet<Resource>();
+        }
+    
         public string Id { get; set; }
         public string Name { get; set; }
+        public string StatusId { get; set; }
     
         public virtual Invoice Invoice { get; set; }
+        public virtual ProjectStatu ProjectStatu { get; set; }
+        public virtual ICollection<Resource> Resources { get; set; }
+        public virtual ICollection<Resource> Resources1 { get; set; }
+        public virtual ICollection<Resource> Resources2 { get; set; }
     }
 }

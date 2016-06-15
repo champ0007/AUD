@@ -69,8 +69,17 @@
     <Compile Include="Project.cs">
       <DependentUpon>AUDashboardModel.tt</DependentUpon>
     </Compile>
+    <Compile Include="ProjectStatu.cs">
+      <DependentUpon>AUDashboardModel.tt</DependentUpon>
+    </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Resource.cs">
+      <DependentUpon>AUDashboardModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="ResourceSkillMap.cs">
+      <DependentUpon>AUDashboardModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Skill.cs">
       <DependentUpon>AUDashboardModel.tt</DependentUpon>
     </Compile>
   </ItemGroup>
@@ -81,7 +90,9 @@
     </EntityDeploy>
   </ItemGroup>
   <ItemGroup>
-    <None Include="App.Config" />
+    <None Include="App.Config">
+      <SubType>Designer</SubType>
+    </None>
     <None Include="AUDashboardModel.Context.tt">
       <Generator>TextTemplatingFileGenerator</Generator>
       <DependentUpon>AUDashboardModel.edmx</DependentUpon>

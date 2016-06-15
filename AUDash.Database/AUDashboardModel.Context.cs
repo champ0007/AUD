@@ -28,5 +28,8 @@ namespace AUDash.Database
         public virtual DbSet<Invoice> Invoices { get; set; }
         public virtual DbSet<Project> Projects { get; set; }
         public virtual DbSet<Resource> Resources { get; set; }
+        public virtual DbSet<ProjectStatu> ProjectStatus { get; set; }
+        public virtual DbSet<ResourceSkillMap> ResourceSkillMaps { get; set; }
+        public virtual DbSet<Skill> Skills { get; set; }
     }
 }

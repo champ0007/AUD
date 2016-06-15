@@ -17,6 +17,17 @@ namespace AUDash.Database
         public string Id { get; set; }
         public string ResourceId { get; set; }
         public string ProjectId { get; set; }
+        public Nullable<System.DateTime> Date { get; set; }
+        public Nullable<int> Hours { get; set; }
+        public Nullable<decimal> Amount { get; set; }
+        public string ATBApproval { get; set; }
+        public Nullable<System.DateTime> ATBApprovalSentOn { get; set; }
+        public byte[] InvoiceRaised { get; set; }
+        public string InvoiceNo { get; set; }
+        public Nullable<System.DateTime> InvoiceRaisedOn { get; set; }
+        public string Comments { get; set; }
+        public byte[] PaymentReceived { get; set; }
+        public string EngagementNumber { get; set; }
     
         public virtual Project Project { get; set; }
         public virtual Resource Resource { get; set; }

@@ -14,9 +14,30 @@ namespace AUDash.Database
     
     public partial class Resource
     {
+        public Resource()
+        {
+            this.ResourceSkillMaps = new HashSet<ResourceSkillMap>();
+        }
+    
         public string Id { get; set; }
         public string ResourceName { get; set; }
+        public string FirstName { get; set; }
+        public string LastName { get; set; }
+        public string LastProject { get; set; }
+        public string CurrentProject { get; set; }
+        public string NextProject { get; set; }
+        public Nullable<System.DateTime> AvailableOn { get; set; }
+        public string EmpId { get; set; }
+        public Nullable<System.DateTime> ProposedStartDate { get; set; }
+        public Nullable<System.DateTime> ProposedEndDate { get; set; }
+        public string PositionStatus { get; set; }
+        public Nullable<System.DateTime> RequiredTill { get; set; }
+        public string AllocationStatus { get; set; }
     
         public virtual Invoice Invoice { get; set; }
+        public virtual ICollection<ResourceSkillMap> ResourceSkillMaps { get; set; }
+        public virtual Project Project { get; set; }
+        public virtual Project Project1 { get; set; }
+        public virtual Project Project2 { get; set; }
     }
 }
