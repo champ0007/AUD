@@ -17,10 +17,10 @@ namespace AUDash.Database
         public Resource()
         {
             this.ResourceSkillMaps = new HashSet<ResourceSkillMap>();
+            this.Invoices = new HashSet<Invoice>();
         }
     
         public string Id { get; set; }
-        public string ResourceName { get; set; }
         public string FirstName { get; set; }
         public string LastName { get; set; }
         public string LastProject { get; set; }
@@ -34,10 +34,11 @@ namespace AUDash.Database
         public Nullable<System.DateTime> RequiredTill { get; set; }
         public string AllocationStatus { get; set; }
     
-        public virtual Invoice Invoice { get; set; }
-        public virtual ICollection<ResourceSkillMap> ResourceSkillMaps { get; set; }
+        public virtual ProjectAllocationStatu ProjectAllocationStatu { get; set; }
         public virtual Project Project { get; set; }
         public virtual Project Project1 { get; set; }
         public virtual Project Project2 { get; set; }
+        public virtual ICollection<ResourceSkillMap> ResourceSkillMaps { get; set; }
+        public virtual ICollection<Invoice> Invoices { get; set; }
     }
 }

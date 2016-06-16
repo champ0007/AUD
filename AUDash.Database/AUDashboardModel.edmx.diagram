@@ -5,20 +5,23 @@
     <!-- Diagram content (shape and connector positions) -->
     <edmx:Diagrams>
       <Diagram DiagramId="2096242d209f4515b043a3b2cc283b0b" Name="Diagram1" ZoomLevel="127">
-        <EntityTypeShape EntityType="AUDashboardModel.Invoice" Width="1.5" PointX="3" PointY="0.875" />
-        <EntityTypeShape EntityType="AUDashboardModel.Project" Width="1.5" PointX="0.75" PointY="1.125" />
-        <EntityTypeShape EntityType="AUDashboardModel.Resource" Width="1.5" PointX="0.75" PointY="4.125" />
-        <AssociationConnector Association="AUDashboardModel.FK_Projects_Invoices" />
-        <AssociationConnector Association="AUDashboardModel.FK_Resources_Invoices" />
-        <EntityTypeShape EntityType="AUDashboardModel.ProjectStatu" Width="1.5" PointX="0.75" PointY="8.875" />
+        <EntityTypeShape EntityType="AUDashboardModel.Invoice" Width="1.5" PointX="0.75" PointY="7" />
+        <EntityTypeShape EntityType="AUDashboardModel.Notification" Width="1.5" PointX="7.75" PointY="7" />
+        <EntityTypeShape EntityType="AUDashboardModel.ProjectAllocationStatu" Width="1.5" PointX="3" PointY="0.75" />
+        <EntityTypeShape EntityType="AUDashboardModel.Project" Width="1.5" PointX="3" PointY="3.375" />
+        <EntityTypeShape EntityType="AUDashboardModel.ProjectStatu" Width="1.5" PointX="0.75" PointY="3.75" />
+        <EntityTypeShape EntityType="AUDashboardModel.Resource" Width="1.5" PointX="5.25" PointY="2.25" />
+        <EntityTypeShape EntityType="AUDashboardModel.ResourceSkillMap" Width="1.5" PointX="7.5" PointY="3.5" />
+        <AssociationConnector Association="AUDashboardModel.FK_ProjectAllocationStatus_Resources" />
         <AssociationConnector Association="AUDashboardModel.FK_ProjectStatus_Projects" />
-        <EntityTypeShape EntityType="AUDashboardModel.ResourceSkillMap" Width="1.5" PointX="3" PointY="6.25" />
-        <EntityTypeShape EntityType="AUDashboardModel.Skill" Width="1.5" PointX="0.75" PointY="10.375" />
-        <AssociationConnector Association="AUDashboardModel.FK_ResourceSkillMap_Resource" />
-        <AssociationConnector Association="AUDashboardModel.FK_ResourceSkillMap_Skill" />
         <AssociationConnector Association="AUDashboardModel.FK_Resources_CurrentProject" />
         <AssociationConnector Association="AUDashboardModel.FK_Resources_LastProject" />
         <AssociationConnector Association="AUDashboardModel.FK_Resources_NextProject" />
+        <AssociationConnector Association="AUDashboardModel.FK_ResourceSkillMap_Resource" />
+        <AssociationConnector Association="AUDashboardModel.FK_Projects_Invoices" />
+        <AssociationConnector Association="AUDashboardModel.FK_Resources_Invoices" />
+        <EntityTypeShape EntityType="AUDashboardModel.Skill" Width="1.5" PointX="7.375" PointY="0.875" />
+        <AssociationConnector Association="AUDashboardModel.FK_ResourceSkillMap_Skill" />
       </Diagram>
     </edmx:Diagrams>
   </edmx:Designer>

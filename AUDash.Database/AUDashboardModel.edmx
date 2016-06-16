@@ -24,6 +24,21 @@
           <Property Name="PaymentReceived" Type="binary" MaxLength="50" />
           <Property Name="EngagementNumber" Type="varchar" MaxLength="50" />
         </EntityType>
+        <EntityType Name="Notifications">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="nchar" MaxLength="10" Nullable="false" />
+          <Property Name="NotificationDesc" Type="varchar" MaxLength="200" />
+          <Property Name="NotificationName" Type="varchar(max)" />
+        </EntityType>
+        <EntityType Name="ProjectAllocationStatus">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="nchar" MaxLength="10" Nullable="false" />
+          <Property Name="Status" Type="varchar" MaxLength="200" />
+        </EntityType>
         <EntityType Name="Projects">
           <Key>
             <PropertyRef Name="Id" />
@@ -72,6 +87,30 @@
           <Property Name="Id" Type="nchar" MaxLength="10" Nullable="false" />
           <Property Name="Skill" Type="varchar" MaxLength="200" />
         </EntityType>
+        <Association Name="FK_ProjectAllocationStatus_Resources">
+          <End Role="ProjectAllocationStatus" Type="Self.ProjectAllocationStatus" Multiplicity="0..1" />
+          <End Role="Resources" Type="Self.Resources" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="ProjectAllocationStatus">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="Resources">
+              <PropertyRef Name="AllocationStatus" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Projects_Invoices">
+          <End Role="Projects" Type="Self.Projects" Multiplicity="1" />
+          <End Role="Invoices" Type="Self.Invoices" Multiplicity="0..1" />
+          <ReferentialConstraint>
+            <Principal Role="Projects">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="Invoices">
+              <PropertyRef Name="Id" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
         <Association Name="FK_ProjectStatus_Projects">
           <End Role="ProjectStatus" Type="Self.ProjectStatus" Multiplicity="0..1" />
           <End Role="Projects" Type="Self.Projects" Multiplicity="*" />
@@ -93,6 +132,18 @@
             </Principal>
             <Dependent Role="Resources">
               <PropertyRef Name="CurrentProject" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Resources_Invoices">
+          <End Role="Resources" Type="Self.Resources" Multiplicity="0..1" />
+          <End Role="Invoices" Type="Self.Invoices" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Resources">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="Invoices">
+              <PropertyRef Name="ResourceId" />
             </Dependent>
           </ReferentialConstraint>
         </Association>
@@ -146,11 +197,21 @@
         </Association>
         <EntityContainer Name="AUDashboardModelStoreContainer">
           <EntitySet Name="Invoices" EntityType="Self.Invoices" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Notifications" EntityType="Self.Notifications" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="ProjectAllocationStatus" EntityType="Self.ProjectAllocationStatus" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Projects" EntityType="Self.Projects" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="ProjectStatus" EntityType="Self.ProjectStatus" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Resources" EntityType="Self.Resources" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="ResourceSkillMap" EntityType="Self.ResourceSkillMap" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Skills" EntityType="Self.Skills" Schema="dbo" store:Type="Tables" />
+          <AssociationSet Name="FK_ProjectAllocationStatus_Resources" Association="Self.FK_ProjectAllocationStatus_Resources">
+            <End Role="ProjectAllocationStatus" EntitySet="ProjectAllocationStatus" />
+            <End Role="Resources" EntitySet="Resources" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Projects_Invoices" Association="Self.FK_Projects_Invoices">
+            <End Role="Projects" EntitySet="Projects" />
+            <End Role="Invoices" EntitySet="Invoices" />
+          </AssociationSet>
           <AssociationSet Name="FK_ProjectStatus_Projects" Association="Self.FK_ProjectStatus_Projects">
             <End Role="ProjectStatus" EntitySet="ProjectStatus" />
             <End Role="Projects" EntitySet="Projects" />
@@ -158,6 +219,10 @@
           <AssociationSet Name="FK_Resources_CurrentProject" Association="Self.FK_Resources_CurrentProject">
             <End Role="Projects" EntitySet="Projects" />
             <End Role="Resources" EntitySet="Resources" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Resources_Invoices" Association="Self.FK_Resources_Invoices">
+            <End Role="Resources" EntitySet="Resources" />
+            <End Role="Invoices" EntitySet="Invoices" />
           </AssociationSet>
           <AssociationSet Name="FK_Resources_LastProject" Association="Self.FK_Resources_LastProject">
             <End Role="Projects" EntitySet="Projects" />
@@ -182,30 +247,19 @@
       <Schema Namespace="AUDashboardModel" Alias="Self" annotation:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
         <EntityContainer Name="AUDashboardEntities" annotation:LazyLoadingEnabled="true">
           <EntitySet Name="Invoices" EntityType="AUDashboardModel.Invoice" />
+          <EntitySet Name="Notifications" EntityType="AUDashboardModel.Notification" />
+          <EntitySet Name="ProjectAllocationStatus" EntityType="AUDashboardModel.ProjectAllocationStatu" />
           <EntitySet Name="Projects" EntityType="AUDashboardModel.Project" />
-          <EntitySet Name="Resources" EntityType="AUDashboardModel.Resource" />
-          <AssociationSet Name="FK_Projects_Invoices" Association="AUDashboardModel.FK_Projects_Invoices">
-            <End Role="Project" EntitySet="Projects" />
-            <End Role="Invoice" EntitySet="Invoices" />
-          </AssociationSet>
-          <AssociationSet Name="FK_Resources_Invoices" Association="AUDashboardModel.FK_Resources_Invoices">
-            <End Role="Resource" EntitySet="Resources" />
-            <End Role="Invoice" EntitySet="Invoices" />
-          </AssociationSet>
           <EntitySet Name="ProjectStatus" EntityType="AUDashboardModel.ProjectStatu" />
+          <EntitySet Name="Resources" EntityType="AUDashboardModel.Resource" />
+          <EntitySet Name="ResourceSkillMaps" EntityType="AUDashboardModel.ResourceSkillMap" />
+          <AssociationSet Name="FK_ProjectAllocationStatus_Resources" Association="AUDashboardModel.FK_ProjectAllocationStatus_Resources">
+            <End Role="ProjectAllocationStatu" EntitySet="ProjectAllocationStatus" />
+            <End Role="Resource" EntitySet="Resources" />
+          </AssociationSet>
           <AssociationSet Name="FK_ProjectStatus_Projects" Association="AUDashboardModel.FK_ProjectStatus_Projects">
             <End Role="ProjectStatu" EntitySet="ProjectStatus" />
             <End Role="Project" EntitySet="Projects" />
-          </AssociationSet>
-          <EntitySet Name="ResourceSkillMaps" EntityType="AUDashboardModel.ResourceSkillMap" />
-          <EntitySet Name="Skills" EntityType="AUDashboardModel.Skill" />
-          <AssociationSet Name="FK_ResourceSkillMap_Resource" Association="AUDashboardModel.FK_ResourceSkillMap_Resource">
-            <End Role="Resource" EntitySet="Resources" />
-            <End Role="ResourceSkillMap" EntitySet="ResourceSkillMaps" />
-          </AssociationSet>
-          <AssociationSet Name="FK_ResourceSkillMap_Skill" Association="AUDashboardModel.FK_ResourceSkillMap_Skill">
-            <End Role="Skill" EntitySet="Skills" />
-            <End Role="ResourceSkillMap" EntitySet="ResourceSkillMaps" />
           </AssociationSet>
           <AssociationSet Name="FK_Resources_CurrentProject" Association="AUDashboardModel.FK_Resources_CurrentProject">
             <End Role="Project" EntitySet="Projects" />
@@ -219,6 +273,23 @@
             <End Role="Project" EntitySet="Projects" />
             <End Role="Resource" EntitySet="Resources" />
           </AssociationSet>
+          <AssociationSet Name="FK_ResourceSkillMap_Resource" Association="AUDashboardModel.FK_ResourceSkillMap_Resource">
+            <End Role="Resource" EntitySet="Resources" />
+            <End Role="ResourceSkillMap" EntitySet="ResourceSkillMaps" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Projects_Invoices" Association="AUDashboardModel.FK_Projects_Invoices">
+            <End Role="Project" EntitySet="Projects" />
+            <End Role="Invoice" EntitySet="Invoices" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Resources_Invoices" Association="AUDashboardModel.FK_Resources_Invoices">
+            <End Role="Resource" EntitySet="Resources" />
+            <End Role="Invoice" EntitySet="Invoices" />
+          </AssociationSet>
+          <EntitySet Name="Skills" EntityType="AUDashboardModel.Skill" />
+          <AssociationSet Name="FK_ResourceSkillMap_Skill" Association="AUDashboardModel.FK_ResourceSkillMap_Skill">
+            <End Role="Skill" EntitySet="Skills" />
+            <End Role="ResourceSkillMap" EntitySet="ResourceSkillMaps" />
+          </AssociationSet>
         </EntityContainer>
         <EntityType Name="Invoice">
           <Key>
@@ -227,8 +298,6 @@
           <Property Name="Id" Type="String" Nullable="false" MaxLength="10" FixedLength="true" Unicode="true" />
           <Property Name="ResourceId" Type="String" MaxLength="10" FixedLength="true" Unicode="true" />
           <Property Name="ProjectId" Type="String" MaxLength="10" FixedLength="true" Unicode="true" />
-          <NavigationProperty Name="Project" Relationship="AUDashboardModel.FK_Projects_Invoices" FromRole="Invoice" ToRole="Project" />
-          <NavigationProperty Name="Resource" Relationship="AUDashboardModel.FK_Resources_Invoices" FromRole="Invoice" ToRole="Resource" />
           <Property Name="Date" Type="DateTime" Precision="3" />
           <Property Name="Hours" Type="Int32" />
           <Property Name="Amount" Type="Decimal" Precision="10" Scale="2" />
@@ -240,6 +309,24 @@
           <Property Name="Comments" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
           <Property Name="PaymentReceived" Type="Binary" MaxLength="50" FixedLength="true" />
           <Property Name="EngagementNumber" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <NavigationProperty Name="Project" Relationship="AUDashboardModel.FK_Projects_Invoices" FromRole="Invoice" ToRole="Project" />
+          <NavigationProperty Name="Resource" Relationship="AUDashboardModel.FK_Resources_Invoices" FromRole="Invoice" ToRole="Resource" />
+        </EntityType>
+        <EntityType Name="Notification">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="String" Nullable="false" MaxLength="10" FixedLength="true" Unicode="true" />
+          <Property Name="NotificationDesc" Type="String" MaxLength="200" FixedLength="false" Unicode="false" />
+          <Property Name="NotificationName" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
+        </EntityType>
+        <EntityType Name="ProjectAllocationStatu">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="String" Nullable="false" MaxLength="10" FixedLength="true" Unicode="true" />
+          <Property Name="Status" Type="String" MaxLength="200" FixedLength="false" Unicode="false" />
+          <NavigationProperty Name="Resources" Relationship="AUDashboardModel.FK_ProjectAllocationStatus_Resources" FromRole="ProjectAllocationStatu" ToRole="Resource" />
         </EntityType>
         <EntityType Name="Project">
           <Key>
@@ -247,61 +334,13 @@
           </Key>
           <Property Name="Id" Type="String" Nullable="false" MaxLength="10" FixedLength="true" Unicode="true" />
           <Property Name="Name" Type="String" MaxLength="200" FixedLength="false" Unicode="false" />
-          <NavigationProperty Name="Invoice" Relationship="AUDashboardModel.FK_Projects_Invoices" FromRole="Project" ToRole="Invoice" />
           <Property Name="StatusId" Type="String" MaxLength="10" FixedLength="true" Unicode="true" />
           <NavigationProperty Name="ProjectStatu" Relationship="AUDashboardModel.FK_ProjectStatus_Projects" FromRole="Project" ToRole="ProjectStatu" />
           <NavigationProperty Name="Resources" Relationship="AUDashboardModel.FK_Resources_CurrentProject" FromRole="Project" ToRole="Resource" />
           <NavigationProperty Name="Resources1" Relationship="AUDashboardModel.FK_Resources_LastProject" FromRole="Project" ToRole="Resource" />
           <NavigationProperty Name="Resources2" Relationship="AUDashboardModel.FK_Resources_NextProject" FromRole="Project" ToRole="Resource" />
+          <NavigationProperty Name="Invoice" Relationship="AUDashboardModel.FK_Projects_Invoices" FromRole="Project" ToRole="Invoice" />
         </EntityType>
-        <EntityType Name="Resource">
-          <Key>
-            <PropertyRef Name="Id" />
-          </Key>
-          <Property Name="Id" Type="String" Nullable="false" MaxLength="10" FixedLength="true" Unicode="true" />
-          <Property Name="ResourceName" Type="String" MaxLength="200" FixedLength="false" Unicode="false" />
-          <NavigationProperty Name="Invoice" Relationship="AUDashboardModel.FK_Resources_Invoices" FromRole="Resource" ToRole="Invoice" />
-          <Property Name="FirstName" Type="String" MaxLength="200" FixedLength="false" Unicode="false" />
-          <Property Name="LastName" Type="String" MaxLength="200" FixedLength="false" Unicode="false" />
-          <NavigationProperty Name="ResourceSkillMaps" Relationship="AUDashboardModel.FK_ResourceSkillMap_Resource" FromRole="Resource" ToRole="ResourceSkillMap" />
-          <Property Name="LastProject" Type="String" MaxLength="10" FixedLength="true" Unicode="true" />
-          <Property Name="CurrentProject" Type="String" MaxLength="10" FixedLength="true" Unicode="true" />
-          <NavigationProperty Name="Project" Relationship="AUDashboardModel.FK_Resources_CurrentProject" FromRole="Resource" ToRole="Project" />
-          <NavigationProperty Name="Project1" Relationship="AUDashboardModel.FK_Resources_LastProject" FromRole="Resource" ToRole="Project" />
-          <Property Name="NextProject" Type="String" MaxLength="10" FixedLength="true" Unicode="true" />
-          <NavigationProperty Name="Project2" Relationship="AUDashboardModel.FK_Resources_NextProject" FromRole="Resource" ToRole="Project" />
-          <Property Name="AvailableOn" Type="DateTime" Precision="3" />
-          <Property Name="EmpId" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
-          <Property Name="ProposedStartDate" Type="DateTime" Precision="3" />
-          <Property Name="ProposedEndDate" Type="DateTime" Precision="3" />
-          <Property Name="PositionStatus" Type="String" MaxLength="10" FixedLength="true" Unicode="true" />
-          <Property Name="RequiredTill" Type="DateTime" Precision="3" />
-          <Property Name="AllocationStatus" Type="String" MaxLength="10" FixedLength="true" Unicode="true" />
-        </EntityType>
-        <Association Name="FK_Projects_Invoices">
-          <End Type="AUDashboardModel.Project" Role="Project" Multiplicity="1" />
-          <End Type="AUDashboardModel.Invoice" Role="Invoice" Multiplicity="0..1" />
-          <ReferentialConstraint>
-            <Principal Role="Project">
-              <PropertyRef Name="Id" />
-            </Principal>
-            <Dependent Role="Invoice">
-              <PropertyRef Name="Id" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
-        <Association Name="FK_Resources_Invoices">
-          <End Type="AUDashboardModel.Resource" Role="Resource" Multiplicity="1" />
-          <End Type="AUDashboardModel.Invoice" Role="Invoice" Multiplicity="0..1" />
-          <ReferentialConstraint>
-            <Principal Role="Resource">
-              <PropertyRef Name="Id" />
-            </Principal>
-            <Dependent Role="Invoice">
-              <PropertyRef Name="Id" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
         <EntityType Name="ProjectStatu">
           <Key>
             <PropertyRef Name="Id" />
@@ -310,18 +349,30 @@
           <Property Name="StatusName" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
           <NavigationProperty Name="Projects" Relationship="AUDashboardModel.FK_ProjectStatus_Projects" FromRole="ProjectStatu" ToRole="Project" />
         </EntityType>
-        <Association Name="FK_ProjectStatus_Projects">
-          <End Type="AUDashboardModel.ProjectStatu" Role="ProjectStatu" Multiplicity="0..1" />
-          <End Type="AUDashboardModel.Project" Role="Project" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="ProjectStatu">
-              <PropertyRef Name="Id" />
-            </Principal>
-            <Dependent Role="Project">
-              <PropertyRef Name="StatusId" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
+        <EntityType Name="Resource">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="String" Nullable="false" MaxLength="10" FixedLength="true" Unicode="true" />
+          <Property Name="FirstName" Type="String" MaxLength="200" FixedLength="false" Unicode="false" />
+          <Property Name="LastName" Type="String" MaxLength="200" FixedLength="false" Unicode="false" />
+          <Property Name="LastProject" Type="String" MaxLength="10" FixedLength="true" Unicode="true" />
+          <Property Name="CurrentProject" Type="String" MaxLength="10" FixedLength="true" Unicode="true" />
+          <Property Name="NextProject" Type="String" MaxLength="10" FixedLength="true" Unicode="true" />
+          <Property Name="AvailableOn" Type="DateTime" Precision="3" />
+          <Property Name="EmpId" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="ProposedStartDate" Type="DateTime" Precision="3" />
+          <Property Name="ProposedEndDate" Type="DateTime" Precision="3" />
+          <Property Name="PositionStatus" Type="String" MaxLength="10" FixedLength="true" Unicode="true" />
+          <Property Name="RequiredTill" Type="DateTime" Precision="3" />
+          <Property Name="AllocationStatus" Type="String" MaxLength="10" FixedLength="true" Unicode="true" />
+          <NavigationProperty Name="ProjectAllocationStatu" Relationship="AUDashboardModel.FK_ProjectAllocationStatus_Resources" FromRole="Resource" ToRole="ProjectAllocationStatu" />
+          <NavigationProperty Name="Project" Relationship="AUDashboardModel.FK_Resources_CurrentProject" FromRole="Resource" ToRole="Project" />
+          <NavigationProperty Name="Project1" Relationship="AUDashboardModel.FK_Resources_LastProject" FromRole="Resource" ToRole="Project" />
+          <NavigationProperty Name="Project2" Relationship="AUDashboardModel.FK_Resources_NextProject" FromRole="Resource" ToRole="Project" />
+          <NavigationProperty Name="ResourceSkillMaps" Relationship="AUDashboardModel.FK_ResourceSkillMap_Resource" FromRole="Resource" ToRole="ResourceSkillMap" />
+          <NavigationProperty Name="Invoices" Relationship="AUDashboardModel.FK_Resources_Invoices" FromRole="Resource" ToRole="Invoice" />
+        </EntityType>
         <EntityType Name="ResourceSkillMap">
           <Key>
             <PropertyRef Name="Id" />
@@ -332,35 +383,27 @@
           <NavigationProperty Name="Resource" Relationship="AUDashboardModel.FK_ResourceSkillMap_Resource" FromRole="ResourceSkillMap" ToRole="Resource" />
           <NavigationProperty Name="Skill" Relationship="AUDashboardModel.FK_ResourceSkillMap_Skill" FromRole="ResourceSkillMap" ToRole="Skill" />
         </EntityType>
-        <EntityType Name="Skill">
-          <Key>
-            <PropertyRef Name="Id" />
-          </Key>
-          <Property Name="Id" Type="String" Nullable="false" MaxLength="10" FixedLength="true" Unicode="true" />
-          <Property Name="Skill1" Type="String" MaxLength="200" FixedLength="false" Unicode="false" />
-          <NavigationProperty Name="ResourceSkillMaps" Relationship="AUDashboardModel.FK_ResourceSkillMap_Skill" FromRole="Skill" ToRole="ResourceSkillMap" />
-        </EntityType>
-        <Association Name="FK_ResourceSkillMap_Resource">
-          <End Type="AUDashboardModel.Resource" Role="Resource" Multiplicity="0..1" />
-          <End Type="AUDashboardModel.ResourceSkillMap" Role="ResourceSkillMap" Multiplicity="*" />
+        <Association Name="FK_ProjectAllocationStatus_Resources">
+          <End Type="AUDashboardModel.ProjectAllocationStatu" Role="ProjectAllocationStatu" Multiplicity="0..1" />
+          <End Type="AUDashboardModel.Resource" Role="Resource" Multiplicity="*" />
           <ReferentialConstraint>
-            <Principal Role="Resource">
+            <Principal Role="ProjectAllocationStatu">
               <PropertyRef Name="Id" />
             </Principal>
-            <Dependent Role="ResourceSkillMap">
-              <PropertyRef Name="ResourceId" />
+            <Dependent Role="Resource">
+              <PropertyRef Name="AllocationStatus" />
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <Association Name="FK_ResourceSkillMap_Skill">
-          <End Type="AUDashboardModel.Skill" Role="Skill" Multiplicity="0..1" />
-          <End Type="AUDashboardModel.ResourceSkillMap" Role="ResourceSkillMap" Multiplicity="*" />
+        <Association Name="FK_ProjectStatus_Projects">
+          <End Type="AUDashboardModel.ProjectStatu" Role="ProjectStatu" Multiplicity="0..1" />
+          <End Type="AUDashboardModel.Project" Role="Project" Multiplicity="*" />
           <ReferentialConstraint>
-            <Principal Role="Skill">
+            <Principal Role="ProjectStatu">
               <PropertyRef Name="Id" />
             </Principal>
-            <Dependent Role="ResourceSkillMap">
-              <PropertyRef Name="SkillId" />
+            <Dependent Role="Project">
+              <PropertyRef Name="StatusId" />
             </Dependent>
           </ReferentialConstraint>
         </Association>
@@ -400,6 +443,62 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
+        <Association Name="FK_ResourceSkillMap_Resource">
+          <End Type="AUDashboardModel.Resource" Role="Resource" Multiplicity="0..1" />
+          <End Type="AUDashboardModel.ResourceSkillMap" Role="ResourceSkillMap" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Resource">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="ResourceSkillMap">
+              <PropertyRef Name="ResourceId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Projects_Invoices">
+          <End Type="AUDashboardModel.Project" Role="Project" Multiplicity="1" />
+          <End Type="AUDashboardModel.Invoice" Role="Invoice" Multiplicity="0..1" />
+          <ReferentialConstraint>
+            <Principal Role="Project">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="Invoice">
+              <PropertyRef Name="Id" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Resources_Invoices">
+          <End Type="AUDashboardModel.Resource" Role="Resource" Multiplicity="0..1" />
+          <End Type="AUDashboardModel.Invoice" Role="Invoice" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Resource">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="Invoice">
+              <PropertyRef Name="ResourceId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <EntityType Name="Skill">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="String" Nullable="false" MaxLength="10" FixedLength="true" Unicode="true" />
+          <Property Name="Skill1" Type="String" MaxLength="200" FixedLength="false" Unicode="false" />
+          <NavigationProperty Name="ResourceSkillMaps" Relationship="AUDashboardModel.FK_ResourceSkillMap_Skill" FromRole="Skill" ToRole="ResourceSkillMap" />
+        </EntityType>
+        <Association Name="FK_ResourceSkillMap_Skill">
+          <End Type="AUDashboardModel.Skill" Role="Skill" Multiplicity="0..1" />
+          <End Type="AUDashboardModel.ResourceSkillMap" Role="ResourceSkillMap" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Skill">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="ResourceSkillMap">
+              <PropertyRef Name="SkillId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
         </Schema>
     </edmx:ConceptualModels>
     <!-- C-S mapping content -->
@@ -426,11 +525,36 @@
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
+          <EntitySetMapping Name="Notifications">
+            <EntityTypeMapping TypeName="AUDashboardModel.Notification">
+              <MappingFragment StoreEntitySet="Notifications">
+                <ScalarProperty Name="NotificationName" ColumnName="NotificationName" />
+                <ScalarProperty Name="NotificationDesc" ColumnName="NotificationDesc" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="ProjectAllocationStatus">
+            <EntityTypeMapping TypeName="AUDashboardModel.ProjectAllocationStatu">
+              <MappingFragment StoreEntitySet="ProjectAllocationStatus">
+                <ScalarProperty Name="Status" ColumnName="Status" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
           <EntitySetMapping Name="Projects">
             <EntityTypeMapping TypeName="AUDashboardModel.Project">
               <MappingFragment StoreEntitySet="Projects">
                 <ScalarProperty Name="StatusId" ColumnName="StatusId" />
                 <ScalarProperty Name="Name" ColumnName="Name" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="ProjectStatus">
+            <EntityTypeMapping TypeName="AUDashboardModel.ProjectStatu">
+              <MappingFragment StoreEntitySet="ProjectStatus">
+                <ScalarProperty Name="StatusName" ColumnName="StatusName" />
                 <ScalarProperty Name="Id" ColumnName="Id" />
               </MappingFragment>
             </EntityTypeMapping>
@@ -450,14 +574,6 @@
                 <ScalarProperty Name="LastProject" ColumnName="LastProject" />
                 <ScalarProperty Name="LastName" ColumnName="LastName" />
                 <ScalarProperty Name="FirstName" ColumnName="FirstName" />
-                <ScalarProperty Name="Id" ColumnName="Id" />
-              </MappingFragment>
-            </EntityTypeMapping>
-          </EntitySetMapping>
-          <EntitySetMapping Name="ProjectStatus">
-            <EntityTypeMapping TypeName="AUDashboardModel.ProjectStatu">
-              <MappingFragment StoreEntitySet="ProjectStatus">
-                <ScalarProperty Name="StatusName" ColumnName="StatusName" />
                 <ScalarProperty Name="Id" ColumnName="Id" />
               </MappingFragment>
             </EntityTypeMapping>

@@ -66,7 +66,13 @@
     <Compile Include="Invoice.cs">
       <DependentUpon>AUDashboardModel.tt</DependentUpon>
     </Compile>
+    <Compile Include="Notification.cs">
+      <DependentUpon>AUDashboardModel.tt</DependentUpon>
+    </Compile>
     <Compile Include="Project.cs">
+      <DependentUpon>AUDashboardModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="ProjectAllocationStatu.cs">
       <DependentUpon>AUDashboardModel.tt</DependentUpon>
     </Compile>
     <Compile Include="ProjectStatu.cs">
